@@ -1,0 +1,50 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "[Rust] Debug Build",
+            "type": "shell",
+            "command": "cargo build",
+            "problemMatcher": [
+                "$rustc"
+            ]
+        },
+        {
+            "label": "[Rust] Release Build",
+            "type": "shell",
+            "command": "cargo build --release",
+            "problemMatcher": [
+                "$rustc"
+            ]
+        },
+        {
+            "label": "[Godot] Open Editor",
+            "type": "shell",
+            "command": "godot_console",
+            "args": [
+                "--editor",
+                "--path",
+                "${workspaceFolder}/godot",
+            ],
+            "problemMatcher": [],
+            "isBackground": true,
+        },
+        {
+            "label": "[Godot] Run Default Scene",
+            "type": "shell",
+            "command": "godot_console",
+            "args": [
+                "--path",
+                "${workspaceFolder}/godot",
+            ],
+            "problemMatcher": [],
+            "isBackground": true,
+            "dependsOn": [
+                "[Rust] Debug Build"
+            ]
+        }
+        // Export: godot --headless --path path_to_your_project --export-release my_export_preset_name game.exe
+    ]
+}
