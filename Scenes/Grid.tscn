@@ -1,0 +1,12 @@
+[gd_scene load_steps=2 format=3 uid="uid://bw68lilbv7mqv"]
+
+[ext_resource type="MeshLibrary" uid="uid://46f7acy8mu60" path="res://Mesh Library/Voxels.tres" id="1_w1wdj"]
+
+[node name="Grid" type="Node3D"]
+
+[node name="GridMap" type="GridMap" parent="."]
+mesh_library = ExtResource("1_w1wdj")
+data = {
+"cells": PackedInt32Array(0, 65535, 0, 65535, 65535, 0, 65535, 0, 0, 0, 0, 0, 1, 1, 0, 65534, 1, 0, 1, 65534, 0, 65534, 65534, 0, 131070, 1, 0, 131070, 65534, 0, 65537, 65534, 0, 65537, 1, 0, 131073, 65534, 0, 196606, 65534, 0, 196606, 1, 0, 131073, 1, 0, 196609, 65534, 0, 262142, 65534, 0, 262142, 1, 0, 196609, 1, 0, 262142, 65535, 0, 262142, 0, 0, 262143, 65534, 0, 262143, 65535, 0, 262143, 0, 0, 262143, 1, 0, 196608, 65534, 0, 196608, 65535, 0, 196608, 1, 0, 196609, 65535, 0, 196609, 0, 0, 196608, 0, 0)
+}
+metadata/_editor_floor_ = Vector3(0, 0, 0)

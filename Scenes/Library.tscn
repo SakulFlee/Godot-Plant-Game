@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://dp2w4tc5a0c6e"]
+
+[ext_resource type="PackedScene" uid="uid://vp3vxk1b5ib6" path="res://Models/Voxels/Default/Cube.blend" id="1_khhd2"]
+
+[node name="Library" type="Node3D"]
+
+[node name="Cube" parent="." instance=ExtResource("1_khhd2")]

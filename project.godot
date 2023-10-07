@@ -11,10 +11,10 @@ config_version=5
 [application]
 
 config/name="Godot-Rust"
-run/main_scene="res://main.tscn"
+run/main_scene="res://Scenes/Main.tscn"
 config/features=PackedStringArray("4.1", "Forward Plus")
 config/icon="res://icon.svg"
 
-[dotnet]
+[filesystem]
 
-project/assembly_name="Godot-Rust"
+import/fbx/enabled=false

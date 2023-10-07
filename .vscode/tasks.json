@@ -26,10 +26,13 @@
             "args": [
                 "--editor",
                 "--path",
-                "${workspaceFolder}/godot",
+                "${workspaceFolder}",
             ],
             "problemMatcher": [],
             "isBackground": true,
+            "dependsOn": [
+                "[Rust] Debug Build"
+            ]
         },
         {
             "label": "[Godot] Run Default Scene",
@@ -37,7 +40,7 @@
             "command": "godot_console",
             "args": [
                 "--path",
-                "${workspaceFolder}/godot",
+                "${workspaceFolder}",
             ],
             "problemMatcher": [],
             "isBackground": true,
