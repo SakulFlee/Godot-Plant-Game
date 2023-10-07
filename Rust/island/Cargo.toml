@@ -1,5 +1,5 @@
 [package]
-name = "island_gen"
+name = "island"
 version = "0.1.0"
 edition = "2021"
 
@@ -9,3 +9,4 @@ crate-type = ["cdylib"]
 [dependencies]
 godot = { git = "https://github.com/godot-rust/gdext", branch = "master" }
 rand = "0.8.5"
+noise = "0.8.2"
