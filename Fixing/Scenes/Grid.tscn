@@ -1,5 +1,0 @@
-[gd_scene format=3 uid="uid://bw68lilbv7mqv"]
-
-[node name="Grid" type="Node3D"]
-
-[node name="IslandGen" type="IslandGen" parent="."]
