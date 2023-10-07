@@ -3,5 +3,3 @@
 [node name="Grid" type="Node3D"]
 
 [node name="IslandGen" type="IslandGen" parent="."]
-cell_scale = 0.53
-metadata/_editor_floor_ = Vector3(0, 1, 0)
