@@ -7,6 +7,9 @@ use noise::{
     Billow, Perlin,
 };
 
+mod voxels;
+use voxels::*;
+
 struct MyExtension;
 
 #[gdextension]
@@ -75,8 +78,8 @@ impl Island {
 
     fn setup(&mut self) {
         godot_print!("Setup");
-        self.base.set_cell_size(Vector3::new(0.5, 0.5, 0.5));
-        self.base.set_cell_scale(0.5);
+        self.base.set_cell_size(Vector3::new(1.0, 1.0, 1.0));
+        self.base.set_cell_scale(1.0);
 
         let mesh_library = match try_load("res://Mesh Library/Voxels.tres") {
             Some(mesh_library) => mesh_library,
@@ -156,17 +159,20 @@ impl Island {
                         continue;
                     }
 
-                    let mesh_index: i32;
+                    let mesh_index: Voxel;
                     if y == 0 {
-                        mesh_index = 0;
+                        mesh_index = Voxel::Grass;
                     } else if y < 0 && y >= -3 {
-                        mesh_index = 1;
+                        mesh_index = Voxel::Dirt;
                     } else {
-                        mesh_index = 2;
+                        mesh_index = Voxel::Stone;
                     }
 
+                    // TODO: Add water AFTER this based on a water level height level!
+
                     let cell_position = Vector3i::new(x, y, z);
-                    self.base.set_cell_item(cell_position, mesh_index);
+                    self.base
+                        .set_cell_item(cell_position, mesh_index.to_index());
                 }
             }
         }
@@ -174,54 +180,72 @@ impl Island {
 
     fn cull(&mut self) {
         godot_print!("Cull");
-        let size = self.radius as i32;
-        for x in -size..=size {
-            for y in -size..=size {
-                for z in -size..=size {
-                    let cell_position_x_pos = Vector3i::new(x + 1, y, z);
-                    let cell_position_x_neg = Vector3i::new(x - 1, y, z);
-                    let cell_position_y_pos = Vector3i::new(x, y + 1, z);
-                    let cell_position_y_neg = Vector3i::new(x, y - 1, z);
-                    let cell_position_z_pos = Vector3i::new(x + 1, y, z + 1);
-                    let cell_position_z_neg = Vector3i::new(x, y, z - 1);
 
-                    let cell_index_x_pos = self.base.get_cell_item(cell_position_x_pos);
-                    let cell_index_x_neg = self.base.get_cell_item(cell_position_x_neg);
-                    let cell_index_y_pos = self.base.get_cell_item(cell_position_y_pos);
-                    let cell_index_y_neg = self.base.get_cell_item(cell_position_y_neg);
-                    let cell_index_z_pos = self.base.get_cell_item(cell_position_z_pos);
-                    let cell_index_z_neg = self.base.get_cell_item(cell_position_z_neg);
+        let mut to_be_removed: Vec<Vector3i> = Vec::new();
 
-                    let mut neighbour_count = 0;
+        let used_cells = self.base.get_used_cells();
+        let count_before = used_cells.len();
+        for index in 0..count_before {
+            let position = used_cells.get(index);
 
-                    if cell_index_x_pos != -1 {
-                        neighbour_count += 1;
-                    }
-                    if cell_index_x_neg != -1 {
-                        neighbour_count += 1;
-                    }
-                    if cell_index_y_pos != -1 {
-                        neighbour_count += 1;
-                    }
-                    if cell_index_y_neg != -1 {
-                        neighbour_count += 1;
-                    }
-                    if cell_index_z_pos != -1 {
-                        neighbour_count += 1;
-                    }
-                    if cell_index_z_neg != -1 {
-                        neighbour_count += 1;
-                    }
+            let mut neighbours = 0;
 
-                    // TODO: Culling not working!
-                    if neighbour_count == 6 {
-                        godot_print!("Culling");
-                        let cell_position = Vector3i::new(x, y, z);
-                        self.base.set_cell_item(cell_position, -1)
-                    }
-                }
+            if self
+                .base
+                .get_cell_item(Vector3i::new(position.x + 1, position.y, position.z))
+                != GridMap::INVALID_CELL_ITEM
+            {
+                neighbours += 1;
+            }
+            if self
+                .base
+                .get_cell_item(Vector3i::new(position.x - 1, position.y, position.z))
+                != GridMap::INVALID_CELL_ITEM
+            {
+                neighbours += 1;
+            }
+            if self
+                .base
+                .get_cell_item(Vector3i::new(position.x, position.y + 1, position.z))
+                != GridMap::INVALID_CELL_ITEM
+            {
+                neighbours += 1;
+            }
+            if self
+                .base
+                .get_cell_item(Vector3i::new(position.x, position.y - 1, position.z))
+                != GridMap::INVALID_CELL_ITEM
+            {
+                neighbours += 1;
+            }
+            if self
+                .base
+                .get_cell_item(Vector3i::new(position.x, position.y, position.z + 1))
+                != GridMap::INVALID_CELL_ITEM
+            {
+                neighbours += 1;
+            }
+            if self
+                .base
+                .get_cell_item(Vector3i::new(position.x, position.y, position.z - 1))
+                != GridMap::INVALID_CELL_ITEM
+            {
+                neighbours += 1;
+            }
+
+            if neighbours == 6 {
+                to_be_removed.push(position);
             }
         }
+
+        godot_print!("To be removed: {}", to_be_removed.len());
+        godot_print!("Before: {count_before}");
+
+        for position in to_be_removed {
+            self.base.set_cell_item(position, Voxel::Air.to_index());
+        }
+
+        godot_print!("After: {}", self.base.get_used_cells().len());
     }
 
     #[func]
