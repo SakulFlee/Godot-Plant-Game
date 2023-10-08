@@ -3,7 +3,7 @@ use godot::{
     prelude::*,
 };
 use noise::{
-    utils::{NoiseMap, NoiseMapBuilder, PlaneMapBuilder},
+    utils::{NoiseMapBuilder, PlaneMapBuilder},
     Billow, Perlin,
 };
 
@@ -16,7 +16,6 @@ unsafe impl ExtensionLibrary for MyExtension {}
 #[class(tool, base=GridMap)]
 struct Island {
     needs_update: bool,
-    noise_map: Option<NoiseMap>,
 
     #[base]
     base: Base<GridMap>,
@@ -26,7 +25,7 @@ struct Island {
     pub seed: u32,
 
     #[export(range = (5.0, 100.0))]
-    #[var(get = size, set = set_size)]
+    #[var(get = radius, set = set_radius)]
     pub radius: u32,
 
     #[export]
@@ -56,6 +55,13 @@ impl Island {
     }
 
     fn island(&mut self) {
+        let billow = Billow::<Billow<Perlin>>::new(self.seed);
+        let noise_map = PlaneMapBuilder::<_, 2>::new(billow)
+            .set_size((self.radius * 2) as usize, (self.radius * 2) as usize)
+            .set_x_bounds(-1.0, 1.0)
+            .set_y_bounds(-1.0, 1.0)
+            .build();
+
         let size = self.radius as i32;
         let range = (self.radius as f32).powf(2.0);
 
@@ -65,11 +71,7 @@ impl Island {
                     Vector3::new(x as f32, 0.0, z as f32).distance_squared_to(Vector3::ZERO);
 
                 if distance <= range {
-                    let n = self
-                        .noise_map
-                        .as_ref()
-                        .unwrap()
-                        .get_value((x + size) as usize, (z + size) as usize);
+                    let n = noise_map.get_value((x + size) as usize, (z + size) as usize);
 
                     if n <= 1.0 {
                         continue;
@@ -118,12 +120,12 @@ impl Island {
     }
 
     #[func]
-    pub fn size(&self) -> u32 {
+    pub fn radius(&self) -> u32 {
         self.radius
     }
 
     #[func]
-    pub fn set_size(&mut self, size: u32) {
+    pub fn set_radius(&mut self, size: u32) {
         self.needs_update = true;
         self.radius = size;
     }
@@ -140,17 +142,7 @@ impl GridMapVirtual for Island {
             seed: 12345,
             radius: 25,
             height_multiplier: 5.0,
-            noise_map: None,
         };
-
-        let billow = Billow::<Billow<Perlin>>::new(s.seed);
-        let noise_map = PlaneMapBuilder::<_, 2>::new(billow)
-            .set_size((s.radius * 2) as usize, (s.radius * 2) as usize)
-            .set_x_bounds(-1.0, 1.0)
-            .set_y_bounds(-1.0, 1.0)
-            .build();
-
-        s.noise_map = Some(noise_map);
 
         s.clear();
         s.setup();
