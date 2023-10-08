@@ -20,11 +20,21 @@ struct Island {
     #[base]
     base: Base<GridMap>,
 
+    // General Terrain
+    #[export(range = (5.0, 100.0))]
+    #[var(get = radius, set = set_radius)]
+    pub radius: u32,
+    #[export]
+    #[var(get = below_ground_factor, set = set_below_ground_factor)]
+    pub below_ground_factor: f64,
+    #[export]
+    #[var(get = terrain_indent_factor, set = set_terrain_indent_factor)]
+    pub terrain_indent_factor: f64,
+
     // Terrain A
     #[export]
     #[var(get = terrain_seed_a, set = set_terrain_seed_a)]
     pub terrain_seed_a: u32,
-
     #[export(range = (1.0, 6.0))]
     #[var(get = octaves_a, set = set_octaves_a)]
     pub octaves_a: u32,
@@ -42,7 +52,6 @@ struct Island {
     #[export]
     #[var(get = terrain_seed_b, set = set_terrain_seed_b)]
     pub terrain_seed_b: u32,
-
     #[export(range = (1.0, 6.0))]
     #[var(get = octaves_b, set = set_octaves_b)]
     pub octaves_b: u32,
@@ -55,17 +64,6 @@ struct Island {
     #[export]
     #[var(get = persistence_b, set = set_persistence_b)]
     pub persistence_b: f64,
-
-    #[export(range = (5.0, 100.0))]
-    #[var(get = radius, set = set_radius)]
-    pub radius: u32,
-
-    #[export]
-    #[var(get = below_ground_factor, set = set_below_ground_factor)]
-    pub below_ground_factor: f64,
-    #[export]
-    #[var(get = terrain_indent_factor, set = set_terrain_indent_factor)]
-    pub terrain_indent_factor: f64,
 }
 
 #[godot_api]
