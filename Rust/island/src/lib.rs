@@ -66,9 +66,6 @@ struct Island {
     #[export]
     #[var(get = terrain_indent_factor, set = set_terrain_indent_factor)]
     pub terrain_indent_factor: f64,
-    #[export]
-    #[var(get = terrain_mountain_factor, set = set_terrain_mountain_factor)]
-    pub terrain_mountain_factor: f64,
 }
 
 #[godot_api]
@@ -142,6 +139,7 @@ impl Island {
                     // If the distance is not within (<=) range, skip!
                     continue;
                 }
+
                 let terrain_noise_a =
                     terrain_noise_a.get_value((x + size) as usize, (z + size) as usize);
                 let terrain_noise_b =
@@ -196,17 +194,6 @@ impl Island {
     pub fn set_terrain_indent_factor(&mut self, factor: f64) {
         self.needs_update = true;
         self.terrain_indent_factor = factor;
-    }
-
-    #[func]
-    pub fn terrain_mountain_factor(&self) -> f64 {
-        self.terrain_mountain_factor
-    }
-
-    #[func]
-    pub fn set_terrain_mountain_factor(&mut self, factor: f64) {
-        self.needs_update = true;
-        self.terrain_mountain_factor = factor;
     }
 
     #[func]
@@ -352,7 +339,6 @@ impl GridMapVirtual for Island {
             radius: 50,
             below_ground_factor: 2.0,
             terrain_indent_factor: 2.0,
-            terrain_mountain_factor: 0.0,
         };
 
         s.clear();
