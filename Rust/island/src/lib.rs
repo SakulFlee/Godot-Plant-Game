@@ -172,6 +172,58 @@ impl Island {
         }
     }
 
+    fn cull(&mut self) {
+        godot_print!("Cull");
+        let size = self.radius as i32;
+        for x in -size..=size {
+            for y in -size..=size {
+                for z in -size..=size {
+                    let cell_position_x_pos = Vector3i::new(x + 1, y, z);
+                    let cell_position_x_neg = Vector3i::new(x - 1, y, z);
+                    let cell_position_y_pos = Vector3i::new(x, y + 1, z);
+                    let cell_position_y_neg = Vector3i::new(x, y - 1, z);
+                    let cell_position_z_pos = Vector3i::new(x + 1, y, z + 1);
+                    let cell_position_z_neg = Vector3i::new(x, y, z - 1);
+
+                    let cell_index_x_pos = self.base.get_cell_item(cell_position_x_pos);
+                    let cell_index_x_neg = self.base.get_cell_item(cell_position_x_neg);
+                    let cell_index_y_pos = self.base.get_cell_item(cell_position_y_pos);
+                    let cell_index_y_neg = self.base.get_cell_item(cell_position_y_neg);
+                    let cell_index_z_pos = self.base.get_cell_item(cell_position_z_pos);
+                    let cell_index_z_neg = self.base.get_cell_item(cell_position_z_neg);
+
+                    let mut neighbour_count = 0;
+
+                    if cell_index_x_pos != -1 {
+                        neighbour_count += 1;
+                    }
+                    if cell_index_x_neg != -1 {
+                        neighbour_count += 1;
+                    }
+                    if cell_index_y_pos != -1 {
+                        neighbour_count += 1;
+                    }
+                    if cell_index_y_neg != -1 {
+                        neighbour_count += 1;
+                    }
+                    if cell_index_z_pos != -1 {
+                        neighbour_count += 1;
+                    }
+                    if cell_index_z_neg != -1 {
+                        neighbour_count += 1;
+                    }
+
+                    // TODO: Culling not working!
+                    if neighbour_count == 6 {
+                        godot_print!("Culling");
+                        let cell_position = Vector3i::new(x, y, z);
+                        self.base.set_cell_item(cell_position, -1)
+                    }
+                }
+            }
+        }
+    }
+
     #[func]
     pub fn below_ground_factor(&self) -> f64 {
         self.below_ground_factor
@@ -352,6 +404,7 @@ impl GridMapVirtual for Island {
 
             self.clear();
             self.island();
+            self.cull();
         }
     }
 }
