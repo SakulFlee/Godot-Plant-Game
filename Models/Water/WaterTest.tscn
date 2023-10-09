@@ -1,6 +1,11 @@
-[gd_scene load_steps=4 format=3 uid="uid://25yva3ydehl5"]
+[gd_scene load_steps=5 format=3 uid="uid://25yva3ydehl5"]
 
 [ext_resource type="PackedScene" uid="uid://te70nji72mlw" path="res://Models/Water/Water.tscn" id="1_6q82x"]
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_dbqp2"]
+top_radius = 0.515
+bottom_radius = 0.0
+height = 0.001
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_emdh0"]
 top_radius = 0.05
@@ -15,12 +20,16 @@ height = 0.25
 
 [node name="WaterPlane" parent="." instance=ExtResource("1_6q82x")]
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.0673491, 0)
+[node name="WaterCircle" parent="." instance=ExtResource("1_6q82x")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 0)
+mesh = SubResource("CylinderMesh_dbqp2")
+
+[node name="Cylinder" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.392104, 0)
 mesh = SubResource("CylinderMesh_emdh0")
 skeleton = NodePath("../WaterPlane")
 
-[node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.197107, -0.0183443, -0.000440061)
+[node name="Sphere" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.197107, 0.357529, -0.000440061)
 mesh = SubResource("SphereMesh_bqy1x")
 skeleton = NodePath("../WaterPlane")

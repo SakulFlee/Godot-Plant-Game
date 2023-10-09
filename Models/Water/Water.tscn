@@ -3,8 +3,9 @@
 [ext_resource type="Shader" path="res://Shaders/Water.gdshader" id="1_jevci"]
 
 [sub_resource type="QuadMesh" id="QuadMesh_vbwrk"]
-subdivide_width = 200
-subdivide_depth = 200
+subdivide_width = 10
+subdivide_depth = 10
+center_offset = Vector3(0, 0.25, 0)
 orientation = 1
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_jhjc2"]
@@ -57,7 +58,7 @@ shader_parameter/texture_normal_a = SubResource("NoiseTexture2D_bl1ye")
 shader_parameter/texture_normal_b = SubResource("NoiseTexture2D_h81go")
 shader_parameter/wave = SubResource("NoiseTexture2D_n5omc")
 
-[node name="WaterPlane" type="MeshInstance3D"]
+[node name="Water" type="MeshInstance3D"]
 cast_shadow = 0
 mesh = SubResource("QuadMesh_vbwrk")
 surface_material_override/0 = SubResource("ShaderMaterial_exy4d")

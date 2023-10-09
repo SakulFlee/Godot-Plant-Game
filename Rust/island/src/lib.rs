@@ -33,6 +33,9 @@ struct Island {
     #[export]
     #[var(get = terrain_indent_factor, set = set_terrain_indent_factor)]
     pub terrain_indent_factor: f64,
+    #[export]
+    #[var(get = water_level, set = set_water_level)]
+    pub water_level: i32,
 
     // Terrain A
     #[export]
@@ -111,6 +114,94 @@ impl Island {
     }
 
     fn island(&mut self) {
+        self.terrain();
+        self.water();
+        self.cull();
+    }
+
+    fn cull(&mut self) {
+        godot_print!("Cull");
+
+        let mut to_be_removed: Vec<Vector3i> = Vec::new();
+
+        let used_cells = self.base.get_used_cells();
+        let count_before = used_cells.len();
+        for index in 0..count_before {
+            let position = used_cells.get(index);
+
+            let mut neighbours = 0;
+
+            if Voxel::from_index(self.base.get_cell_item(Vector3i::new(
+                position.x + 1,
+                position.y,
+                position.z,
+            )))
+            .count_as_neighbour()
+            {
+                neighbours += 1;
+            }
+            if Voxel::from_index(self.base.get_cell_item(Vector3i::new(
+                position.x - 1,
+                position.y,
+                position.z,
+            )))
+            .count_as_neighbour()
+            {
+                neighbours += 1;
+            }
+            if Voxel::from_index(self.base.get_cell_item(Vector3i::new(
+                position.x,
+                position.y + 1,
+                position.z,
+            )))
+            .count_as_neighbour()
+            {
+                neighbours += 1;
+            }
+            if Voxel::from_index(self.base.get_cell_item(Vector3i::new(
+                position.x,
+                position.y - 1,
+                position.z,
+            )))
+            .count_as_neighbour()
+            {
+                neighbours += 1;
+            }
+            if Voxel::from_index(self.base.get_cell_item(Vector3i::new(
+                position.x,
+                position.y,
+                position.z + 1,
+            )))
+            .count_as_neighbour()
+            {
+                neighbours += 1;
+            }
+            if Voxel::from_index(self.base.get_cell_item(Vector3i::new(
+                position.x,
+                position.y,
+                position.z - 1,
+            )))
+            .count_as_neighbour()
+            {
+                neighbours += 1;
+            }
+
+            if neighbours == 6 {
+                to_be_removed.push(position);
+            }
+        }
+
+        godot_print!("To be removed: {}", to_be_removed.len());
+        godot_print!("Before: {count_before}");
+
+        for position in to_be_removed {
+            self.base.set_cell_item(position, Voxel::Air.to_index());
+        }
+
+        godot_print!("After: {}", self.base.get_used_cells().len());
+    }
+
+    fn terrain(&mut self) {
         let terrain_noise_a = Self::make_noise_map(
             self.terrain_seed_a(),
             self.radius(),
@@ -168,8 +259,6 @@ impl Island {
                         mesh_index = Voxel::Stone;
                     }
 
-                    // TODO: Add water AFTER this based on a water level height level!
-
                     let cell_position = Vector3i::new(x, y, z);
                     self.base
                         .set_cell_item(cell_position, mesh_index.to_index());
@@ -178,74 +267,28 @@ impl Island {
         }
     }
 
-    fn cull(&mut self) {
-        godot_print!("Cull");
+    fn water(&mut self) {
+        let size = self.radius as i32;
+        let range = (self.radius as f32).powf(2.0);
 
-        let mut to_be_removed: Vec<Vector3i> = Vec::new();
+        for x in -size..=size {
+            for z in -size..=size {
+                let distance =
+                    Vector3::new(x as f32, 0.0, z as f32).distance_squared_to(Vector3::ZERO);
 
-        let used_cells = self.base.get_used_cells();
-        let count_before = used_cells.len();
-        for index in 0..count_before {
-            let position = used_cells.get(index);
+                if distance > range {
+                    // If the distance is not within (<=) range, skip!
+                    continue;
+                }
 
-            let mut neighbours = 0;
+                let position = Vector3i::new(x, self.water_level(), z);
+                let index = Voxel::from_index(self.base.get_cell_item(position));
 
-            if self
-                .base
-                .get_cell_item(Vector3i::new(position.x + 1, position.y, position.z))
-                != GridMap::INVALID_CELL_ITEM
-            {
-                neighbours += 1;
-            }
-            if self
-                .base
-                .get_cell_item(Vector3i::new(position.x - 1, position.y, position.z))
-                != GridMap::INVALID_CELL_ITEM
-            {
-                neighbours += 1;
-            }
-            if self
-                .base
-                .get_cell_item(Vector3i::new(position.x, position.y + 1, position.z))
-                != GridMap::INVALID_CELL_ITEM
-            {
-                neighbours += 1;
-            }
-            if self
-                .base
-                .get_cell_item(Vector3i::new(position.x, position.y - 1, position.z))
-                != GridMap::INVALID_CELL_ITEM
-            {
-                neighbours += 1;
-            }
-            if self
-                .base
-                .get_cell_item(Vector3i::new(position.x, position.y, position.z + 1))
-                != GridMap::INVALID_CELL_ITEM
-            {
-                neighbours += 1;
-            }
-            if self
-                .base
-                .get_cell_item(Vector3i::new(position.x, position.y, position.z - 1))
-                != GridMap::INVALID_CELL_ITEM
-            {
-                neighbours += 1;
-            }
-
-            if neighbours == 6 {
-                to_be_removed.push(position);
+                if index == Voxel::Air {
+                    self.base.set_cell_item(position, Voxel::Water.to_index());
+                }
             }
         }
-
-        godot_print!("To be removed: {}", to_be_removed.len());
-        godot_print!("Before: {count_before}");
-
-        for position in to_be_removed {
-            self.base.set_cell_item(position, Voxel::Air.to_index());
-        }
-
-        godot_print!("After: {}", self.base.get_used_cells().len());
     }
 
     #[func]
@@ -390,6 +433,17 @@ impl Island {
         self.needs_update = true;
         self.persistence_b = persistence_b;
     }
+
+    #[func]
+    pub fn water_level(&self) -> i32 {
+        self.water_level
+    }
+
+    #[func]
+    pub fn set_water_level(&mut self, water_level: i32) {
+        self.needs_update = true;
+        self.water_level = water_level;
+    }
 }
 
 #[godot_api]
@@ -412,7 +466,8 @@ impl GridMapVirtual for Island {
             persistence_b: 0.5,
             radius: 50,
             below_ground_factor: 2.0,
-            terrain_indent_factor: 2.0,
+            terrain_indent_factor: 1.5,
+            water_level: 0,
         };
 
         s.clear();
@@ -428,7 +483,6 @@ impl GridMapVirtual for Island {
 
             self.clear();
             self.island();
-            self.cull();
         }
     }
 }

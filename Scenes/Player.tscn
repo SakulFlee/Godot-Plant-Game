@@ -1,0 +1,25 @@
+[gd_scene load_steps=3 format=3 uid="uid://8q5kqymcgbiq"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_d5xy0"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_yvu4y"]
+
+[node name="Player" type="Node3D"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+mesh = SubResource("CapsuleMesh_d5xy0")
+
+[node name="RigidBody3D" type="RigidBody3D" parent="MeshInstance3D"]
+can_sleep = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MeshInstance3D/RigidBody3D"]
+shape = SubResource("CapsuleShape3D_yvu4y")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.819152, 0.573576, 0, -0.573576, 0.819152, 0, 5, 5)
+
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+light_color = Color(0.643137, 0.490196, 0.203922, 1)
+light_specular = 1.0
