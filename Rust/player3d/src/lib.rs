@@ -1,7 +1,6 @@
 use godot::{
     engine::{
-        input::MouseMode, CharacterBody3D, InputEvent, InputEventJoypadMotion, InputEventKey,
-        InputEventMouseMotion, ProjectSettings,
+        input::MouseMode, CharacterBody3D, InputEvent, InputEventMouseMotion, ProjectSettings,
     },
     prelude::{
         utilities::{clampf, deg_to_rad},
@@ -31,95 +30,46 @@ struct Player3D {
 
     #[export]
     pub sanity_y_cutoff: f32,
+
+    camera_origin: Option<Gd<Node3D>>,
+    character_body: Option<Gd<CharacterBody3D>>,
 }
 
 #[godot_api]
 impl Player3D {
-    fn find_camera_origin(&self) -> Option<Gd<Node3D>> {
-        let camera_origin: Option<Gd<Node3D>> = match self
-            .base
-            .find_child_ex("CameraOrigin".into())
-            .recursive(true)
-            .done()
-        {
-            Some(child) => {
-                let node: Option<Gd<Node3D>> = child.try_cast();
-                node
-            }
-            None => None,
-        };
-        camera_origin
-    }
-
-    fn find_camera(&self) -> Option<Gd<Camera3D>> {
-        let camera_origin: Option<Gd<Camera3D>> = match self
-            .base
-            .find_child_ex("Camera3D".into())
-            .recursive(true)
-            .done()
-        {
-            Some(child) => {
-                let node: Option<Gd<Camera3D>> = child.try_cast();
-                node
-            }
-            None => None,
-        };
-        camera_origin
-    }
-
-    fn find_character_body(&self) -> Option<Gd<CharacterBody3D>> {
-        let camera_origin: Option<Gd<CharacterBody3D>> = match self
-            .base
-            .find_child_ex("CharacterBody3D".into())
-            .recursive(true)
-            .done()
-        {
-            Some(child) => {
-                let node: Option<Gd<CharacterBody3D>> = child.try_cast();
-                node
-            }
-            None => None,
-        };
-        camera_origin
-    }
-
     fn handle_mouse_movement_event(&mut self, event: Gd<InputEventMouseMotion>) {
+        let mouse_sensitivity = self.mouse_sensitivity;
+
         // Y Rot
-        if let Some(mut character_body) = self.find_character_body() {
-            character_body.rotate_y(deg_to_rad(
-                (-event.get_relative().x * self.mouse_sensitivity) as f64,
-            ) as f32);
-        } else {
-            godot_warn!("Character Body missing!");
+        if let Some(character_body) = self.character_body_mut() {
+            character_body
+                .rotate_y(deg_to_rad((-event.get_relative().x * mouse_sensitivity) as f64) as f32);
         }
 
-        let pivot = self.find_camera_origin(); // TODO: Optimize
-        if pivot.is_none() {
-            godot_warn!("Pivot/Camera Origin is missing!");
-            return;
+        if let Some(camera_origin) = self.camera_origin_mut() {
+            // X Rot
+            camera_origin
+                .rotate_x(deg_to_rad((-event.get_relative().y * mouse_sensitivity) as f64) as f32);
+
+            // CLAMP
+            let current_rotation = camera_origin.get_rotation();
+            camera_origin.set_rotation(Vector3::new(
+                clampf(
+                    current_rotation.x as f64,
+                    deg_to_rad(-45.0),
+                    deg_to_rad(45.0),
+                ) as f32,
+                current_rotation.y,
+                current_rotation.z,
+            ));
         }
-
-        let mut camera_origin = pivot.unwrap();
-
-        // X Rot
-        camera_origin
-            .rotate_x(deg_to_rad((-event.get_relative().y * self.mouse_sensitivity) as f64) as f32);
-
-        // CLAMP
-        let current_rotation = camera_origin.get_rotation();
-        camera_origin.set_rotation(Vector3::new(
-            clampf(
-                current_rotation.x as f64,
-                deg_to_rad(-45.0),
-                deg_to_rad(45.0),
-            ) as f32,
-            current_rotation.y,
-            current_rotation.z,
-        ));
     }
 
     fn handle_movement(&mut self) {
-        if let Some(mut character_body) = self.find_character_body() {
+        let jump_velocity = self.jump_velocity;
+        let movement_speed = self.movement_speed;
+
+        if let Some(character_body) = self.character_body_mut() {
             let input_vector = Input::singleton().get_vector(
                 "move_left".into(),
                 "move_right".into(),
@@ -132,16 +82,14 @@ impl Player3D {
 
             let mut y = character_body.get_velocity().y;
             if Input::singleton().is_action_just_pressed("jump".into()) {
-                y = self.jump_velocity;
+                y = jump_velocity;
             }
 
             character_body.set_velocity(Vector3::new(
-                direction.x * self.movement_speed,
+                direction.x * movement_speed,
                 y,
-                direction.z * self.movement_speed,
+                direction.z * movement_speed,
             ));
-        } else {
-            godot_warn!("CharacterBody Origin is missing!");
         }
     }
 
@@ -150,33 +98,60 @@ impl Player3D {
             .get_setting("physics/3d/default_gravity".into())
             .to();
 
-        if let Some(mut character_body) = self.find_character_body() {
+        if let Some(character_body) = self.character_body_mut() {
             if !character_body.is_on_floor() {
                 let current_velocity = character_body.get_velocity();
-                godot_print!("Current: {}", current_velocity);
 
                 character_body.set_velocity(Vector3::new(
                     current_velocity.x,
                     current_velocity.y - (gravity * delta) as f32,
                     current_velocity.z,
                 ));
-                godot_print!("After  : {}", character_body.get_velocity());
             }
-        } else {
-            godot_warn!("Character Body missing!");
         }
     }
 
     fn sanity_check(&mut self) {
-        if let Some(mut character_body) = self.find_character_body() {
-            if character_body.get_position().y <= self.sanity_y_cutoff {
+        let sanity_y_cutoff = self.sanity_y_cutoff;
+        if let Some(character_body) = self.character_body_mut() {
+            if character_body.get_position().y <= sanity_y_cutoff {
                 godot_warn!("Sanity Check :: Returning player to island center!");
 
                 character_body.set_position(Vector3::new(0.0, 5.0, 0.0));
             }
-        } else {
-            godot_warn!("Character Body missing!");
         }
+    }
+
+    #[allow(unused)]
+    pub fn camera_origin(&self) -> Option<&Gd<Node3D>> {
+        if self.camera_origin.is_none() {
+            godot_warn!("Camera Origin is missing!");
+        }
+        self.camera_origin.as_ref()
+    }
+
+    #[allow(unused)]
+    pub fn camera_origin_mut(&mut self) -> Option<&mut Gd<Node3D>> {
+        if self.camera_origin.is_none() {
+            godot_warn!("Camera Origin is missing!");
+        }
+        self.camera_origin.as_mut()
+    }
+
+    #[allow(unused)]
+    pub fn character_body(&self) -> Option<&Gd<CharacterBody3D>> {
+        if self.character_body.is_none() {
+            godot_warn!("Character Body is missing!");
+        }
+        self.character_body.as_ref()
+    }
+
+    #[allow(unused)]
+    pub fn character_body_mut(&mut self) -> Option<&mut Gd<CharacterBody3D>> {
+        if self.character_body.is_none() {
+            godot_warn!("Character Body is missing!");
+        }
+        self.character_body.as_mut()
     }
 }
 
@@ -189,40 +164,59 @@ impl Node3DVirtual for Player3D {
             mouse_sensitivity: 0.35,
             jump_velocity: 5.0,
             sanity_y_cutoff: -250.0,
+            camera_origin: None,
+            character_body: None,
         }
     }
 
     fn ready(&mut self) {
-        let camera_origin = self.find_camera_origin();
-        if camera_origin.is_none() {
-            godot_error!("Camera Origin is missing!");
+        // Find and store Camera Origin
+        self.camera_origin = self
+            .base
+            .find_child_ex("CameraOrigin".into())
+            .recursive(true)
+            .done()
+            .and_then(|x| x.try_cast::<Node3D>());
+        if self.camera_origin.is_none() {
+            godot_warn!("Camera Origin missing!");
         }
 
-        let mut input = Input::singleton();
-        input.set_mouse_mode(MouseMode::MOUSE_MODE_CAPTURED);
+        // Find and store Character Body
+        self.character_body = self
+            .base
+            .find_child_ex("CharacterBody3D".into())
+            .recursive(true)
+            .done()
+            .and_then(|x| x.try_cast::<CharacterBody3D>());
+        if self.character_body.is_none() {
+            godot_warn!("Character Body missing!");
+        }
+
+        // Capture mouse
+        Input::singleton().set_mouse_mode(MouseMode::MOUSE_MODE_CAPTURED);
     }
 
     fn input(&mut self, event: Gd<InputEvent>) {
         if let Some(mouse_event) = event.clone().try_cast::<InputEventMouseMotion>() {
             self.handle_mouse_movement_event(mouse_event);
         }
+
+        // TODO: Controller camera movement?
     }
 
     fn physics_process(&mut self, delta: f64) {
+        // Check if we should quit
         if Input::singleton().is_action_pressed("quit".into()) {
             self.base.get_tree().unwrap().quit();
             return;
         }
 
-        let character_body = self.find_character_body();
-        if character_body.is_none() {
-            godot_warn!("Character Body is missing!");
-            return;
-        }
-
         self.handle_movement();
         self.handle_gravity(delta);
-        character_body.unwrap().move_and_slide();
+
+        if let Some(character_body) = self.character_body_mut() {
+            character_body.move_and_slide();
+        }
 
         self.sanity_check();
     }
