@@ -41,6 +41,8 @@ struct Player3D {
     ray_cast_front: Option<Gd<RayCast3D>>,
 
     can_jump: bool,
+
+    last_selector_cell_position: Option<Vector3i>,
 }
 
 #[godot_api]
@@ -233,6 +235,7 @@ impl Node3DVirtual for Player3D {
             character_body: None,
             ray_cast_front: None,
             can_jump: true,
+            last_selector_cell_position: None,
         }
     }
 
@@ -283,7 +286,7 @@ impl Node3DVirtual for Player3D {
     fn process(&mut self, _delta: f64) {
         if let Some(ray) = self.ray_cast_front() {
             if ray.is_colliding() {
-                if let Some(grid_map) = ray.get_collider().unwrap().try_cast::<GridMap>() {
+                if let Some(mut grid_map) = ray.get_collider().unwrap().try_cast::<GridMap>() {
                     let collision_point = ray.get_collision_point();
 
                     let hit_point = grid_map.local_to_map(collision_point);
@@ -294,6 +297,16 @@ impl Node3DVirtual for Player3D {
                         Voxel::from_index(grid_map.get_cell_item(below_hit_point));
 
                     godot_print!("Voxel Hit: {} @ {}", voxel_below_hit, hit_point);
+
+                    if voxel_below_hit != Voxel::Air {
+                        if let Some(last_point) = self.last_selector_cell_position {
+                            grid_map.set_cell_item(last_point, Voxel::Air.to_index());
+                        }
+
+                        self.last_selector_cell_position = Some(hit_point);
+
+                        grid_map.set_cell_item(hit_point, Voxel::Selector.to_index());
+                    }
                 }
             }
         }

@@ -1,5 +1,6 @@
-[gd_scene load_steps=5 format=3 uid="uid://dp2w4tc5a0c6e"]
+[gd_scene load_steps=6 format=3 uid="uid://dp2w4tc5a0c6e"]
 
+[ext_resource type="PackedScene" uid="uid://1jvixigil6id" path="res://Models/Selector/Selector.blend" id="1_mnr8j"]
 [ext_resource type="PackedScene" uid="uid://hnpxrwfwpndk" path="res://Models/Voxels/Dirt/Dirt.blend" id="2_lwrsm"]
 [ext_resource type="PackedScene" uid="uid://d1qa8gr18tyf7" path="res://Models/Voxels/Grass/Grass.blend" id="3_xg2gg"]
 [ext_resource type="PackedScene" uid="uid://te70nji72mlw" path="res://Models/Water/Water.tscn" id="4_7b36k"]
@@ -7,13 +8,13 @@
 
 [node name="Library" type="Node3D"]
 
+[node name="Selector" parent="." instance=ExtResource("1_mnr8j")]
+
 [node name="Grass" parent="." instance=ExtResource("3_xg2gg")]
 
 [node name="Dirt" parent="." instance=ExtResource("2_lwrsm")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0)
 
 [node name="Stone" parent="." instance=ExtResource("4_ku7tg")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 0)
 
 [node name="Water" parent="." instance=ExtResource("4_7b36k")]
-transform = Transform3D(1.05, 0, 0, 0, 1.05, 0, 0, 0, 1.05, -2, 0, 0)
+transform = Transform3D(1.05, 0, 0, 0, 1.05, 0, 0, 0, 1.05, 0, 0, 0)
