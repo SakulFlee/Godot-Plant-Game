@@ -28,6 +28,9 @@ struct Player3D {
 
     #[export]
     pub jump_velocity: f32,
+
+    #[export]
+    pub sanity_y_cutoff: f32,
 }
 
 #[godot_api]
@@ -163,6 +166,18 @@ impl Player3D {
             godot_warn!("Character Body missing!");
         }
     }
+
+    fn sanity_check(&mut self) {
+        if let Some(mut character_body) = self.find_character_body() {
+            if character_body.get_position().y <= self.sanity_y_cutoff {
+                godot_warn!("Sanity Check :: Returning player to island center!");
+
+                character_body.set_position(Vector3::new(0.0, 5.0, 0.0));
+            }
+        } else {
+            godot_warn!("Character Body missing!");
+        }
+    }
 }
 
 #[godot_api]
@@ -171,8 +186,9 @@ impl Node3DVirtual for Player3D {
         Self {
             base,
             movement_speed: 5.0,
-            mouse_sensitivity: 0.5,
-            jump_velocity: 4.5,
+            mouse_sensitivity: 0.35,
+            jump_velocity: 5.0,
+            sanity_y_cutoff: -250.0,
         }
     }
 
@@ -208,6 +224,6 @@ impl Node3DVirtual for Player3D {
         self.handle_gravity(delta);
         character_body.unwrap().move_and_slide();
 
-        // TODO: Jump
+        self.sanity_check();
     }
 }
