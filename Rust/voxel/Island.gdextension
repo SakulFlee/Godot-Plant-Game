@@ -1,0 +1,13 @@
+[configuration]
+entry_symbol = "gdext_rust_init"
+compatibility_minimum = 4.1
+
+[libraries]
+linux.debug.x86_64 = "res://./target/debug/lib_island.so"
+linux.release.x86_64 = "res://./target/release/lib_island.so"
+windows.debug.x86_64 = "res://./target/debug/island.dll"
+windows.release.x86_64 = "res://./target/release/island.dll"
+macos.debug = "res://./target/debug/lib_island.dylib"
+macos.release = "res://./target/release/lib_island.dylib"
+macos.debug.arm64 = "res://./target/debug/lib_island.dylib"
+macos.release.arm64 = "res://./target/release/lib_island.dylib"

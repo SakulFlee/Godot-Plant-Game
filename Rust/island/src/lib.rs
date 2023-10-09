@@ -6,9 +6,7 @@ use noise::{
     utils::{NoiseMap, NoiseMapBuilder, PlaneMapBuilder},
     Billow, Perlin,
 };
-
-mod voxels;
-use voxels::*;
+use voxel::Voxel;
 
 struct MyExtension;
 

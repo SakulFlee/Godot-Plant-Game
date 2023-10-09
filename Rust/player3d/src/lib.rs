@@ -1,12 +1,14 @@
 use godot::{
     engine::{
-        input::MouseMode, CharacterBody3D, InputEvent, InputEventMouseMotion, ProjectSettings,
+        input::MouseMode, CharacterBody3D, GridMap, InputEvent, InputEventMouseMotion,
+        ProjectSettings, RayCast3D,
     },
     prelude::{
         utilities::{clampf, deg_to_rad},
         *,
     },
 };
+use voxel::Voxel;
 
 struct Player3DExtension;
 
@@ -36,6 +38,7 @@ struct Player3D {
 
     camera_origin: Option<Gd<Node3D>>,
     character_body: Option<Gd<CharacterBody3D>>,
+    ray_cast_front: Option<Gd<RayCast3D>>,
 
     can_jump: bool,
 }
@@ -198,6 +201,22 @@ impl Player3D {
         }
         self.character_body.as_mut()
     }
+
+    #[allow(unused)]
+    pub fn ray_cast_front(&self) -> Option<&Gd<RayCast3D>> {
+        if self.ray_cast_front.is_none() {
+            godot_warn!("RayCast Front is missing!");
+        }
+        self.ray_cast_front.as_ref()
+    }
+
+    #[allow(unused)]
+    pub fn ray_cast_front_mut(&mut self) -> Option<&mut Gd<RayCast3D>> {
+        if self.ray_cast_front.is_none() {
+            godot_warn!("RayCast Front is missing!");
+        }
+        self.ray_cast_front.as_mut()
+    }
 }
 
 #[godot_api]
@@ -212,6 +231,7 @@ impl Node3DVirtual for Player3D {
             sanity_y_cutoff: -250.0,
             camera_origin: None,
             character_body: None,
+            ray_cast_front: None,
             can_jump: true,
         }
     }
@@ -239,6 +259,17 @@ impl Node3DVirtual for Player3D {
             godot_warn!("Character Body missing!");
         }
 
+        // Find and store RayCastFront
+        self.ray_cast_front = self
+            .base
+            .find_child_ex("RayCastFront".into())
+            .recursive(true)
+            .done()
+            .and_then(|x| x.try_cast::<RayCast3D>());
+        if self.character_body.is_none() {
+            godot_warn!("RayCastFront missing!");
+        }
+
         // Capture mouse
         Input::singleton().set_mouse_mode(MouseMode::MOUSE_MODE_CAPTURED);
     }
@@ -246,6 +277,25 @@ impl Node3DVirtual for Player3D {
     fn input(&mut self, event: Gd<InputEvent>) {
         if let Some(mouse_event) = event.try_cast::<InputEventMouseMotion>() {
             self.handle_mouse_movement_event(mouse_event);
+        }
+    }
+
+    fn process(&mut self, _delta: f64) {
+        if let Some(ray) = self.ray_cast_front() {
+            if ray.is_colliding() {
+                if let Some(grid_map) = ray.get_collider().unwrap().try_cast::<GridMap>() {
+                    let collision_point = ray.get_collision_point();
+
+                    let hit_point = grid_map.local_to_map(collision_point);
+                    let below_hit_point =
+                        grid_map.local_to_map(collision_point) + Vector3i::new(0, -1, 0);
+
+                    let voxel_below_hit =
+                        Voxel::from_index(grid_map.get_cell_item(below_hit_point));
+
+                    godot_print!("Voxel Hit: {} @ {}", voxel_below_hit, hit_point);
+                }
+            }
         }
     }
 

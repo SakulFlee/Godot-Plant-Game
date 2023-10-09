@@ -139,6 +139,7 @@ dependencies = [
  "godot",
  "noise",
  "rand 0.8.5",
+ "voxel",
 ]
 
 [[package]]
@@ -206,6 +207,7 @@ name = "player3d"
 version = "0.1.0"
 dependencies = [
  "godot",
+ "voxel",
 ]
 
 [[package]]
@@ -355,6 +357,13 @@ checksum = "61584a325b16f97b5b25fcc852eb9550843a251057a5e3e5992d2376f3df4bb2"
 dependencies = [
  "proc-macro2",
  "quote",
+]
+
+[[package]]
+name = "voxel"
+version = "0.1.0"
+dependencies = [
+ "godot",
 ]
 
 [[package]]

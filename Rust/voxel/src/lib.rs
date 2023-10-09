@@ -1,3 +1,4 @@
+use std::fmt::{Display, Formatter, Result};
 use godot::engine::GridMap;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
@@ -39,5 +40,11 @@ impl Voxel {
             Voxel::Water | Voxel::Air => false,
             _ => true,
         }
+    }
+}
+
+impl Display for Voxel {
+    fn fmt(&self, formatter: &mut Formatter<'_>) -> Result {
+        formatter.write_fmt(format_args!("Voxel@{:?}", self))
     }
 }
