@@ -1,6 +1,7 @@
 use godot::{
     engine::{
-        input::MouseMode, CharacterBody3D, InputEvent, InputEventMouseMotion, ProjectSettings,
+        input::MouseMode, CharacterBody3D, InputEvent, InputEventJoypadMotion,
+        InputEventMouseMotion, ProjectSettings,
     },
     prelude::{
         utilities::{clampf, deg_to_rad},
@@ -24,6 +25,9 @@ struct Player3D {
 
     #[export]
     pub mouse_sensitivity: f32,
+
+    #[export]
+    pub controller_sensitivity: f32,
 
     #[export]
     pub jump_velocity: f32,
@@ -50,6 +54,36 @@ impl Player3D {
             // X Rot
             camera_origin
                 .rotate_x(deg_to_rad((-event.get_relative().y * mouse_sensitivity) as f64) as f32);
+
+            // CLAMP
+            let current_rotation = camera_origin.get_rotation();
+            camera_origin.set_rotation(Vector3::new(
+                clampf(
+                    current_rotation.x as f64,
+                    deg_to_rad(-45.0),
+                    deg_to_rad(45.0),
+                ) as f32,
+                current_rotation.y,
+                current_rotation.z,
+            ));
+        }
+    }
+
+    fn handle_joypad_camera(&mut self) {
+        let joypad_sensitivity = self.controller_sensitivity;
+
+        let axis_horizontal = Input::singleton().get_axis("look_up".into(), "look_down".into());
+        let axis_vertical = Input::singleton().get_axis("look_left".into(), "look_right".into());
+
+        if let Some(character_body) = self.character_body_mut() {
+            character_body
+                .rotate_y(deg_to_rad((-axis_vertical * joypad_sensitivity) as f64) as f32);
+        }
+
+        if let Some(camera_origin) = self.camera_origin_mut() {
+            // X Rot
+            camera_origin
+                .rotate_x(deg_to_rad((-axis_horizontal * joypad_sensitivity) as f64) as f32);
 
             // CLAMP
             let current_rotation = camera_origin.get_rotation();
@@ -162,6 +196,7 @@ impl Node3DVirtual for Player3D {
             base,
             movement_speed: 5.0,
             mouse_sensitivity: 0.35,
+            controller_sensitivity: 5.0,
             jump_velocity: 5.0,
             sanity_y_cutoff: -250.0,
             camera_origin: None,
@@ -197,11 +232,10 @@ impl Node3DVirtual for Player3D {
     }
 
     fn input(&mut self, event: Gd<InputEvent>) {
-        if let Some(mouse_event) = event.clone().try_cast::<InputEventMouseMotion>() {
+        if let Some(mouse_event) = event.try_cast::<InputEventMouseMotion>() {
             self.handle_mouse_movement_event(mouse_event);
         }
-
-        // TODO: Controller camera movement?
+        // TODO: Moon jump XD
     }
 
     fn physics_process(&mut self, delta: f64) {
@@ -212,6 +246,7 @@ impl Node3DVirtual for Player3D {
         }
 
         self.handle_movement();
+        self.handle_joypad_camera();
         self.handle_gravity(delta);
 
         if let Some(character_body) = self.character_body_mut() {
