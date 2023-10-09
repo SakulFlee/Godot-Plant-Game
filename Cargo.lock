@@ -133,13 +133,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "95505c38b4572b2d910cecb0281560f54b440a19336cbbcb27bf6ce6adc6f5a8"
 
 [[package]]
-name = "hello-world"
-version = "0.1.0"
-dependencies = [
- "godot",
-]
-
-[[package]]
 name = "island"
 version = "0.1.0"
 dependencies = [
@@ -200,6 +193,20 @@ name = "paste"
 version = "1.0.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "de3145af08024dea9fa9914f381a17b8fc6034dfb00f3a84013f7ff43f29ed4c"
+
+[[package]]
+name = "player2d"
+version = "0.1.0"
+dependencies = [
+ "godot",
+]
+
+[[package]]
+name = "player3d"
+version = "0.1.0"
+dependencies = [
+ "godot",
+]
 
 [[package]]
 name = "ppv-lite86"

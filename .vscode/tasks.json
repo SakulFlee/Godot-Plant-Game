@@ -47,6 +47,36 @@
             "dependsOn": [
                 "[Rust] Debug Build"
             ]
+        },
+        {
+            "label": "[Godot] Run Main Scene",
+            "type": "shell",
+            "command": "godot_console",
+            "args": [
+                "--path",
+                "${workspaceFolder}",
+                "${workspaceFolder}/Scenes/Main.tscn",
+            ],
+            "problemMatcher": [],
+            "isBackground": true,
+            "dependsOn": [
+                "[Rust] Debug Build"
+            ]
+        },
+        {
+            "label": "[Godot] Run MainGame Scene",
+            "type": "shell",
+            "command": "godot_console",
+            "args": [
+                "--path",
+                "${workspaceFolder}",
+                "${workspaceFolder}/Scenes/MainGame.tscn",
+            ],
+            "problemMatcher": [],
+            "isBackground": true,
+            "dependsOn": [
+                "[Rust] Debug Build"
+            ]
         }
         // Export: godot --headless --path path_to_your_project --export-release my_export_preset_name game.exe
     ]

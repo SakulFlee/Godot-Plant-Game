@@ -3,14 +3,14 @@ use godot::{
     prelude::*,
 };
 
-struct MyExtension;
+struct Player2DExtension;
 
 #[gdextension]
-unsafe impl ExtensionLibrary for MyExtension {}
+unsafe impl ExtensionLibrary for Player2DExtension {}
 
 #[derive(GodotClass)]
 #[class(base=Sprite2D)]
-struct Player {
+struct Player2D {
     enable: bool,
 
     speed: f64,
@@ -21,7 +21,7 @@ struct Player {
 }
 
 #[godot_api]
-impl Player {
+impl Player2D {
     #[func]
     fn increase_speed(&mut self, amount: f64) {
         self.speed += amount;
@@ -41,7 +41,7 @@ impl Player {
 }
 
 #[godot_api]
-impl Sprite2DVirtual for Player {
+impl Sprite2DVirtual for Player2D {
     fn init(sprite: Base<Sprite2D>) -> Self {
         godot_print!("Hello, world!"); // Prints to the Godot console
 

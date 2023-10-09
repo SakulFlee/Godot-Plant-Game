@@ -11,7 +11,7 @@ offset_right = 600.0
 offset_bottom = 400.0
 text = "Button"
 
-[node name="Player" type="Player" parent="."]
+[node name="Player" type="Player2D" parent="."]
 position = Vector2(500, 300)
 texture = ExtResource("1_xf4l5")
 
