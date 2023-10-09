@@ -1,7 +1,6 @@
 use godot::{
     engine::{
-        input::MouseMode, CharacterBody3D, InputEvent, InputEventJoypadMotion,
-        InputEventMouseMotion, ProjectSettings,
+        input::MouseMode, CharacterBody3D, InputEvent, InputEventMouseMotion, ProjectSettings,
     },
     prelude::{
         utilities::{clampf, deg_to_rad},
@@ -37,6 +36,8 @@ struct Player3D {
 
     camera_origin: Option<Gd<Node3D>>,
     character_body: Option<Gd<CharacterBody3D>>,
+
+    can_jump: bool,
 }
 
 #[godot_api]
@@ -103,6 +104,9 @@ impl Player3D {
         let jump_velocity = self.jump_velocity;
         let movement_speed = self.movement_speed;
 
+        let can_jump = self.can_jump;
+        let mut restrict_jump_after = false;
+
         if let Some(character_body) = self.character_body_mut() {
             let input_vector = Input::singleton().get_vector(
                 "move_left".into(),
@@ -115,8 +119,9 @@ impl Player3D {
             .normalized();
 
             let mut y = character_body.get_velocity().y;
-            if Input::singleton().is_action_just_pressed("jump".into()) {
+            if Input::singleton().is_action_just_pressed("jump".into()) && can_jump {
                 y = jump_velocity;
+                restrict_jump_after = true;
             }
 
             character_body.set_velocity(Vector3::new(
@@ -124,6 +129,10 @@ impl Player3D {
                 y,
                 direction.z * movement_speed,
             ));
+        }
+
+        if restrict_jump_after {
+            self.can_jump = false;
         }
     }
 
@@ -141,6 +150,8 @@ impl Player3D {
                     current_velocity.y - (gravity * delta) as f32,
                     current_velocity.z,
                 ));
+            } else {
+                self.can_jump = true;
             }
         }
     }
@@ -201,6 +212,7 @@ impl Node3DVirtual for Player3D {
             sanity_y_cutoff: -250.0,
             camera_origin: None,
             character_body: None,
+            can_jump: true,
         }
     }
 
@@ -235,7 +247,6 @@ impl Node3DVirtual for Player3D {
         if let Some(mouse_event) = event.try_cast::<InputEventMouseMotion>() {
             self.handle_mouse_movement_event(mouse_event);
         }
-        // TODO: Moon jump XD
     }
 
     fn physics_process(&mut self, delta: f64) {

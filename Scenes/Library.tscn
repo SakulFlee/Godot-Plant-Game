@@ -2,7 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://hnpxrwfwpndk" path="res://Models/Voxels/Dirt/Dirt.blend" id="2_lwrsm"]
 [ext_resource type="PackedScene" uid="uid://d1qa8gr18tyf7" path="res://Models/Voxels/Grass/Grass.blend" id="3_xg2gg"]
-[ext_resource type="PackedScene" uid="uid://ccutyqioofgrx" path="res://Models/Water/Water-Collision.tscn" id="4_j17si"]
+[ext_resource type="PackedScene" uid="uid://te70nji72mlw" path="res://Models/Water/Water.tscn" id="4_7b36k"]
 [ext_resource type="PackedScene" uid="uid://bmwntvf5yg3ol" path="res://Models/Voxels/Stone/Stone.blend" id="4_ku7tg"]
 
 [node name="Library" type="Node3D"]
@@ -15,5 +15,5 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0)
 [node name="Stone" parent="." instance=ExtResource("4_ku7tg")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 0)
 
-[node name="Water-Collision" parent="." instance=ExtResource("4_j17si")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 0)
+[node name="Water" parent="." instance=ExtResource("4_7b36k")]
+transform = Transform3D(1.05, 0, 0, 0, 1.05, 0, 0, 0, 1.05, -2, 0, 0)
