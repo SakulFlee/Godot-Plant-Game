@@ -1,7 +1,7 @@
 use godot::{
     engine::{
         input::MouseMode, CharacterBody3D, InputEvent, InputEventJoypadMotion, InputEventKey,
-        InputEventMouseMotion,
+        InputEventMouseMotion, ProjectSettings,
     },
     prelude::{
         utilities::{clampf, deg_to_rad},
@@ -25,6 +25,9 @@ struct Player3D {
 
     #[export]
     pub mouse_sensitivity: f32,
+
+    #[export]
+    pub jump_velocity: f32,
 }
 
 #[godot_api]
@@ -124,13 +127,40 @@ impl Player3D {
                 * Vector3::new(input_vector.x, 0.0, input_vector.y))
             .normalized();
 
+            let mut y = character_body.get_velocity().y;
+            if Input::singleton().is_action_just_pressed("jump".into()) {
+                y = self.jump_velocity;
+            }
+
             character_body.set_velocity(Vector3::new(
                 direction.x * self.movement_speed,
-                0.0,
+                y,
                 direction.z * self.movement_speed,
             ));
         } else {
             godot_warn!("CharacterBody Origin is missing!");
+        }
+    }
+
+    fn handle_gravity(&mut self, delta: f64) {
+        let gravity: f64 = ProjectSettings::singleton()
+            .get_setting("physics/3d/default_gravity".into())
+            .to();
+
+        if let Some(mut character_body) = self.find_character_body() {
+            if !character_body.is_on_floor() {
+                let current_velocity = character_body.get_velocity();
+                godot_print!("Current: {}", current_velocity);
+
+                character_body.set_velocity(Vector3::new(
+                    current_velocity.x,
+                    current_velocity.y - (gravity * delta) as f32,
+                    current_velocity.z,
+                ));
+                godot_print!("After  : {}", character_body.get_velocity());
+            }
+        } else {
+            godot_warn!("Character Body missing!");
         }
     }
 }
@@ -142,6 +172,7 @@ impl Node3DVirtual for Player3D {
             base,
             movement_speed: 5.0,
             mouse_sensitivity: 0.5,
+            jump_velocity: 4.5,
         }
     }
 
@@ -174,9 +205,9 @@ impl Node3DVirtual for Player3D {
         }
 
         self.handle_movement();
+        self.handle_gravity(delta);
         character_body.unwrap().move_and_slide();
 
-        // TODO: Gravity
         // TODO: Jump
     }
 }
