@@ -39,7 +39,7 @@ jobs:
       run: mkdir -p out/debug
 
     - name: Godot - Debug Export
-      run: godot_console --headless --export-debug Linux out/debug .
+      run: godot --headless --export-debug Linux out/debug .
 
   godot-release:
     runs-on: self-hosted
@@ -50,4 +50,4 @@ jobs:
       run: mkdir -p out/release
 
     - name: Godot - Release Export
-      run: godot_console --headless --export-release Linux out/release .
+      run: godot --headless --export-release Linux out/release .
