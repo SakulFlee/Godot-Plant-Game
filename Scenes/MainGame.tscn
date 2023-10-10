@@ -3,7 +3,7 @@
 [ext_resource type="PackedScene" uid="uid://8q5kqymcgbiq" path="res://Scenes/Player.tscn" id="1_k4jxu"]
 [ext_resource type="PackedScene" uid="uid://dao1dhy5qi3wv" path="res://Scenes/Sky.tscn" id="1_kbiy7"]
 
-[node name="Node" type="Node3D"]
+[node name="Node" type="Node"]
 
 [node name="Sky" parent="." instance=ExtResource("1_kbiy7")]
 

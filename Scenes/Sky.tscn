@@ -1,10 +1,13 @@
 [gd_scene load_steps=6 format=3 uid="uid://dao1dhy5qi3wv"]
 
 [sub_resource type="Gradient" id="Gradient_8f5jr"]
-colors = PackedColorArray(0.00392157, 0.231373, 0.890196, 1, 0, 0, 0, 1)
+offsets = PackedFloat32Array(0, 0.226891, 0.470588, 0.655462, 1)
+colors = PackedColorArray(0, 0, 0, 1, 0.411765, 0.776471, 0.956863, 1, 0.368627, 0, 0.576471, 1, 0.0196078, 0.00784314, 0, 1, 0.0196078, 0.00784314, 0, 1)
 
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_ru6gf"]
 gradient = SubResource("Gradient_8f5jr")
+width = 1
+height = 1
 fill_from = Vector2(1, 1)
 
 [sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_e4gkf"]
@@ -35,11 +38,8 @@ adjustment_brightness = 0.85
 adjustment_contrast = 1.5
 adjustment_saturation = 1.5
 
-[node name="Sky" type="Node"]
-
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+[node name="Sky" type="SkyExt"]
 environment = SubResource("Environment_oyip8")
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="WorldEnvironment"]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 sky_mode = 2
