@@ -24,7 +24,7 @@ jobs:
       run: mkdir -p out/debug out/release
 
     - name: Godot - Debug Export
-      run: godot --export-debug Linux out/debug
+      run: godot_console --export-debug Linux out/debug .
 
     - name: Godot - Release Export
-      run: godot --export-release Linux out/release
+      run: godot_console --export-release Linux out/release .
