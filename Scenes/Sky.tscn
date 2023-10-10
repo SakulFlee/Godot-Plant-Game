@@ -1,0 +1,45 @@
+[gd_scene load_steps=6 format=3 uid="uid://dao1dhy5qi3wv"]
+
+[sub_resource type="Gradient" id="Gradient_8f5jr"]
+colors = PackedColorArray(0.00392157, 0.231373, 0.890196, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_ru6gf"]
+gradient = SubResource("Gradient_8f5jr")
+fill_from = Vector2(1, 1)
+
+[sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_e4gkf"]
+turbidity = 0.0
+energy_multiplier = 2.0
+night_sky = SubResource("GradientTexture2D_ru6gf")
+
+[sub_resource type="Sky" id="Sky_n656v"]
+sky_material = SubResource("PhysicalSkyMaterial_e4gkf")
+
+[sub_resource type="Environment" id="Environment_oyip8"]
+background_mode = 2
+sky = SubResource("Sky_n656v")
+ambient_light_source = 3
+ambient_light_color = Color(0.768627, 0.792157, 0, 1)
+reflected_light_source = 2
+tonemap_mode = 1
+ssr_enabled = true
+ssao_enabled = true
+ssil_enabled = true
+sdfgi_enabled = true
+sdfgi_use_occlusion = true
+volumetric_fog_enabled = true
+volumetric_fog_density = 0.025
+volumetric_fog_ambient_inject = 1.0
+adjustment_enabled = true
+adjustment_brightness = 0.85
+adjustment_contrast = 1.5
+adjustment_saturation = 1.5
+
+[node name="Sky" type="Node"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_oyip8")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="WorldEnvironment"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
+sky_mode = 2

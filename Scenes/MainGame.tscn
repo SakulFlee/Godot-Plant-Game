@@ -1,37 +1,11 @@
-[gd_scene load_steps=5 format=3 uid="uid://cn8jsho55rjs0"]
+[gd_scene load_steps=3 format=3 uid="uid://cn8jsho55rjs0"]
 
 [ext_resource type="PackedScene" uid="uid://8q5kqymcgbiq" path="res://Scenes/Player.tscn" id="1_k4jxu"]
-
-[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_bksmg"]
-sky_top_color = Color(0.211765, 0.443137, 0.784314, 1)
-sky_horizon_color = Color(0.611765, 0.615686, 0.937255, 1)
-
-[sub_resource type="Sky" id="Sky_n656v"]
-sky_material = SubResource("ProceduralSkyMaterial_bksmg")
-
-[sub_resource type="Environment" id="Environment_6ptf7"]
-background_mode = 2
-sky = SubResource("Sky_n656v")
-ambient_light_source = 3
-ambient_light_color = Color(0.768627, 0.792157, 0, 1)
-reflected_light_source = 2
-tonemap_mode = 1
-volumetric_fog_enabled = true
-volumetric_fog_density = 0.025
-volumetric_fog_ambient_inject = 1.0
-adjustment_enabled = true
-adjustment_brightness = 0.85
-adjustment_contrast = 1.5
-adjustment_saturation = 1.5
+[ext_resource type="PackedScene" uid="uid://dao1dhy5qi3wv" path="res://Scenes/Sky.tscn" id="1_kbiy7"]
 
 [node name="Node" type="Node3D"]
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource("Environment_6ptf7")
-
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="WorldEnvironment"]
-transform = Transform3D(1, 0, 0, 0, 0.16367, 0.986515, 0, -0.986515, 0.16367, 11.4896, 23.9853, 17.9295)
-light_energy = 0.0
+[node name="Sky" parent="." instance=ExtResource("1_kbiy7")]
 
 [node name="Island" type="Island" parent="."]
 data = {
