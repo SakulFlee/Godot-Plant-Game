@@ -14,5 +14,17 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Build
+    - name: Rust - Debug Build
       run: cargo build --verbose
+
+    - name: Rust - Release Build
+      run: cargo build --verbose --release
+
+    - name: Make output folder
+      run: mkdir -p out/debug out/release
+
+    - name: Godot - Debug Export
+      run: godot --export-debug Linux out/debug
+
+    - name: Godot - Release Export
+      run: godot --export-release Linux out/release
