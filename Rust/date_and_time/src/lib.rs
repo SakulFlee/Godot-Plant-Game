@@ -1,18 +1,15 @@
-use godot::{
-    engine::{DirectionalLight3D, WorldEnvironment, WorldEnvironmentVirtual},
-    prelude::{utilities::deg_to_rad, *},
-};
+use godot::{engine::Node, prelude::*};
 
-struct SkyExtension;
+struct DateAndTimeExtension;
 
 #[gdextension]
-unsafe impl ExtensionLibrary for SkyExtension {}
+unsafe impl ExtensionLibrary for DateAndTimeExtension {}
 
 #[derive(GodotClass)]
-#[class(init, base=WorldEnvironment)]
-struct SkyExt {
+#[class(init, base=Node)]
+struct DateAndTime {
     #[base]
-    base: Base<WorldEnvironment>,
+    base: Base<Node>,
 
     #[export]
     #[init(default = 24)]
@@ -57,20 +54,10 @@ struct SkyExt {
     #[export]
     #[init(default = 1000)]
     pub year: u32,
-
-    pub directional_light: Option<Gd<DirectionalLight3D>>,
 }
 
 #[godot_api]
-impl SkyExt {
-    pub fn to_rotation_deg(&self) -> f64 {
-        let current_time_in_minutes = (self.minute + self.hour * self.minutes_per_hour) as f64;
-        let max_minutes_per_day = (self.minutes_per_hour * self.hours_per_day) as f64;
-
-        let value = current_time_in_minutes / max_minutes_per_day;
-        return -(360.0 * value) + 90.0;
-    }
-
+impl DateAndTime {
     #[signal]
     fn minute_passed(time: f64);
 
@@ -87,22 +74,14 @@ impl SkyExt {
     fn year_passed(year: u32);
 
     #[signal]
-    fn time_init(day: u32, month: u32, year: u32, hour: u32, minute: u32);
+    fn time_changed(day: u32, month: u32, year: u32, hour: u32, minute: u32);
 }
 
 #[godot_api]
-impl WorldEnvironmentVirtual for SkyExt {
+impl NodeVirtual for DateAndTime {
     fn ready(&mut self) {
-        self.directional_light = self
-            .base
-            .find_child("DirectionalLight3D".into())
-            .and_then(|x| x.try_cast::<DirectionalLight3D>());
-        if self.directional_light.is_none() {
-            godot_warn!("DirectionalLight3D missing!");
-        }
-
         self.base.emit_signal(
-            "time_init".into(),
+            "time_changed".into(),
             &[
                 self.day.to_variant(),
                 self.month.to_variant(),
@@ -126,7 +105,7 @@ impl WorldEnvironmentVirtual for SkyExt {
                 .emit_signal("minute_passed".into(), &[self.minute.to_variant()]);
         }
 
-        if self.minute >= self.minutes_per_hour {
+        if self.minute > self.minutes_per_hour {
             self.minute = 0;
             self.hour += 1;
 
@@ -134,7 +113,7 @@ impl WorldEnvironmentVirtual for SkyExt {
                 .emit_signal("hour_passed".into(), &[self.hour.to_variant()]);
         }
 
-        if self.hour >= self.hours_per_day {
+        if self.hour > self.hours_per_day {
             self.hour = 1;
             self.day += 1;
 
@@ -156,11 +135,6 @@ impl WorldEnvironmentVirtual for SkyExt {
 
             self.base
                 .emit_signal("year_passed".into(), &[self.year.to_variant()]);
-        }
-
-        let rotation = self.to_rotation_deg();
-        if let Some(light) = self.directional_light.as_mut() {
-            light.set_rotation(Vector3::new(deg_to_rad(rotation) as f32, 0.0, 0.0))
         }
     }
 }

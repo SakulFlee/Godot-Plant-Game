@@ -1,5 +1,5 @@
 [package]
-name = "sky"
+name = "date_and_time"
 version = "0.1.0"
 edition = "2021"
 

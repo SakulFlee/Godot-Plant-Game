@@ -38,8 +38,11 @@ adjustment_brightness = 0.85
 adjustment_contrast = 1.5
 adjustment_saturation = 1.5
 
-[node name="Sky" type="SkyExt"]
+[node name="Sky" type="SkyAndSun"]
 environment = SubResource("Environment_oyip8")
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+[node name="Anchor" type="Node3D" parent="."]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Anchor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 300)
 sky_mode = 2
