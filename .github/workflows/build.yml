@@ -8,46 +8,34 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  setup:
+  debug:
+    name: Debug
     runs-on: self-hosted
 
     steps:
     - uses: actions/checkout@v4
 
-  rust-debug:
-    runs-on: self-hosted
-    needs: setup
-
-    steps:
-    - name: Rust - Debug Build
-      run: cargo build
-
-  rust-release:
-    runs-on: self-hosted
-    needs: setup
-
-    steps:
-    - name: Rust - Release Build
-      run: cargo build --release
-
-  godot-debug:
-    runs-on: self-hosted
-    needs: rust-debug
-
-    steps:
     - name: Make output folder
       run: mkdir -p out/debug
+
+    - name: Rust - Debug Build
+      run: cargo build
 
     - name: Godot - Debug Export
       run: godot --headless --export-debug Linux out/debug .
 
-  godot-release:
+  release:
+    name: Release
     runs-on: self-hosted
-    needs: rust-release
 
     steps:
+    - uses: actions/checkout@v4
+
     - name: Make output folder
       run: mkdir -p out/release
+
+    - name: Rust - Release Build
+      run: cargo build --release
 
     - name: Godot - Release Export
       run: godot --headless --export-release Linux out/release .
