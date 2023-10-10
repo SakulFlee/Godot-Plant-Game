@@ -85,6 +85,9 @@ impl SkyExt {
 
     #[signal]
     fn year_passed(year: u32);
+
+    #[signal]
+    fn time_init(day: u32, month: u32, year: u32, hour: u32, minute: u32);
 }
 
 #[godot_api]
@@ -97,6 +100,17 @@ impl WorldEnvironmentVirtual for SkyExt {
         if self.directional_light.is_none() {
             godot_warn!("DirectionalLight3D missing!");
         }
+
+        self.base.emit_signal(
+            "time_init".into(),
+            &[
+                self.day.to_variant(),
+                self.month.to_variant(),
+                self.year.to_variant(),
+                self.hour.to_variant(),
+                self.minute.to_variant(),
+            ],
+        );
     }
 
     fn process(&mut self, delta: f64) {

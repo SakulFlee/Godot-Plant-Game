@@ -1,11 +1,17 @@
-[gd_scene load_steps=3 format=3 uid="uid://cn8jsho55rjs0"]
+[gd_scene load_steps=5 format=3 uid="uid://cn8jsho55rjs0"]
 
 [ext_resource type="PackedScene" uid="uid://8q5kqymcgbiq" path="res://Scenes/Player.tscn" id="1_k4jxu"]
 [ext_resource type="PackedScene" uid="uid://dao1dhy5qi3wv" path="res://Scenes/Sky.tscn" id="1_kbiy7"]
+[ext_resource type="Script" path="res://Scripts/MainGameUI.gd" id="2_6kk7f"]
+[ext_resource type="PackedScene" uid="uid://e78lxxm5hkbw" path="res://Scenes/MainGameUI.tscn" id="3_a52tf"]
 
 [node name="Node" type="Node"]
 
+[node name="MainGameUI" parent="." instance=ExtResource("3_a52tf")]
+script = ExtResource("2_6kk7f")
+
 [node name="Sky" parent="." instance=ExtResource("1_kbiy7")]
+hour = 6
 
 [node name="Island" type="Island" parent="."]
 data = {
@@ -15,3 +21,10 @@ metadata/_editor_floor_ = Vector3(0, 1, 0)
 
 [node name="Player" parent="." instance=ExtResource("1_k4jxu")]
 transform = Transform3D(0.486185, 0, -0.116722, 0, 0.5, 0, 0.116722, 0, 0.486185, 0, 1, 0)
+
+[connection signal="day_passed" from="Sky" to="MainGameUI" method="_on_sky_day_passed"]
+[connection signal="hour_passed" from="Sky" to="MainGameUI" method="_on_sky_hour_passed"]
+[connection signal="minute_passed" from="Sky" to="MainGameUI" method="_on_sky_minute_passed"]
+[connection signal="month_passed" from="Sky" to="MainGameUI" method="_on_sky_month_passed"]
+[connection signal="time_init" from="Sky" to="MainGameUI" method="_on_sky_time_init"]
+[connection signal="year_passed" from="Sky" to="MainGameUI" method="_on_sky_year_passed"]
