@@ -8,16 +8,11 @@ use godot::{
         *,
     },
 };
-use voxel::Voxel;
-
-struct Player3DExtension;
-
-#[gdextension]
-unsafe impl ExtensionLibrary for Player3DExtension {}
+use crate::voxel::Voxel;
 
 #[derive(GodotClass)]
 #[class(base=Node3D)]
-struct Player3D {
+struct Player {
     #[base]
     base: Base<Node3D>,
 
@@ -46,7 +41,7 @@ struct Player3D {
 }
 
 #[godot_api]
-impl Player3D {
+impl Player {
     fn handle_mouse_movement_event(&mut self, event: Gd<InputEventMouseMotion>) {
         let mouse_sensitivity = self.mouse_sensitivity;
 
@@ -222,7 +217,8 @@ impl Player3D {
 }
 
 #[godot_api]
-impl Node3DVirtual for Player3D {
+impl Node3DVirtual for Player {
+    // TODO: Init instead ...
     fn init(base: Base<Node3D>) -> Self {
         Self {
             base,

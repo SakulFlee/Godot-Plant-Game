@@ -1,10 +1,5 @@
 use godot::{engine::Node, prelude::*};
 
-struct DateAndTimeExtension;
-
-#[gdextension]
-unsafe impl ExtensionLibrary for DateAndTimeExtension {}
-
 #[derive(GodotClass)]
 #[class(init, base=Node)]
 struct DateAndTime {

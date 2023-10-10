@@ -1,13 +1,8 @@
+use crate::utils::FindChildInScene;
 use godot::{
     engine::{WorldEnvironment, WorldEnvironmentVirtual},
     prelude::{utilities::deg_to_rad, *},
 };
-use utils::FindChildInScene;
-
-struct SkyAndSunExtension;
-
-#[gdextension]
-unsafe impl ExtensionLibrary for SkyAndSunExtension {}
 
 #[derive(GodotClass)]
 #[class(init, base=WorldEnvironment)]

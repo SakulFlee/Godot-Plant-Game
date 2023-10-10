@@ -1,0 +1,20 @@
+[gd_scene load_steps=6 format=3 uid="uid://dp2w4tc5a0c6e"]
+
+[ext_resource type="PackedScene" uid="uid://1jvixigil6id" path="res://models/Selector/Selector.blend" id="1_mnr8j"]
+[ext_resource type="PackedScene" uid="uid://hnpxrwfwpndk" path="res://models/Voxels/Dirt/Dirt.blend" id="2_lwrsm"]
+[ext_resource type="PackedScene" uid="uid://d1qa8gr18tyf7" path="res://models/Voxels/Grass/Grass.blend" id="3_xg2gg"]
+[ext_resource type="PackedScene" uid="uid://te70nji72mlw" path="res://models/Water/Water.tscn" id="4_7b36k"]
+[ext_resource type="PackedScene" uid="uid://bmwntvf5yg3ol" path="res://models/Voxels/Stone/Stone.blend" id="4_ku7tg"]
+
+[node name="Library" type="Node3D"]
+
+[node name="Selector" parent="." instance=ExtResource("1_mnr8j")]
+
+[node name="Grass" parent="." instance=ExtResource("3_xg2gg")]
+
+[node name="Dirt" parent="." instance=ExtResource("2_lwrsm")]
+
+[node name="Stone" parent="." instance=ExtResource("4_ku7tg")]
+
+[node name="Water" parent="." instance=ExtResource("4_7b36k")]
+transform = Transform3D(1.05, 0, 0, 0, 1.05, 0, 0, 0, 1.05, 0, 0, 0)

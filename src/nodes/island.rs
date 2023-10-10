@@ -1,3 +1,4 @@
+use crate::voxel::Voxel;
 use godot::{
     engine::{GridMap, GridMapVirtual},
     prelude::*,
@@ -6,12 +7,6 @@ use noise::{
     utils::{NoiseMap, NoiseMapBuilder, PlaneMapBuilder},
     Billow, Perlin,
 };
-use voxel::Voxel;
-
-struct MyExtension;
-
-#[gdextension]
-unsafe impl ExtensionLibrary for MyExtension {}
 
 #[derive(GodotClass)]
 #[class(tool, base=GridMap)]
