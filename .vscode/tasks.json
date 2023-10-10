@@ -20,6 +20,14 @@
             ]
         },
         {
+            "label": "[Rust] Open Documenation",
+            "type": "shell",
+            "command": "cargo doc --open",
+            "problemMatcher": [
+                "$rustc"
+            ]
+        },
+        {
             "label": "[Godot] Open Editor",
             "type": "shell",
             "command": "godot_console",
