@@ -6,23 +6,22 @@ hinting = 2
 subpixel_positioning = 3
 multichannel_signed_distance_field = true
 
-[node name="MainGameUI" type="Control"]
-layout_mode = 3
+[node name="MainGameUI" type="MainGameUI"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="DateAndTime" type="RichTextLabel" parent="."]
+[node name="DateAndTimeLabel" type="RichTextLabel" parent="."]
 layout_mode = 0
-offset_right = 250.0
+offset_right = 200.0
 offset_bottom = 60.0
 theme_override_colors/default_color = Color(1, 1, 1, 1)
 theme_override_fonts/normal_font = SubResource("SystemFont_46blq")
 theme_override_font_sizes/normal_font_size = 20
-text = "Date: 
-Time:"
+text = "Date: dd.mm.yyyy 
+Time: hh:mm"
 scroll_active = false
 shortcut_keys_enabled = false
 meta_underlined = false
