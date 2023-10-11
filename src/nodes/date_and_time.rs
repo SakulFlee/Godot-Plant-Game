@@ -2,7 +2,7 @@ use godot::{engine::Node, prelude::*};
 
 #[derive(GodotClass)]
 #[class(init, base=Node)]
-struct DateAndTime {
+pub struct DateAndTime {
     #[base]
     base: Base<Node>,
 
@@ -131,5 +131,16 @@ impl NodeVirtual for DateAndTime {
             self.base
                 .emit_signal("year_passed".into(), &[self.year.to_variant()]);
         }
+
+        self.base.emit_signal(
+            "time_changed".into(),
+            &[
+                self.day.to_variant(),
+                self.month.to_variant(),
+                self.year.to_variant(),
+                self.hour.to_variant(),
+                self.minute.to_variant(),
+            ],
+        );
     }
 }

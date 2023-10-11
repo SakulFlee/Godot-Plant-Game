@@ -1,6 +1,9 @@
 mod main_menu;
 pub use main_menu::*;
 
+mod main_game_ui;
+pub use main_game_ui::*;
+
 mod sky_and_sun;
 pub use sky_and_sun::*;
 

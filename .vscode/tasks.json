@@ -57,13 +57,13 @@
             ]
         },
         {
-            "label": "[Godot] Run Main Scene",
+            "label": "[Godot] Run MainMenu Scene",
             "type": "shell",
             "command": "godot_console",
             "args": [
                 "--path",
                 "${workspaceFolder}",
-                "${workspaceFolder}/Scenes/Main.tscn",
+                "${workspaceFolder}/scenes/main_menu.tscn",
             ],
             "problemMatcher": [],
             "isBackground": true,
@@ -78,7 +78,7 @@
             "args": [
                 "--path",
                 "${workspaceFolder}",
-                "${workspaceFolder}/Scenes/MainGame.tscn",
+                "${workspaceFolder}/Scenes/main_game.tscn",
             ],
             "problemMatcher": [],
             "isBackground": true,

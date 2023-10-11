@@ -1,4 +1,4 @@
-use crate::utils::FindChildInScene;
+use crate::{nodes::DateAndTime, utils::FindChildInScene};
 use godot::{
     engine::{WorldEnvironment, WorldEnvironmentVirtual},
     prelude::{utilities::deg_to_rad, *},
@@ -10,7 +10,11 @@ struct SkyAndSun {
     #[base]
     base: Base<WorldEnvironment>,
 
-    time: Option<Gd<Node>>,
+    hours_per_day: u32,
+    minutes_per_hour: u32,
+
+    current_minute: u32,
+    current_hour: u32,
 
     anchor: Option<Gd<Node3D>>,
 }
@@ -18,31 +22,18 @@ struct SkyAndSun {
 #[godot_api]
 impl SkyAndSun {
     pub fn to_rotation_deg(&mut self) -> Option<f64> {
-        if self.time.is_none() {
-            godot_warn!("Time is missing!");
-            return None;
-        }
-
-        let time = self.time.as_mut().unwrap();
-
-        godot_print!("Properties:");
-        // TODO: Cast first, then try again?
-        let properties = time.get_meta_list();
-        for index in 0..properties.len() {
-            let property = properties.get(index);
-            godot_print!("{:#?}", property);
-        }
-
-        let minutes_per_hour: u32 = time.call("minutes_per_hour".into(), &[]).to();
-        let hours_per_day: u32 = time.call("hours_per_day".into(), &[]).to();
-        let minute: u32 = time.call("minute".into(), &[]).to();
-        let hour: u32 = time.call("hour".into(), &[]).to();
-
-        let current_time_in_minutes = (minute + hour * minutes_per_hour) as f64;
-        let max_minutes_per_day = (minutes_per_hour * hours_per_day) as f64;
+        let current_time_in_minutes =
+            (self.current_minute + self.current_hour * self.minutes_per_hour) as f64;
+        let max_minutes_per_day = (self.minutes_per_hour * self.hours_per_day) as f64;
 
         let value = current_time_in_minutes / max_minutes_per_day;
         return Some(-(360.0 * value) + 90.0);
+    }
+
+    #[func]
+    pub fn _on_time_change(&mut self, _day: u32, _month: u32, _year: u32, hour: u32, minute: u32) {
+        self.current_minute = minute;
+        self.current_hour = hour;
     }
 }
 
@@ -57,9 +48,15 @@ impl WorldEnvironmentVirtual for SkyAndSun {
             godot_warn!("Anchor missing!");
         }
 
-        self.time = self.base.find_child_in_scene("DateAndTime".into(), true);
-        if self.time.is_none() {
-            godot_warn!("Time not found!");
+        if let Some(node) = self.base.find_child_in_scene("DateAndTime".into(), true) {
+            if let Some(date_and_time) = node.try_cast::<DateAndTime>() {
+                self.minutes_per_hour = date_and_time.get("minutes_per_hour".into()).to();
+                self.hours_per_day = date_and_time.get("hours_per_day".into()).to();
+            } else {
+                godot_warn!("DateAndTime found, but wrong type!");
+            }
+        } else {
+            godot_warn!("DateAndTime not found!");
         }
     }
 
