@@ -77,7 +77,7 @@ impl Island {
         self.base.set_cell_size(Vector3::new(1.0, 1.0, 1.0));
         self.base.set_cell_scale(1.0);
 
-        let mesh_library = match try_load("res://Mesh Library/Voxels.tres") {
+        let mesh_library = match try_load("res://mesh_library/voxels.tres") {
             Some(mesh_library) => mesh_library,
             None => {
                 return;
