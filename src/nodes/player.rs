@@ -1,3 +1,4 @@
+use crate::voxel::Voxel;
 use godot::{
     engine::{
         input::MouseMode, CharacterBody3D, GridMap, InputEvent, InputEventMouseMotion,
@@ -8,7 +9,6 @@ use godot::{
         *,
     },
 };
-use crate::voxel::Voxel;
 
 #[derive(GodotClass)]
 #[class(base=Node3D)]
@@ -291,8 +291,6 @@ impl Node3DVirtual for Player {
 
                     let voxel_below_hit =
                         Voxel::from_index(grid_map.get_cell_item(below_hit_point));
-
-                    godot_print!("Voxel Hit: {} @ {}", voxel_below_hit, hit_point);
 
                     if voxel_below_hit != Voxel::Air {
                         if let Some(last_point) = self.last_selector_cell_position {
