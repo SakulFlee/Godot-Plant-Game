@@ -104,6 +104,18 @@ look_right={
 ]
 }
 
+[internationalization]
+
+rendering/text_driver="ICU / HarfBuzz / Graphite (Built-in)"
+
 [rendering]
 
+driver/threads/thread_model=2
+camera/depth_of_field/depth_of_field_bokeh_shape=0
+camera/depth_of_field/depth_of_field_use_jitter=true
+anti_aliasing/quality/msaa_2d=1
+anti_aliasing/quality/msaa_3d=1
+anti_aliasing/quality/screen_space_aa=1
+anti_aliasing/quality/use_taa=true
+anti_aliasing/quality/use_debanding=true
 occlusion_culling/use_occlusion_culling=true
