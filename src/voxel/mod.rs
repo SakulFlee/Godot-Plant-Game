@@ -9,40 +9,58 @@ pub enum Voxel {
     Dirt,
     Stone,
     Water,
+    Farmland,
 }
 
 impl Voxel {
     pub fn from_index(index: i32) -> Self {
         if index == 0 {
-            Voxel::Selector
+            Self::Selector
         } else if index == 1 {
-            Voxel::Dirt
+            Self::Dirt
         } else if index == 2 {
-            Voxel::Grass
+            Self::Grass
         } else if index == 3 {
-            Voxel::Stone
+            Self::Stone
         } else if index == 4 {
-            Voxel::Water
+            Self::Water
+        } else if index == 5 {
+            Self::Farmland
         } else {
-            Voxel::Air
+            Self::Air
         }
     }
 
     pub fn to_index(&self) -> i32 {
         match self {
-            Voxel::Air => GridMap::INVALID_CELL_ITEM,
+            Self::Air => GridMap::INVALID_CELL_ITEM,
             Self::Selector => 0,
-            Voxel::Grass => 1,
-            Voxel::Dirt => 2,
-            Voxel::Stone => 3,
-            Voxel::Water => 4,
+            Self::Grass => 1,
+            Self::Dirt => 2,
+            Self::Stone => 3,
+            Self::Water => 4,
+            Self::Farmland => 5,
         }
     }
 
     pub fn count_as_neighbour(&self) -> bool {
         match self {
-            Voxel::Water | Voxel::Air | Voxel::Selector => false,
+            Self::Water | Self::Air | Self::Selector => false,
             _ => true,
+        }
+    }
+
+    pub fn plantable(&self) -> bool {
+        match self {
+            Self::Farmland => true,
+            _ => false,
+        }
+    }
+
+    pub fn can_become_farmland(&self) -> bool {
+        match self {
+            Self::Grass | Self::Dirt => true,
+            _ => false,
         }
     }
 }

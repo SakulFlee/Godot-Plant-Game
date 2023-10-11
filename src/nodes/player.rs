@@ -300,6 +300,10 @@ impl Node3DVirtual for Player {
                         self.last_selector_cell_position = Some(hit_point);
 
                         grid_map.set_cell_item(hit_point, Voxel::Selector.to_index());
+
+                        // TODO: Store this as a variable
+                        // TODO: Do some interaction with "can_become_farmland" and "can_be_planted" based on RMB or something
+                        // TODO: Move into it's own functions, call from here
                     }
                 }
             }
