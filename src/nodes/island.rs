@@ -10,7 +10,7 @@ use noise::{
 
 #[derive(GodotClass)]
 #[class(tool, base=GridMap)]
-struct Island {
+pub struct Island {
     needs_update: bool,
 
     #[base]
