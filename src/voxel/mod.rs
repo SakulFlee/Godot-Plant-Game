@@ -10,6 +10,7 @@ pub enum Voxel {
     Stone,
     Water,
     Farmland,
+    Radish,
 }
 
 impl Voxel {
@@ -26,6 +27,8 @@ impl Voxel {
             Self::Water
         } else if index == 5 {
             Self::Farmland
+        } else if index == 6 {
+            Self::Radish
         } else {
             Self::Air
         }
@@ -40,12 +43,13 @@ impl Voxel {
             Self::Stone => 3,
             Self::Water => 4,
             Self::Farmland => 5,
+            Self::Radish => 6,
         }
     }
 
     pub fn count_as_neighbour(&self) -> bool {
         match self {
-            Self::Water | Self::Air | Self::Selector => false,
+            Self::Water | Self::Air | Self::Selector | Self::Radish => false,
             _ => true,
         }
     }
@@ -67,6 +71,11 @@ impl Voxel {
 
 impl Display for Voxel {
     fn fmt(&self, formatter: &mut Formatter<'_>) -> Result {
-        formatter.write_fmt(format_args!("Voxel@{:?}", self))
+        formatter.write_fmt(format_args!(
+            "Voxel@{:?} (Plantable: {}) (Farmable: {})",
+            self,
+            self.plantable(),
+            self.can_become_farmland()
+        ))
     }
 }

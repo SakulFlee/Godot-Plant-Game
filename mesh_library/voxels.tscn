@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://dp2w4tc5a0c6e"]
+[gd_scene load_steps=8 format=3 uid="uid://dp2w4tc5a0c6e"]
 
 [ext_resource type="PackedScene" uid="uid://1jvixigil6id" path="res://models/Selector/Selector.blend" id="1_mnr8j"]
 [ext_resource type="PackedScene" uid="uid://hnpxrwfwpndk" path="res://models/Voxels/Dirt/Dirt.blend" id="2_lwrsm"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://te70nji72mlw" path="res://models/Water/Water.tscn" id="4_7b36k"]
 [ext_resource type="PackedScene" uid="uid://bmwntvf5yg3ol" path="res://models/Voxels/Stone/Stone.blend" id="4_ku7tg"]
 [ext_resource type="PackedScene" uid="uid://bvek78enbifi7" path="res://models/Voxels/Farmland/Farmland.blend" id="6_55145"]
+[ext_resource type="PackedScene" uid="uid://d3tewr522sn5r" path="res://models/Voxels/Radish.blend" id="7_30hn5"]
 
 [node name="Library" type="Node3D"]
 
@@ -18,6 +19,7 @@
 [node name="Stone" parent="." instance=ExtResource("4_ku7tg")]
 
 [node name="Water" parent="." instance=ExtResource("4_7b36k")]
-transform = Transform3D(1.05, 0, 0, 0, 1.05, 0, 0, 0, 1.05, 0, 0, 0)
 
 [node name="Farmland" parent="." instance=ExtResource("6_55145")]
+
+[node name="Radish" parent="." instance=ExtResource("7_30hn5")]
