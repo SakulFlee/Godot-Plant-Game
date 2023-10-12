@@ -1,4 +1,4 @@
-use crate::voxel::{Voxel, VoxelLibrary};
+use crate::{utils::FindChildInScene, voxel::VoxelLibrary};
 use godot::{
     engine::{
         input::MouseMode, CharacterBody3D, GridMap, InputEvent, InputEventMouseMotion, MeshLibrary,
@@ -51,7 +51,7 @@ impl Player {
             self.last_selector_cell_position = None;
 
             if let Some(island) = &mut self.island {
-                island.set_cell_item(last_point, Voxel::Air.to_index());
+                island.set_cell_item(last_point, VoxelLibrary::empty_id());
             }
         }
 
@@ -66,18 +66,21 @@ impl Player {
                         grid_map.local_to_map(collision_point) + Vector3i::new(0, -1, 0);
 
                     let voxel_below_hit =
-                        Voxel::from_index(grid_map.get_cell_item(below_hit_point));
+                        VoxelLibrary::singleton().by_id(grid_map.get_cell_item(below_hit_point));
 
                     godot_print!("Ray Hit: {} @ {}", voxel_below_hit, below_hit_point);
 
                     // ... check for the voxel it's hitting!
                     // If it's air for some reason -> Skip
-                    if voxel_below_hit != Voxel::Air {
+                    if voxel_below_hit.id() != VoxelLibrary::empty_id() {
                         // Set the new selector position
                         self.last_selector_cell_position = Some(hit_point);
 
                         // Spawn the new selector "voxel"
-                        grid_map.set_cell_item(hit_point, Voxel::Selector.to_index());
+                        grid_map.set_cell_item(
+                            hit_point,
+                            VoxelLibrary::singleton().by_name("Selector").id(),
+                        );
                     }
                 }
             }
@@ -223,10 +226,14 @@ impl Player {
         if input.is_action_pressed("primary_action".into()) {
             if let Some(cell_below_selector) = &self.cell_below_selector() {
                 if let Some(grid_map) = &mut self.island {
-                    let voxel = Voxel::from_index(grid_map.get_cell_item(*cell_below_selector));
+                    let voxel = VoxelLibrary::singleton()
+                        .by_id(grid_map.get_cell_item(*cell_below_selector));
 
-                    if voxel.can_become_farmland() {
-                        grid_map.set_cell_item(*cell_below_selector, Voxel::Farmland.to_index());
+                    if voxel.can_be_plowed() {
+                        grid_map.set_cell_item(
+                            *cell_below_selector,
+                            VoxelLibrary::singleton().by_name("Farmland").id(),
+                        );
                     }
                 }
             }
@@ -235,10 +242,14 @@ impl Player {
         if input.is_action_pressed("secondary_action".into()) {
             if let Some(cell_below_selector) = &self.cell_below_selector() {
                 if let Some(grid_map) = &mut self.island {
-                    let voxel = Voxel::from_index(grid_map.get_cell_item(*cell_below_selector));
+                    let voxel = VoxelLibrary::singleton()
+                        .by_id(grid_map.get_cell_item(*cell_below_selector));
 
-                    if voxel.plantable() {
-                        grid_map.set_cell_item(*cell_below_selector, Voxel::Radish.to_index());
+                    if voxel.can_be_plowed() {
+                        grid_map.set_cell_item(
+                            *cell_below_selector,
+                            VoxelLibrary::singleton().by_name("Radish").id(),
+                        );
                     }
                 }
             }
