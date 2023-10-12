@@ -5,4 +5,4 @@
 target/
 
 # Blender
-*.blend*
+*.blend[0-999]
