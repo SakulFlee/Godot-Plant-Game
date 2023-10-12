@@ -36,29 +36,13 @@ impl Voxel {
     pub fn can_be_plowed(&self) -> bool {
         self.can_be_plowed
     }
-
-    pub fn plantable(&self) -> bool {
-        match self {
-            Self::Farmland => true,
-            _ => false,
-        }
-    }
-
-    pub fn can_become_farmland(&self) -> bool {
-        match self {
-            Self::Grass | Self::Dirt => true,
-            _ => false,
-        }
-    }
 }
 
 impl Display for Voxel {
     fn fmt(&self, formatter: &mut Formatter<'_>) -> Result {
         formatter.write_fmt(format_args!(
-            "Voxel@{:?} (Plantable: {}) (Farmable: {})",
-            self,
-            self.plantable(),
-            self.can_become_farmland()
+            "Voxel@{} #{} (Neighbour: {}, Harvestable: {}, Plowable: {})",
+            self.name, self.id, self.is_neighbour, self.can_be_harvested, self.can_be_plowed,
         ))
     }
 }
