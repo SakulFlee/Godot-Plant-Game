@@ -1,4 +1,4 @@
-use crate::voxel::Voxel;
+use crate::voxel::{Voxel, VoxelLibrary};
 use godot::{
     engine::{GridMap, GridMapVirtual},
     prelude::*,
@@ -124,57 +124,63 @@ impl Island {
 
             let mut neighbours = 0;
 
-            if Voxel::from_index(self.base.get_cell_item(Vector3i::new(
-                position.x + 1,
-                position.y,
-                position.z,
-            )))
-            .count_as_neighbour()
+            if VoxelLibrary::singleton()
+                .by_id(self.base.get_cell_item(Vector3i::new(
+                    position.x + 1,
+                    position.y,
+                    position.z,
+                )))
+                .is_neighbour()
             {
                 neighbours += 1;
             }
-            if Voxel::from_index(self.base.get_cell_item(Vector3i::new(
-                position.x - 1,
-                position.y,
-                position.z,
-            )))
-            .count_as_neighbour()
+            if VoxelLibrary::singleton()
+                .by_id(self.base.get_cell_item(Vector3i::new(
+                    position.x - 1,
+                    position.y,
+                    position.z,
+                )))
+                .is_neighbour()
             {
                 neighbours += 1;
             }
-            if Voxel::from_index(self.base.get_cell_item(Vector3i::new(
-                position.x,
-                position.y + 1,
-                position.z,
-            )))
-            .count_as_neighbour()
+            if VoxelLibrary::singleton()
+                .by_id(self.base.get_cell_item(Vector3i::new(
+                    position.x,
+                    position.y + 1,
+                    position.z,
+                )))
+                .is_neighbour()
             {
                 neighbours += 1;
             }
-            if Voxel::from_index(self.base.get_cell_item(Vector3i::new(
-                position.x,
-                position.y - 1,
-                position.z,
-            )))
-            .count_as_neighbour()
+            if VoxelLibrary::singleton()
+                .by_id(self.base.get_cell_item(Vector3i::new(
+                    position.x,
+                    position.y - 1,
+                    position.z,
+                )))
+                .is_neighbour()
             {
                 neighbours += 1;
             }
-            if Voxel::from_index(self.base.get_cell_item(Vector3i::new(
-                position.x,
-                position.y,
-                position.z + 1,
-            )))
-            .count_as_neighbour()
+            if VoxelLibrary::singleton()
+                .by_id(self.base.get_cell_item(Vector3i::new(
+                    position.x,
+                    position.y,
+                    position.z + 1,
+                )))
+                .is_neighbour()
             {
                 neighbours += 1;
             }
-            if Voxel::from_index(self.base.get_cell_item(Vector3i::new(
-                position.x,
-                position.y,
-                position.z - 1,
-            )))
-            .count_as_neighbour()
+            if VoxelLibrary::singleton()
+                .by_id(self.base.get_cell_item(Vector3i::new(
+                    position.x,
+                    position.y,
+                    position.z - 1,
+                )))
+                .is_neighbour()
             {
                 neighbours += 1;
             }
@@ -188,7 +194,7 @@ impl Island {
         godot_print!("Before: {count_before}");
 
         for position in to_be_removed {
-            self.base.set_cell_item(position, Voxel::Air.to_index());
+            self.base.set_cell_item(position, VoxelLibrary::empty_id());
         }
 
         godot_print!("After: {}", self.base.get_used_cells().len());
@@ -245,16 +251,15 @@ impl Island {
 
                     let mesh_index: Voxel;
                     if y == 0 {
-                        mesh_index = Voxel::Grass;
+                        mesh_index = VoxelLibrary::singleton().by_name("Grass");
                     } else if y < 0 && y >= -3 {
-                        mesh_index = Voxel::Dirt;
+                        mesh_index = VoxelLibrary::singleton().by_name("Dirt");
                     } else {
-                        mesh_index = Voxel::Stone;
+                        mesh_index = VoxelLibrary::singleton().by_name("Stone");
                     }
 
                     let cell_position = Vector3i::new(x, y, z);
-                    self.base
-                        .set_cell_item(cell_position, mesh_index.to_index());
+                    self.base.set_cell_item(cell_position, mesh_index.id());
                 }
             }
         }
@@ -275,10 +280,11 @@ impl Island {
                 }
 
                 let position = Vector3i::new(x, self.water_level(), z);
-                let index = Voxel::from_index(self.base.get_cell_item(position));
+                let index = VoxelLibrary::singleton().by_id(self.base.get_cell_item(position));
 
-                if index == Voxel::Air {
-                    self.base.set_cell_item(position, Voxel::Water.to_index());
+                if index.id() == VoxelLibrary::empty_id() {
+                    self.base
+                        .set_cell_item(position, VoxelLibrary::singleton().by_name("Water").id());
                 }
             }
         }

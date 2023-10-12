@@ -1,4 +1,4 @@
-use crate::voxel::Voxel;
+use crate::voxel::{Voxel, VoxelLibrary};
 use godot::{
     engine::{
         input::MouseMode, CharacterBody3D, GridMap, InputEvent, InputEventMouseMotion,
@@ -290,16 +290,19 @@ impl Node3DVirtual for Player {
                         grid_map.local_to_map(collision_point) + Vector3i::new(0, -1, 0);
 
                     let voxel_below_hit =
-                        Voxel::from_index(grid_map.get_cell_item(below_hit_point));
+                        VoxelLibrary::singleton().by_id(grid_map.get_cell_item(below_hit_point));
 
-                    if voxel_below_hit != Voxel::Air {
+                    if voxel_below_hit.id() != VoxelLibrary::empty_id() {
                         if let Some(last_point) = self.last_selector_cell_position {
-                            grid_map.set_cell_item(last_point, Voxel::Air.to_index());
+                            grid_map.set_cell_item(last_point, VoxelLibrary::empty_id());
                         }
 
                         self.last_selector_cell_position = Some(hit_point);
 
-                        grid_map.set_cell_item(hit_point, Voxel::Selector.to_index());
+                        grid_map.set_cell_item(
+                            hit_point,
+                            VoxelLibrary::singleton().by_name("Selector").id(),
+                        );
                     }
                 }
             }
