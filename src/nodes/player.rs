@@ -1,7 +1,7 @@
-use crate::voxel::Voxel;
+use crate::{utils::FindChildInScene, voxel::Voxel};
 use godot::{
     engine::{
-        input::MouseMode, CharacterBody3D, GridMap, InputEvent, InputEventMouseMotion,
+        input::MouseMode, CharacterBody3D, GridMap, InputEvent, InputEventMouseMotion, MeshLibrary,
         ProjectSettings, RayCast3D,
     },
     prelude::{
@@ -9,6 +9,8 @@ use godot::{
         *,
     },
 };
+
+use super::Island;
 
 #[derive(GodotClass)]
 #[class(base=Node3D)]
@@ -34,14 +36,62 @@ struct Player {
     camera_origin: Option<Gd<Node3D>>,
     character_body: Option<Gd<CharacterBody3D>>,
     ray_cast_front: Option<Gd<RayCast3D>>,
+    island: Option<Gd<Island>>,
 
-    can_jump: bool,
+    can_jump: bool, // TODO: Double jump!
 
     last_selector_cell_position: Option<Vector3i>,
 }
 
 #[godot_api]
 impl Player {
+    fn do_ray_cast(&mut self) {
+        // If there is a last selector position set, remove it!
+        if let Some(last_point) = self.last_selector_cell_position {
+            self.last_selector_cell_position = None;
+
+            if let Some(island) = &mut self.island {
+                island.set_cell_item(last_point, Voxel::Air.to_index());
+            }
+        }
+
+        if let Some(ray) = self.ray_cast_front() {
+            if ray.is_colliding() {
+                if let Some(mut grid_map) = ray.get_collider().unwrap().try_cast::<GridMap>() {
+                    // If a RayCast exists and it hits a GridMap (i.e. it's hitting our Island) ...
+                    let collision_point = ray.get_collision_point();
+
+                    let hit_point = grid_map.local_to_map(collision_point);
+                    let below_hit_point =
+                        grid_map.local_to_map(collision_point) + Vector3i::new(0, -1, 0);
+
+                    let voxel_below_hit =
+                        Voxel::from_index(grid_map.get_cell_item(below_hit_point));
+
+                    godot_print!("Ray Hit: {} @ {}", voxel_below_hit, below_hit_point);
+
+                    // ... check for the voxel it's hitting!
+                    // If it's air for some reason -> Skip
+                    if voxel_below_hit != Voxel::Air {
+                        // Set the new selector position
+                        self.last_selector_cell_position = Some(hit_point);
+
+                        // Spawn the new selector "voxel"
+                        grid_map.set_cell_item(hit_point, Voxel::Selector.to_index());
+                    }
+                }
+            }
+        }
+    }
+
+    fn cell_below_selector(&self) -> Option<Vector3i> {
+        if let Some(last_selector_cell_position) = self.last_selector_cell_position {
+            return Some(last_selector_cell_position + Vector3i::new(0, -1, 0));
+        }
+
+        None
+    }
+
     fn handle_mouse_movement_event(&mut self, event: Gd<InputEventMouseMotion>) {
         let mouse_sensitivity = self.mouse_sensitivity;
 
@@ -167,12 +217,32 @@ impl Player {
         }
     }
 
-    #[allow(unused)]
-    pub fn camera_origin(&self) -> Option<&Gd<Node3D>> {
-        if self.camera_origin.is_none() {
-            godot_warn!("Camera Origin is missing!");
+    fn handle_actions(&mut self) {
+        let input = Input::singleton();
+
+        if input.is_action_pressed("primary_action".into()) {
+            if let Some(cell_below_selector) = &self.cell_below_selector() {
+                if let Some(grid_map) = &mut self.island {
+                    let voxel = Voxel::from_index(grid_map.get_cell_item(*cell_below_selector));
+
+                    if voxel.can_become_farmland() {
+                        grid_map.set_cell_item(*cell_below_selector, Voxel::Farmland.to_index());
+                    }
+                }
+            }
         }
-        self.camera_origin.as_ref()
+
+        if input.is_action_pressed("secondary_action".into()) {
+            if let Some(cell_below_selector) = &self.cell_below_selector() {
+                if let Some(grid_map) = &mut self.island {
+                    let voxel = Voxel::from_index(grid_map.get_cell_item(*cell_below_selector));
+
+                    if voxel.plantable() {
+                        grid_map.set_cell_item(*cell_below_selector, Voxel::Radish.to_index());
+                    }
+                }
+            }
+        }
     }
 
     #[allow(unused)]
@@ -181,14 +251,6 @@ impl Player {
             godot_warn!("Camera Origin is missing!");
         }
         self.camera_origin.as_mut()
-    }
-
-    #[allow(unused)]
-    pub fn character_body(&self) -> Option<&Gd<CharacterBody3D>> {
-        if self.character_body.is_none() {
-            godot_warn!("Character Body is missing!");
-        }
-        self.character_body.as_ref()
     }
 
     #[allow(unused)]
@@ -206,14 +268,6 @@ impl Player {
         }
         self.ray_cast_front.as_ref()
     }
-
-    #[allow(unused)]
-    pub fn ray_cast_front_mut(&mut self) -> Option<&mut Gd<RayCast3D>> {
-        if self.ray_cast_front.is_none() {
-            godot_warn!("RayCast Front is missing!");
-        }
-        self.ray_cast_front.as_mut()
-    }
 }
 
 #[godot_api]
@@ -230,12 +284,21 @@ impl Node3DVirtual for Player {
             camera_origin: None,
             character_body: None,
             ray_cast_front: None,
+            island: None,
             can_jump: true,
             last_selector_cell_position: None,
         }
     }
 
     fn ready(&mut self) {
+        let mesh_library: Gd<MeshLibrary> = load("res:///mesh_library/voxels.tres");
+        let item_list = mesh_library.get_item_list();
+        for i in 0..item_list.len() as i32 {
+            let item_name = mesh_library.get_item_name(i);
+
+            godot_print!("#{}: {}", i, item_name);
+        }
+
         // Find and store Camera Origin
         self.camera_origin = self
             .base
@@ -265,8 +328,17 @@ impl Node3DVirtual for Player {
             .recursive(true)
             .done()
             .and_then(|x| x.try_cast::<RayCast3D>());
-        if self.character_body.is_none() {
+        if self.ray_cast_front.is_none() {
             godot_warn!("RayCastFront missing!");
+        }
+
+        // Find and store Island
+        self.island = self
+            .base
+            .find_child_in_scene("Island".into(), true)
+            .and_then(|x| x.try_cast::<Island>());
+        if self.island.is_none() {
+            godot_warn!("Island missing!");
         }
 
         // Capture mouse
@@ -279,37 +351,6 @@ impl Node3DVirtual for Player {
         }
     }
 
-    fn process(&mut self, _delta: f64) {
-        if let Some(ray) = self.ray_cast_front() {
-            if ray.is_colliding() {
-                if let Some(mut grid_map) = ray.get_collider().unwrap().try_cast::<GridMap>() {
-                    let collision_point = ray.get_collision_point();
-
-                    let hit_point = grid_map.local_to_map(collision_point);
-                    let below_hit_point =
-                        grid_map.local_to_map(collision_point) + Vector3i::new(0, -1, 0);
-
-                    let voxel_below_hit =
-                        Voxel::from_index(grid_map.get_cell_item(below_hit_point));
-
-                    if voxel_below_hit != Voxel::Air {
-                        if let Some(last_point) = self.last_selector_cell_position {
-                            grid_map.set_cell_item(last_point, Voxel::Air.to_index());
-                        }
-
-                        self.last_selector_cell_position = Some(hit_point);
-
-                        grid_map.set_cell_item(hit_point, Voxel::Selector.to_index());
-
-                        // TODO: Store this as a variable
-                        // TODO: Do some interaction with "can_become_farmland" and "can_be_planted" based on RMB or something
-                        // TODO: Move into it's own functions, call from here
-                    }
-                }
-            }
-        }
-    }
-
     fn physics_process(&mut self, delta: f64) {
         // Check if we should quit
         if Input::singleton().is_action_pressed("quit".into()) {
@@ -317,6 +358,7 @@ impl Node3DVirtual for Player {
             return;
         }
 
+        // Any movement based stuff
         self.handle_movement();
         self.handle_joypad_camera();
         self.handle_gravity(delta);
@@ -326,5 +368,11 @@ impl Node3DVirtual for Player {
         }
 
         self.sanity_check();
+
+        // Ray casting
+        self.do_ray_cast();
+
+        // Interactions
+        self.handle_actions();
     }
 }
