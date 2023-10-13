@@ -72,20 +72,6 @@ impl Island {
         self.base.clear();
     }
 
-    fn setup(&mut self) {
-        godot_print!("Setup");
-        self.base.set_cell_size(Vector3::new(1.0, 1.0, 1.0));
-        self.base.set_cell_scale(1.0);
-
-        let mesh_library = match try_load("res://mesh_library/voxels.tres") {
-            Some(mesh_library) => mesh_library,
-            None => {
-                return;
-            }
-        };
-        self.base.set_mesh_library(mesh_library);
-    }
-
     fn make_noise_map(
         seed: u32,
         radius: u32,
@@ -470,7 +456,6 @@ impl GridMapVirtual for Island {
         };
 
         s.clear();
-        s.setup();
 
         s
     }

@@ -1,6 +1,6 @@
 use godot::{
-    engine::MeshLibrary,
-    prelude::{load, Gd},
+    engine::{MeshLibrary, ResourceLoader},
+    prelude::{godot_warn, Gd},
 };
 use std::fmt::{Display, Formatter, Result};
 
@@ -53,6 +53,7 @@ pub struct VoxelLibrary {
 }
 
 impl VoxelLibrary {
+    const VOXEL_LIBRARY_PATH: &'static str = "res:///mesh_library/voxels.tres";
     const NO_NEIGHBOUR: &'static [&'static str] = &["Water", "Air", "Selector"];
     const HARVESTABLE: &'static [&'static str] = &["Radish"];
     const PLOWABLE: &'static [&'static str] = &["Grass", "Dirt"];
@@ -60,14 +61,22 @@ impl VoxelLibrary {
     pub fn singleton() -> &'static Self {
         unsafe {
             if INSTANCE.is_none() {
-                let mesh_library: Gd<MeshLibrary> = load("res:///mesh_library/voxels.tres");
+                if let Some(mesh_library) = ResourceLoader::singleton()
+                    .load_ex(Self::VOXEL_LIBRARY_PATH.into())
+                    .done()
+                    .and_then(|res| res.try_cast::<MeshLibrary>())
+                {
+                    let voxel_library = VoxelLibrary::new(mesh_library);
 
-                let voxel_library = VoxelLibrary::new(mesh_library);
-
-                INSTANCE = Some(voxel_library);
+                    INSTANCE = Some(voxel_library);
+                } else {
+                    godot_warn!("Failed loading Voxel Library!");
+                }
             }
 
-            INSTANCE.as_ref().unwrap()
+            INSTANCE
+                .as_ref()
+                .expect("Failed constructing singleton VoxelLibrary!")
         }
     }
 
@@ -76,7 +85,7 @@ impl VoxelLibrary {
     }
 
     pub fn empty_id() -> i32 {
-        -1
+        0
     }
 
     pub fn empty_voxel() -> Voxel {
@@ -97,6 +106,10 @@ impl VoxelLibrary {
     }
 
     pub fn by_id(&self, id: i32) -> Voxel {
+        if id < 0 {
+            return Self::empty_voxel();
+        }
+
         let name = self.mesh_library.get_item_name(id).to_string();
 
         Voxel {
