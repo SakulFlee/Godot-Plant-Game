@@ -1,7 +1,7 @@
 use crate::{utils::FindChildInScene, voxel::VoxelLibrary};
 use godot::{
     engine::{
-        input::MouseMode, CharacterBody3D, GridMap, InputEvent, InputEventMouseMotion, MeshLibrary,
+        input::MouseMode, CharacterBody3D, GridMap, InputEvent, InputEventMouseMotion,
         ProjectSettings, RayCast3D,
     },
     prelude::{
@@ -51,7 +51,11 @@ impl Player {
             self.last_selector_cell_position = None;
 
             if let Some(island) = &mut self.island {
-                island.set_cell_item(last_point, VoxelLibrary::empty_id());
+                let voxel_id = island.get_cell_item(last_point);
+
+                if voxel_id == VoxelLibrary::singleton().by_name("Selector").id() {
+                    island.set_cell_item(last_point, VoxelLibrary::empty_id());
+                }
             }
         }
 
@@ -65,8 +69,18 @@ impl Player {
                     let mut hit_point_voxel =
                         VoxelLibrary::singleton().by_id(grid_map.get_cell_item(hit_point));
 
+                    // Check above
+                    let above = hit_point + Vector3i::new(0, 1, 0);
+                    let above_voxel =
+                        VoxelLibrary::singleton().by_id(grid_map.get_cell_item(above));
+                    if above_voxel.id() != VoxelLibrary::empty_id() {
+                        hit_point += Vector3i::new(0, 1, 0);
+                        hit_point_voxel =
+                            VoxelLibrary::singleton().by_id(grid_map.get_cell_item(hit_point));
+                    }
+
                     if hit_point_voxel.id() == VoxelLibrary::empty_id() {
-                        hit_point = hit_point + Vector3i::new(0, -1, 0);
+                        hit_point += Vector3i::new(0, -1, 0);
                         hit_point_voxel =
                             VoxelLibrary::singleton().by_id(grid_map.get_cell_item(hit_point));
                     }
@@ -248,9 +262,9 @@ impl Player {
                     let voxel = VoxelLibrary::singleton()
                         .by_id(grid_map.get_cell_item(*cell_below_selector));
 
-                    if voxel.can_be_plowed() {
+                    if voxel.plantable() {
                         grid_map.set_cell_item(
-                            *cell_below_selector,
+                            *cell_below_selector + Vector3i::new(0, 1, 0),
                             VoxelLibrary::singleton().by_name("Radish").id(),
                         );
                     }

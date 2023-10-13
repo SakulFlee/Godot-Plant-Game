@@ -14,6 +14,7 @@ pub struct Voxel {
     is_neighbour: bool,
     can_be_harvested: bool,
     can_be_plowed: bool,
+    plantable: bool,
 }
 
 impl Voxel {
@@ -36,6 +37,10 @@ impl Voxel {
     pub fn can_be_plowed(&self) -> bool {
         self.can_be_plowed
     }
+
+    pub fn plantable(&self) -> bool {
+        self.plantable
+    }
 }
 
 impl Display for Voxel {
@@ -57,6 +62,7 @@ impl VoxelLibrary {
     const NO_NEIGHBOUR: &'static [&'static str] = &["Water", "Air", "Selector"];
     const HARVESTABLE: &'static [&'static str] = &["Radish"];
     const PLOWABLE: &'static [&'static str] = &["Grass", "Dirt"];
+    const PLANTABLE: &'static [&'static str] = &["Farmland"];
 
     pub fn singleton() -> &'static Self {
         unsafe {
@@ -95,6 +101,7 @@ impl VoxelLibrary {
             is_neighbour: false,
             can_be_harvested: false,
             can_be_plowed: false,
+            plantable: false,
         }
     }
 
@@ -118,6 +125,7 @@ impl VoxelLibrary {
             is_neighbour: !Self::NO_NEIGHBOUR.contains(&name.as_str()),
             can_be_harvested: Self::HARVESTABLE.contains(&name.as_str()),
             can_be_plowed: Self::PLOWABLE.contains(&name.as_str()),
+            plantable: Self::PLANTABLE.contains(&name.as_str()),
         }
     }
 }
