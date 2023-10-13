@@ -61,24 +61,27 @@ impl Player {
                     // If a RayCast exists and it hits a GridMap (i.e. it's hitting our Island) ...
                     let collision_point = ray.get_collision_point();
 
-                    let hit_point = grid_map.local_to_map(collision_point);
-                    let below_hit_point =
-                        grid_map.local_to_map(collision_point) + Vector3i::new(0, -1, 0);
+                    let mut hit_point = grid_map.local_to_map(collision_point);
+                    let mut hit_point_voxel =
+                        VoxelLibrary::singleton().by_id(grid_map.get_cell_item(hit_point));
 
-                    let voxel_below_hit =
-                        VoxelLibrary::singleton().by_id(grid_map.get_cell_item(below_hit_point));
-
-                    godot_print!("Ray Hit: {} @ {}", voxel_below_hit, below_hit_point);
+                    if hit_point_voxel.id() == VoxelLibrary::empty_id() {
+                        hit_point = hit_point + Vector3i::new(0, -1, 0);
+                        hit_point_voxel =
+                            VoxelLibrary::singleton().by_id(grid_map.get_cell_item(hit_point));
+                    }
 
                     // ... check for the voxel it's hitting!
                     // If it's air for some reason -> Skip
-                    if voxel_below_hit.id() != VoxelLibrary::empty_id() {
+                    if hit_point_voxel.id() != VoxelLibrary::empty_id() {
+                        let selector_position = hit_point + Vector3i::new(0, 1, 0);
+
                         // Set the new selector position
-                        self.last_selector_cell_position = Some(hit_point);
+                        self.last_selector_cell_position = Some(selector_position);
 
                         // Spawn the new selector "voxel"
                         grid_map.set_cell_item(
-                            hit_point,
+                            selector_position,
                             VoxelLibrary::singleton().by_name("Selector").id(),
                         );
                     }
@@ -302,14 +305,6 @@ impl Node3DVirtual for Player {
     }
 
     fn ready(&mut self) {
-        let mesh_library: Gd<MeshLibrary> = load("res:///mesh_library/voxels.tres");
-        let item_list = mesh_library.get_item_list();
-        for i in 0..item_list.len() as i32 {
-            let item_name = mesh_library.get_item_name(i);
-
-            godot_print!("#{}: {}", i, item_name);
-        }
-
         // Find and store Camera Origin
         self.camera_origin = self
             .base
@@ -359,36 +354,6 @@ impl Node3DVirtual for Player {
     fn input(&mut self, event: Gd<InputEvent>) {
         if let Some(mouse_event) = event.try_cast::<InputEventMouseMotion>() {
             self.handle_mouse_movement_event(mouse_event);
-        }
-    }
-
-    fn process(&mut self, _delta: f64) {
-        if let Some(ray) = self.ray_cast_front() {
-            if ray.is_colliding() {
-                if let Some(mut grid_map) = ray.get_collider().unwrap().try_cast::<GridMap>() {
-                    let collision_point = ray.get_collision_point();
-
-                    let hit_point = grid_map.local_to_map(collision_point);
-                    let below_hit_point =
-                        grid_map.local_to_map(collision_point) + Vector3i::new(0, -1, 0);
-
-                    let voxel_below_hit =
-                        VoxelLibrary::singleton().by_id(grid_map.get_cell_item(below_hit_point));
-
-                    if voxel_below_hit.id() != VoxelLibrary::empty_id() {
-                        if let Some(last_point) = self.last_selector_cell_position {
-                            grid_map.set_cell_item(last_point, VoxelLibrary::empty_id());
-                        }
-
-                        self.last_selector_cell_position = Some(hit_point);
-
-                        grid_map.set_cell_item(
-                            hit_point,
-                            VoxelLibrary::singleton().by_name("Selector").id(),
-                        );
-                    }
-                }
-            }
         }
     }
 
