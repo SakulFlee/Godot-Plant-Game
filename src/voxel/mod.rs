@@ -85,7 +85,7 @@ impl VoxelLibrary {
     }
 
     pub fn empty_id() -> i32 {
-        0
+        -1
     }
 
     pub fn empty_voxel() -> Voxel {
@@ -115,7 +115,7 @@ impl VoxelLibrary {
         Voxel {
             id,
             name: name.clone(),
-            is_neighbour: Self::NO_NEIGHBOUR.contains(&name.as_str()),
+            is_neighbour: !Self::NO_NEIGHBOUR.contains(&name.as_str()),
             can_be_harvested: Self::HARVESTABLE.contains(&name.as_str()),
             can_be_plowed: Self::PLOWABLE.contains(&name.as_str()),
         }
