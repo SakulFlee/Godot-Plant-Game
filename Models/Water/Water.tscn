@@ -69,4 +69,5 @@ surface_material_override/0 = SubResource("ShaderMaterial_exy4d")
 [node name="StaticBody3D" type="StaticBody3D" parent="."]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(1.05, 0, 0, 0, 1.05, 0, 0, 0, 1.05, 0, 0, 0)
 shape = SubResource("BoxShape3D_jy3x2")

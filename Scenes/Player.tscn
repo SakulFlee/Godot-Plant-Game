@@ -46,10 +46,9 @@ margin = 0.5
 [node name="Camera3D" type="Camera3D" parent="CharacterBody3D/CameraOrigin/SpringArm3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5)
 current = true
-fov = 90.0
 
 [node name="RayCastFront" type="RayCast3D" parent="CharacterBody3D"]
-transform = Transform3D(1, 0, 0, 0, 0.707107, -0.707107, 0, 0.707107, 0.707107, 0, 0, -0.5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1)
 target_position = Vector3(0, -2, 0)
 
 [node name="OmniLight3D" type="OmniLight3D" parent="CharacterBody3D"]
