@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://b80pwan0h6npx"]
+
+[ext_resource type="MeshLibrary" uid="uid://46f7acy8mu60" path="res://mesh_library/voxels.tres" id="1_yht2s"]
+[ext_resource type="Script" path="res://Scripts/Island.cs" id="2_0r8uk"]
+
+[node name="Node3D" type="Node3D"]
+
+[node name="GridMap" type="GridMap" parent="."]
+mesh_library = ExtResource("1_yht2s")
+cell_size = Vector3(1, 1, 1)
+script = ExtResource("2_0r8uk")
