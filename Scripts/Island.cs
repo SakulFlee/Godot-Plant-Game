@@ -1,9 +1,11 @@
 using Godot;
+using Godot.Collections;
 using System;
 
+[Tool]
 public partial class Island : GridMap
 {
-	[ExportCategory("General Terrain")]
+	[ExportCategory("Island")]
 	[Export(PropertyHint.Range, "5.0, 100.0,")]
 	private uint radius = 50;
 
@@ -16,61 +18,116 @@ public partial class Island : GridMap
 	[Export]
 	private int water_level = 0;
 
-	[ExportCategory("Terrain A")]
 	[Export]
-	private uint terrain_seed_a = 12345;
-
-	[Export(PropertyHint.Range, "1.0, 6.0,")]
-	private uint octaves_a = 6;
+	private UpdateStateRequest update_state_request = UpdateStateRequest.FullUpdate;
 
 	[Export]
-	private float frequency_a = 0.04f;
+	private NoiseTexture2D terrain_noise_a;
 
 	[Export]
-	private float lacunarity_a = 3.0f;
+	private NoiseTexture2D terrain_noise_b;
 
 	[Export]
-	private float persistence_a = 0.5f;
-
-	[ExportCategory("Terrain B")]
-
-	[Export]
-	private uint terrain_seed_b = 54321;
-
-	[Export(PropertyHint.Range, "1.0, 6.0,")]
-	private uint octaves_b = 6;
-
-	[Export]
-	private float frequency_b = 0.025f;
-
-	[Export]
-	private float lacunarity_b = 6.0f;
-
-	[Export]
-	private float persistence_b = 0.5f;
+	private Dictionary<Vector3I, int> change_dict;
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		GD.Print("Island Settings: ");
-		GD.Print("radius\t\t\t\t\t= " + radius);
-		GD.Print("below_ground_factor\t\t= " + below_ground_factor);
-		GD.Print("terrain_indent_factor\t= " + terrain_indent_factor);
-		GD.Print("water_level\t\t\t\t= " + water_level);
-		GD.Print("terrain_seed_a\t\t\t= " + terrain_seed_a);
-		GD.Print("octaves_a\t\t\t\t= " + octaves_a);
-		GD.Print("frequency_a\t\t\t\t= " + frequency_a);
-		GD.Print("lacunarity_a\t\t\t= " + lacunarity_a);
-		GD.Print("persistence_a\t\t\t= " + persistence_a);
-		GD.Print("terrain_seed_b\t\t\t= " + terrain_seed_b);
-		GD.Print("octaves_b\t\t\t\t= " + octaves_b);
-		GD.Print("frequency_b\t\t\t\t= " + frequency_b);
-		GD.Print("lacunarity_b\t\t\t= " + lacunarity_b);
-		GD.Print("persistence_b\t\t\t= " + persistence_b);
+		// Force an update
+		update_state_request = UpdateStateRequest.FullUpdate;
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
+		DoUpdate();
+	}
+
+	private void DoUpdate()
+	{
+
+		if (update_state_request == UpdateStateRequest.None)
+		{
+			return;
+		}
+
+		GD.Print("Doing Update!");
+
+		// Ensure there is a center island for the player to spawn
+		EnsureCenterVoxels();
+
+		// Remove all currently set voxels
+		if (update_state_request == UpdateStateRequest.FullUpdate)
+		{
+			Clear();
+		}
+
+		if (update_state_request == UpdateStateRequest.FullUpdate)
+		{
+			// Utilize noise maps to generate the island(s)
+			UpdateIslandWithNoise();
+		}
+
+		if (update_state_request == UpdateStateRequest.FullUpdate || update_state_request == UpdateStateRequest.ApplyChangeOnly)
+		{
+			// Apply any changes made to the island
+			UpdateIslandWithChange();
+		}
+
+		update_state_request = UpdateStateRequest.None;
+	}
+
+	private void EnsureCenterVoxels()
+	{
+		if (change_dict.Count > 0)
+		{
+			return;
+		}
+
+		var grass_id = MeshLibrary.FindItemByName("Grass");
+
+		for (int x = -1; x <= 1; x++)
+		{
+			for (int z = -1; z <= 1; z++)
+			{
+				change_dict.Add(new Vector3I(z, 0, x), grass_id);
+			}
+		}
+	}
+
+	private void UpdateIslandWithNoise()
+	{
+		for (int x = -(int)radius; x <= radius; x++)
+		{
+			for (int z = -(int)radius; z <= radius; z++)
+			{
+				var position = new Vector3(x, 0, z);
+				var distance = position.DistanceSquaredTo(Vector3.Zero);
+
+				if (distance > Math.Pow(radius, 2.0f))
+				{
+					continue;
+				}
+
+				var noise_a = terrain_noise_a.Noise.GetNoise2D(x, z) * 100.0;
+				var noise_b = terrain_noise_b.Noise.GetNoise2D(x, z) * 100.0;
+
+				var height = (int)Math.Round(noise_a - noise_b);
+
+				for (int y = -height; y <= 0; y++)
+				{
+					var p = new Vector3I(x, y, z);
+					SetCellItem(p, 1);
+				}
+			}
+		}
+	}
+
+	private void UpdateIslandWithChange()
+	{
+		foreach ((var position, var voxel) in change_dict)
+		{
+			SetCellItem(position, voxel);
+		}
 	}
 }
