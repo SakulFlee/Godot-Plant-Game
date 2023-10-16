@@ -95,11 +95,9 @@
             ],
             "problemMatcher": "$msCompile",
             "presentation": {
-                "echo": true,
-                "reveal": "silent",
-                "focus": true,
-                "panel": "shared",
-                "showReuseMessage": true,
+                "reveal": "never",
+                "revealProblems": "onProblem",
+                "focus": false,
                 "clear": true
             },
             "group": {
