@@ -1,6 +1,7 @@
 using Godot;
 using Godot.Collections;
 using System;
+using System.Collections.Generic;
 
 [Tool]
 public partial class Island : GridMap
@@ -16,11 +17,11 @@ public partial class Island : GridMap
 	[Export]
 	private float below_ground_factor = 2.0f;
 
-	[Export]
-	private float terrain_indent_factor = 1.5f;
+	[Export(PropertyHint.Range, "0.0, 1.0, ")]
+	private float terrain_indent_factor = 0.1f;
 
 	[Export]
-	private int spawn_platform_voxel_id = 1;
+	private string spawn_platform_voxel = "Grass";
 
 	[Export]
 	private int water_level = 0;
@@ -34,7 +35,7 @@ public partial class Island : GridMap
 
 	[ExportCategory("Island Change")]
 	[Export]
-	private Dictionary<Vector3I, int> change_dict;
+	private Godot.Collections.Dictionary<Vector3I, int> change_dict;
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
@@ -78,9 +79,59 @@ public partial class Island : GridMap
 		{
 			// Apply any changes made to the island
 			UpdateIslandWithChange();
+
+			// Cull any voxels that won't be in view
+			CullIsland();
 		}
 
 		update_state_request = UpdateStateRequest.None;
+	}
+
+	private void CullIsland()
+	{
+		var to_be_culled = new List<Vector3I>();
+
+		var used_cells = GetUsedCells();
+		var count_before = used_cells.Count;
+		for (int i = 0; i < count_before; i++)
+		{
+			var position = used_cells[i];
+
+			var neighbours = 0;
+			// TODO: Voxel Library
+			if (GetCellItem(position + new Vector3I(1, 0, 0)) > 0)
+			{
+				neighbours++;
+			}
+			if (GetCellItem(position + new Vector3I(-1, 0, 0)) > 0)
+			{
+				neighbours++;
+			}
+			if (GetCellItem(position + new Vector3I(0, 1, 0)) > 0)
+			{
+				neighbours++;
+			}
+			if (GetCellItem(position + new Vector3I(0, -1, 0)) > 0)
+			{
+				neighbours++;
+			}
+			if (GetCellItem(position + new Vector3I(0, 0, 1)) > 0)
+			{
+				neighbours++;
+			}
+			if (GetCellItem(position + new Vector3I(0, 0, -1)) > 0)
+			{
+				neighbours++;
+			}
+
+			if (neighbours == 6)
+			{
+				to_be_culled.Add(position);
+			}
+		}
+
+		GD.Print("Culling " + to_be_culled.Count + "/" + count_before);
+		to_be_culled.ForEach(position => SetCellItem(position, -1));
 	}
 
 	private void EnsureCenterVoxels()
@@ -90,38 +141,53 @@ public partial class Island : GridMap
 			return;
 		}
 
+		var voxel_id = MeshLibrary.FindItemByName(spawn_platform_voxel);
+
 		for (int x = -1; x <= 1; x++)
 		{
 			for (int z = -1; z <= 1; z++)
 			{
-				change_dict.Add(new Vector3I(z, 0, x), spawn_platform_voxel_id);
+				change_dict.Add(new Vector3I(z, 0, x), voxel_id);
 			}
 		}
 	}
 
 	private void UpdateIslandWithNoise()
 	{
+		// Calculate the range
+		var range = Math.Pow(radius, 2.0);
+
+		// Loop over (X, Y) coordinates (horizontal coordinates)
 		for (int x = -(int)radius; x <= radius; x++)
 		{
 			for (int z = -(int)radius; z <= radius; z++)
 			{
-				var position = new Vector3(x, 0, z);
-				var distance = position.DistanceSquaredTo(Vector3.Zero);
-
-				if (distance > Math.Pow(radius, 2.0f))
+				// If distance (without Y!) is greater than the range, skip
+				var distance = new Vector3(x, 0, z).DistanceSquaredTo(Vector3.Zero);
+				if (distance > range)
 				{
 					continue;
 				}
 
+				// Calculate noise values
 				var noise_a = terrain_noise_a.Noise.GetNoise2D(x, z) * 100.0;
 				var noise_b = terrain_noise_b.Noise.GetNoise2D(x, z) * 100.0;
+				var below_ground = (noise_a * noise_b) / 100.0 * below_ground_factor;
+				var terrain_indent = (noise_b - noise_a) * terrain_indent_factor;
 
-				var height = (int)Math.Round(noise_a - noise_b);
-
-				for (int y = -height; y <= 0; y++)
+				// Use noise value for (Y) axis (vertical)
+				for (int y = -(int)below_ground; y <= (int)terrain_indent; y++)
 				{
-					var p = new Vector3I(x, y, z);
-					SetCellItem(p, 1);
+					// If distance (with Y!) is greater than the range, skip
+					distance = new Vector3(x, y, z).DistanceSquaredTo(Vector3.Zero);
+					if (distance > range)
+					{
+						continue;
+					}
+
+
+					var cell_position = new Vector3I(x, y, z);
+					SetCellItem(cell_position, 1);
 				}
 			}
 		}
