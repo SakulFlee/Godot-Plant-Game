@@ -19,7 +19,7 @@ public partial class Island : GridMap
 	private float below_ground_factor = 2.0f;
 
 	[Export(PropertyHint.Range, "0.0, 1.0, ")]
-	private float terrain_indent_factor = 0.1f;
+	private float terrain_indent_factor = 0.05f;
 
 	[Export]
 	private string spawn_platform_voxel = "Grass";
