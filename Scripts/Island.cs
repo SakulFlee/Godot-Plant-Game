@@ -84,11 +84,44 @@ public partial class Island : GridMap
 			// Apply any changes made to the island
 			UpdateIslandWithChange();
 
+			// Place water
+			UpdateWater();
+
 			// Cull any voxels that won't be in view
 			CullIsland();
 		}
 
 		update_state_request = UpdateStateRequest.None;
+	}
+
+	private void UpdateWater()
+	{
+		// Calculate the range
+		var range = Math.Pow(radius, 2.0);
+
+		var water_id = MeshLibrary.FindItemByName("Water");
+
+		// Loop over (X, Y) coordinates (horizontal coordinates)
+		for (int x = -(int)radius; x <= radius; x++)
+		{
+			for (int z = -(int)radius; z <= radius; z++)
+			{
+				// If distance (without Y!) is greater than the range, skip
+				var distance = new Vector3(x, 0, z).DistanceSquaredTo(Vector3.Zero);
+				if (distance > range)
+				{
+					continue;
+				}
+
+				var cell_position = new Vector3I(x, 0, z);
+				var current_cell_id = GetCellItem(cell_position);
+
+				if (current_cell_id < 0)
+				{
+					SetCellItem(cell_position, water_id);
+				}
+			}
+		}
 	}
 
 	private void CullIsland()
@@ -213,7 +246,7 @@ public partial class Island : GridMap
 					{
 						var options = voxel_generation[index];
 
-						Random random = new Random();
+						Random random = new();
 						int option_index = random.Next(0, options.Count);
 
 						voxel_id = MeshLibrary.FindItemByName(options[option_index]);
