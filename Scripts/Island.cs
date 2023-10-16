@@ -25,7 +25,7 @@ public partial class Island : GridMap
 	private string spawn_platform_voxel = "Grass";
 
 	[Export]
-	private Godot.Collections.Dictionary<int, string> voxel_generation;
+	private Godot.Collections.Dictionary<int, Godot.Collections.Array<string>> voxel_generation;
 
 	[Export]
 	private int water_level = 0;
@@ -211,7 +211,12 @@ public partial class Island : GridMap
 
 					if (index > int.MinValue)
 					{
-						voxel_id = MeshLibrary.FindItemByName(voxel_generation[index]);
+						var options = voxel_generation[index];
+
+						Random random = new Random();
+						int option_index = random.Next(0, options.Count);
+
+						voxel_id = MeshLibrary.FindItemByName(options[option_index]);
 					}
 
 					var cell_position = new Vector3I(x, y, z);
