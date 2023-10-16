@@ -4,6 +4,7 @@
         "gdextension",
         "godot",
         "lacunarity",
+        "Mathf",
         "Perlin",
         "powf",
         "voxel",
