@@ -5,7 +5,7 @@ public partial class Island : GridMap
 {
 	[ExportGroup("Island")]
 	[Export]
-	public int some_value { get; set; }
+	private int some_value { get; set; }
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
