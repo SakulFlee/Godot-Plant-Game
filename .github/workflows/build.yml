@@ -24,7 +24,7 @@ jobs:
         echo "$OUTPUT"
         if echo "$OUTPUT" |& grep "Cannot export project"
         then
-          echo "ERROR found in godot output!"
+          echo -e "\n\n\nThere was an error found in the Godot export log!"
           exit -1
         fi
 
@@ -44,6 +44,6 @@ jobs:
         echo "$OUTPUT"
         if echo "$OUTPUT" |& grep "Cannot export project"
         then
-          echo "ERROR found in godot output!"
+          echo -e "\n\n\nThere was an error found in the Godot export log!"
           exit -1
         fi
