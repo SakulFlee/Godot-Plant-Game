@@ -22,7 +22,7 @@ jobs:
       run: |
         OUTPUT="$(godot --headless --export-debug Linux out/debug . 2>&1)"
         echo "$OUTPUT"
-        if $OUTPUT |& grep "Cannot export project"
+        if cat $OUTPUT |& grep "Cannot export project"
         then
           echo "ERROR found in godot output!"
           exit -1
@@ -42,7 +42,7 @@ jobs:
       run: |
         OUTPUT="$(godot --headless --export-release Linux out/release . 2>&1)"
         echo "$OUTPUT"
-        if $OUTPUT |& grep "Cannot export project"
+        if cat $OUTPUT |& grep "Cannot export project"
         then
           echo "ERROR found in godot output!"
           exit -1
