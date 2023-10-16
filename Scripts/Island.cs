@@ -2,6 +2,7 @@ using Godot;
 using Godot.Collections;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 [Tool]
 public partial class Island : GridMap
@@ -22,6 +23,9 @@ public partial class Island : GridMap
 
 	[Export]
 	private string spawn_platform_voxel = "Grass";
+
+	[Export]
+	private Godot.Collections.Dictionary<int, string> voxel_generation;
 
 	[Export]
 	private int water_level = 0;
@@ -185,9 +189,33 @@ public partial class Island : GridMap
 						continue;
 					}
 
+					var voxel_id = -1;
+					var index = y;
+					while (!voxel_generation.ContainsKey(index))
+					{
+						if (index > 0)
+						{
+							index++;
+						}
+						else
+						{
+							index--;
+						}
+
+						if (index > radius || index < -radius)
+						{
+							index = int.MinValue;
+							break;
+						}
+					}
+
+					if (index > int.MinValue)
+					{
+						voxel_id = MeshLibrary.FindItemByName(voxel_generation[index]);
+					}
 
 					var cell_position = new Vector3I(x, y, z);
-					SetCellItem(cell_position, 1);
+					SetCellItem(cell_position, voxel_id);
 				}
 			}
 		}
