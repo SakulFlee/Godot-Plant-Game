@@ -443,7 +443,8 @@ impl GridMapVirtual for Island {
             octaves_a: 6,
             frequency_a: 0.04,
             lacunarity_a: 3.0,
-            persistence_a: 0.5,
+            persistence_a: 0.5
+            ,
             terrain_seed_b: 54321,
             octaves_b: 6,
             frequency_b: 0.025,
