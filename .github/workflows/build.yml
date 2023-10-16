@@ -20,7 +20,7 @@ jobs:
 
     - name: Godot - Debug Export
       run: |
-        OUTPUT="$(godot --headless --export-debug Linux out/debug .)"
+        OUTPUT="$(godot --headless --export-debug Linux out/debug . 2>&1)"
         echo "$OUTPUT"
         if $OUTPUT |& grep "Cannot export project"
         then
@@ -40,7 +40,7 @@ jobs:
 
     - name: Godot - Release Export
       run: |
-        OUTPUT="$(godot --headless --export-release Linux out/release .)"
+        OUTPUT="$(godot --headless --export-release Linux out/release . 2>&1)"
         echo "$OUTPUT"
         if $OUTPUT |& grep "Cannot export project"
         then
