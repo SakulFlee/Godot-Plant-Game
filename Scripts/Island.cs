@@ -64,7 +64,7 @@ public partial class Island : GridMap
 		EnsureCenterVoxels();
 
 		// Remove all currently set voxels
-		if (update_state_request == UpdateStateRequest.FullUpdate)
+		if (update_state_request == UpdateStateRequest.FullUpdate || update_state_request == UpdateStateRequest.Clear)
 		{
 			Clear();
 		}
