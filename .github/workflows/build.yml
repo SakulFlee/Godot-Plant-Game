@@ -19,7 +19,12 @@ jobs:
       run: mkdir -p out/debug
 
     - name: Godot - Debug Export
-      run: godot --headless --export-debug Linux out/debug .
+      run: |
+        if godot --headless --export-debug Linux out/debug . | grep -q "ERROR"
+        then
+          echo "ERROR found in godot output!"
+          exit -1
+        fi
 
   release:
     name: Release
@@ -32,4 +37,9 @@ jobs:
       run: mkdir -p out/release
 
     - name: Godot - Release Export
-      run: godot --headless --export-release Linux out/release .
+      run: |
+        if godot --headless --export-release Linux out/release . | grep -q "ERROR"
+        then
+          echo "ERROR found in godot output!"
+          exit -1
+        fi
