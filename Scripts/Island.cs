@@ -5,7 +5,11 @@ using System;
 [Tool]
 public partial class Island : GridMap
 {
-	[ExportCategory("Island")]
+	[ExportCategory("Island Update")]
+	[Export]
+	private UpdateStateRequest update_state_request = UpdateStateRequest.FullUpdate;
+
+	[ExportCategory("Island Settings")]
 	[Export(PropertyHint.Range, "5.0, 100.0,")]
 	private uint radius = 50;
 
@@ -16,17 +20,19 @@ public partial class Island : GridMap
 	private float terrain_indent_factor = 1.5f;
 
 	[Export]
-	private int water_level = 0;
+	private int spawn_platform_voxel_id = 1;
 
 	[Export]
-	private UpdateStateRequest update_state_request = UpdateStateRequest.FullUpdate;
+	private int water_level = 0;
 
+	[ExportCategory("Island Noise")]
 	[Export]
 	private NoiseTexture2D terrain_noise_a;
 
 	[Export]
 	private NoiseTexture2D terrain_noise_b;
 
+	[ExportCategory("Island Change")]
 	[Export]
 	private Dictionary<Vector3I, int> change_dict;
 
@@ -84,13 +90,11 @@ public partial class Island : GridMap
 			return;
 		}
 
-		var grass_id = MeshLibrary.FindItemByName("Grass");
-
 		for (int x = -1; x <= 1; x++)
 		{
 			for (int z = -1; z <= 1; z++)
 			{
-				change_dict.Add(new Vector3I(z, 0, x), grass_id);
+				change_dict.Add(new Vector3I(z, 0, x), spawn_platform_voxel_id);
 			}
 		}
 	}
