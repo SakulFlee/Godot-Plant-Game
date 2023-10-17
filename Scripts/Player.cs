@@ -161,8 +161,6 @@ public partial class Player : CharacterBody3D
 					SelectedCell = local_cell_position;
 					Island.SetCellItem(SelectedCell.Value, SelectorID);
 					break;
-
-					// TODO: Set selector to null
 				}
 			}
 		}
@@ -206,6 +204,4 @@ public partial class Player : CharacterBody3D
 }
 
 // TODO: Controller input
-// TODO: Change to farmland
-// TODO: Plant
 // TODO: Use NoNeighbourVoxelIDs
