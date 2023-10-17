@@ -24,12 +24,14 @@ public partial class Player : CharacterBody3D
 	private GridMap Island;
 
 	private Vector3I? SelectedCell;
+	private int SelectorID;
 
 	public override void _Ready()
 	{
 		SpringArm3D = GetNode<SpringArm3D>("SpringArm3D");
 		Camera3D = GetNode<Camera3D>("SpringArm3D/Camera3D");
 		Island = GetNode<GridMap>("/root/Node/Island");
+		SelectorID = Island.MeshLibrary.FindItemByName("Selector");
 	}
 
 	public override void _PhysicsProcess(double delta)
@@ -107,43 +109,59 @@ public partial class Player : CharacterBody3D
 		// Ray cast mouse position into world
 		var mouse_position = GetViewport().GetMousePosition();
 		var space_state = GetWorld3D().DirectSpaceState;
+
 		var origin = Camera3D.ProjectRayOrigin(mouse_position);
 		var end = origin + Camera3D.ProjectRayNormal(mouse_position) * 35.0f;
+
 		var query = PhysicsRayQueryParameters3D.Create(origin, end);
 		query.CollideWithAreas = true;
-		var result = space_state.IntersectRay(query);
+		query.Exclude = new Godot.Collections.Array<Rid> { GetRid() };
+
 		// If there is no position key, we probably didn't 
 		// hit anything anyways so we just return out of here ...
+		var result = space_state.IntersectRay(query);
 		if (!result.ContainsKey("position"))
 		{
 			GD.PrintErr("No position");
 			return;
 		}
 
-		var position = (Vector3)result["position"];
-		GD.Print("Position: " + position);
-		var distance_to_player = position.DistanceSquaredTo(Position);
-
-		// Only if the selection is within range set the selector
-		if (distance_to_player <= Math.Pow(SelectorRange, 2.0))
-		{
-			var cell_position = new Vector3I(
-			(int)Math.Round(position.X, 0),
-			(int)Math.Round(position.Y, 0),
-			(int)Math.Round(position.Z, 0)
+		var player_cell = new Vector3I(
+			(int)Math.Floor(Position.X),
+			(int)Math.Floor(Position.Y),
+			(int)Math.Floor(Position.Z)
 		);
-			GD.Print("Cell: " + cell_position);
 
-			// TODO: ignore player when raycasting
+		var position = (Vector3)result["position"];
+		var cell_position = new Vector3I(
+			(int)Math.Floor(position.X),
+			(int)Math.Floor(position.Y),
+			(int)Math.Floor(position.Z)
+		);
 
+		// Only select the cell if there is a single voxel distance
+		var distance = player_cell - cell_position;
+		if (distance.X <= 1 && distance.X >= -1 && distance.Z <= 1 && distance.Z >= -1)
+		{
 			var cell_id = Island.GetCellItem(cell_position);
-			GD.Print("Cell ID: " + cell_id);
 
 			// Only if the cell hit is empty set the selector
 			if (cell_id == GridMap.InvalidCellItem)
 			{
 				SelectedCell = cell_position;
-				Island.SetCellItem(SelectedCell.Value, Island.MeshLibrary.FindItemByName("Selector"));
+				Island.SetCellItem(SelectedCell.Value, SelectorID);
+			}
+			else
+			{
+				// Try a cell above, sometimes the ray hits "weirdly"
+				cell_position += new Vector3I(0, 1, 0);
+				cell_id = Island.GetCellItem(cell_position);
+
+				if (cell_id == GridMap.InvalidCellItem)
+				{
+					SelectedCell = cell_position;
+					Island.SetCellItem(SelectedCell.Value, SelectorID);
+				}
 			}
 		}
 	}
