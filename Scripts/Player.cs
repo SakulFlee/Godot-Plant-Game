@@ -122,7 +122,6 @@ public partial class Player : CharacterBody3D
 		var result = space_state.IntersectRay(query);
 		if (!result.ContainsKey("position"))
 		{
-			GD.PrintErr("No position");
 			return;
 		}
 
