@@ -134,6 +134,8 @@ public partial class Player : CharacterBody3D
 		);
 			GD.Print("Cell: " + cell_position);
 
+			// TODO: ignore player when raycasting
+
 			var cell_id = Island.GetCellItem(cell_position);
 			GD.Print("Cell ID: " + cell_id);
 
