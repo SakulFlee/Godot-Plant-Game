@@ -41,11 +41,32 @@ public partial class Island : GridMap
 	[Export]
 	private Godot.Collections.Dictionary<Vector3I, int> change_dict;
 
+	public int[] NoNeighbourVoxelIDs { get; private set; }
+	public int[] PlowableVoxelIDs { get; private set; }
+	public int[] PlantableVoxelIDs { get; private set; }
+	public int[] HarvestableVoxelIDs { get; private set; }
+
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
 		// Force an update
 		update_state_request = UpdateStateRequest.FullUpdate;
+
+		NoNeighbourVoxelIDs = new int[] {
+			(int) InvalidCellItem,
+			MeshLibrary.FindItemByName("Water"),
+			MeshLibrary.FindItemByName("Selector")
+		};
+		PlowableVoxelIDs = new int[] {
+			MeshLibrary.FindItemByName("Grass"),
+			MeshLibrary.FindItemByName("Dirt")
+		};
+		PlantableVoxelIDs = new int[] {
+			MeshLibrary.FindItemByName("Farmland")
+		};
+		HarvestableVoxelIDs = new int[] {
+			MeshLibrary.FindItemByName("Radish")
+		};
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.

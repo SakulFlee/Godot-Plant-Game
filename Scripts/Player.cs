@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Linq;
 using System.Net.WebSockets;
 
 public partial class Player : CharacterBody3D
@@ -21,17 +22,23 @@ public partial class Player : CharacterBody3D
 
 	private SpringArm3D SpringArm3D;
 	private Camera3D Camera3D;
-	private GridMap Island;
+	private Island Island;
 
 	private Vector3I? SelectedCell;
 	private int SelectorID;
+
+	private int FarmlandVoxelID;
+	private int RadishID;
 
 	public override void _Ready()
 	{
 		SpringArm3D = GetNode<SpringArm3D>("SpringArm3D");
 		Camera3D = GetNode<Camera3D>("SpringArm3D/Camera3D");
-		Island = GetNode<GridMap>("/root/Node/Island");
+		Island = GetNode<Island>("/root/Node/Island");
 		SelectorID = Island.MeshLibrary.FindItemByName("Selector");
+
+		FarmlandVoxelID = Island.MeshLibrary.FindItemByName("Farmland");
+		RadishID = Island.MeshLibrary.FindItemByName("Radish");
 	}
 
 	public override void _PhysicsProcess(double delta)
@@ -44,7 +51,8 @@ public partial class Player : CharacterBody3D
 
 		SanityCheck();
 
-		HandleMouse();
+		HandleMouseMovement();
+		HandleSelectorInteraction();
 	}
 
 	private void HandleMovement()
@@ -97,7 +105,7 @@ public partial class Player : CharacterBody3D
 		}
 	}
 
-	private void HandleMouse()
+	private void HandleMouseMovement()
 	{
 		// If there is a selected cell, remove it
 		if (SelectedCell != null)
@@ -142,25 +150,56 @@ public partial class Player : CharacterBody3D
 		var distance = player_cell - cell_position;
 		if (distance.X <= 1 && distance.X >= -1 && distance.Z <= 1 && distance.Z >= -1)
 		{
-			var cell_id = Island.GetCellItem(cell_position);
-
-			// Only if the cell hit is empty set the selector
-			if (cell_id == GridMap.InvalidCellItem)
+			for (int i = 0; i <= 2; i++)
 			{
-				SelectedCell = cell_position;
-				Island.SetCellItem(SelectedCell.Value, SelectorID);
-			}
-			else
-			{
-				// Try a cell above, sometimes the ray hits "weirdly"
-				cell_position += new Vector3I(0, 1, 0);
-				cell_id = Island.GetCellItem(cell_position);
+				var local_cell_position = cell_position + new Vector3I(0, i, 0);
 
+				var cell_id = Island.GetCellItem(local_cell_position);
+				GD.Print($"#{i} {cell_id}@{local_cell_position}");
 				if (cell_id == GridMap.InvalidCellItem)
 				{
-					SelectedCell = cell_position;
+					SelectedCell = local_cell_position;
 					Island.SetCellItem(SelectedCell.Value, SelectorID);
+					break;
+
+					// TODO: Set selector to null
 				}
+			}
+		}
+	}
+
+	private void HandleSelectorInteraction()
+	{
+		if (SelectedCell == null)
+		{
+			return;
+		}
+
+		var cell_position = SelectedCell.Value - new Vector3I(0, 1, 0);
+		var cell_id = Island.GetCellItem(cell_position);
+
+		if (SelectedCell != null && Input.IsActionJustPressed("primary_action"))
+		{
+			if (Island.PlowableVoxelIDs.Contains(cell_id))
+			{
+				Island.SetCellItem(cell_position, FarmlandVoxelID);
+			}
+
+			if (Island.HarvestableVoxelIDs.Contains(cell_id))
+			{
+				Island.SetCellItem(cell_position, (int)Island.InvalidCellItem);
+			}
+		}
+
+		if (SelectedCell != null && Input.IsActionJustPressed("secondary_action"))
+		{
+			if (Island.PlantableVoxelIDs.Contains(cell_id))
+			{
+				var cell_above = cell_position + new Vector3I(0, 1, 0);
+
+				SelectedCell = null;
+				// SelectedCell = cell_above + new Vector3I(0, 1, 0);
+				Island.SetCellItem(cell_above, RadishID);
 			}
 		}
 	}
@@ -169,3 +208,4 @@ public partial class Player : CharacterBody3D
 // TODO: Controller input
 // TODO: Change to farmland
 // TODO: Plant
+// TODO: Use NoNeighbourVoxelIDs
