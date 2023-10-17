@@ -13,6 +13,9 @@ public partial class Player : CharacterBody3D
 	[Export]
 	private float SanityCutoff = -100.0f;
 
+	[Export]
+	private float SelectorRange = 2.5f;
+
 	// Get the gravity from the project settings to be synced with RigidBody nodes.
 	private float Gravity = ProjectSettings.GetSetting("physics/3d/default_gravity").AsSingle();
 
@@ -94,39 +97,52 @@ public partial class Player : CharacterBody3D
 
 	private void HandleMouse()
 	{
+		// If there is a selected cell, remove it
+		if (SelectedCell != null)
+		{
+			Island.SetCellItem(SelectedCell.Value, (int)GridMap.InvalidCellItem);
+			SelectedCell = null;
+		}
+
+		// Ray cast mouse position into world
 		var mouse_position = GetViewport().GetMousePosition();
-		GD.Print("Mouse Position: " + mouse_position);
-
 		var space_state = GetWorld3D().DirectSpaceState;
-
 		var origin = Camera3D.ProjectRayOrigin(mouse_position);
 		var end = origin + Camera3D.ProjectRayNormal(mouse_position) * 35.0f;
-
 		var query = PhysicsRayQueryParameters3D.Create(origin, end);
 		query.CollideWithAreas = true;
-
 		var result = space_state.IntersectRay(query);
-		var position = (Vector3)result["position"];
-		var cell_position = new Vector3I(
-			(int)position.X,
-			(int)position.Y,
-			(int)position.Z
-		);
-		GD.Print("Cell: " + cell_position);
-		var cell_id = Island.GetCellItem(cell_position);
-		GD.Print("Cell ID: " + cell_id);
-
-		// Only if the cell hit is empty
-		if (cell_id == GridMap.InvalidCellItem)
+		// If there is no position key, we probably didn't 
+		// hit anything anyways so we just return out of here ...
+		if (!result.ContainsKey("position"))
 		{
-			// If there is a selected cell, remove it first
-			if (SelectedCell != null)
-			{
-				Island.SetCellItem(SelectedCell.Value + new Vector3I(0, 1, 0), (int)GridMap.InvalidCellItem);
-			}
+			GD.PrintErr("No position");
+			return;
+		}
 
-			SelectedCell = cell_position;
-			Island.SetCellItem(SelectedCell.Value + new Vector3I(0, 1, 0), Island.MeshLibrary.FindItemByName("Selector"));
+		var position = (Vector3)result["position"];
+		GD.Print("Position: " + position);
+		var distance_to_player = position.DistanceSquaredTo(Position);
+
+		// Only if the selection is within range set the selector
+		if (distance_to_player <= Math.Pow(SelectorRange, 2.0))
+		{
+			var cell_position = new Vector3I(
+			(int)Math.Round(position.X, 0),
+			(int)Math.Round(position.Y, 0),
+			(int)Math.Round(position.Z, 0)
+		);
+			GD.Print("Cell: " + cell_position);
+
+			var cell_id = Island.GetCellItem(cell_position);
+			GD.Print("Cell ID: " + cell_id);
+
+			// Only if the cell hit is empty set the selector
+			if (cell_id == GridMap.InvalidCellItem)
+			{
+				SelectedCell = cell_position;
+				Island.SetCellItem(SelectedCell.Value, Island.MeshLibrary.FindItemByName("Selector"));
+			}
 		}
 	}
 }
