@@ -1,8 +1,11 @@
-[gd_scene format=3 uid="uid://d2hd5tkxq4ttn"]
+[gd_scene load_steps=2 format=3 uid="uid://d2hd5tkxq4ttn"]
+
+[ext_resource type="Script" path="res://MainMenu/MainMenu.cs" id="1_delya"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
 anchors_preset = 0
+script = ExtResource("1_delya")
 
 [node name="Button" type="Button" parent="."]
 layout_mode = 1
@@ -22,4 +25,4 @@ size_flags_vertical = 6
 theme_override_font_sizes/font_size = 40
 text = "Start"
 
-[connection signal="pressed" from="Button" to="." method="start_button_pressed"]
+[connection signal="pressed" from="Button" to="." method="OnButtonPressed"]
