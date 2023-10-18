@@ -1,6 +1,6 @@
 [gd_scene load_steps=11 format=3 uid="uid://te70nji72mlw"]
 
-[ext_resource type="Shader" path="res://water/Water.gdshader" id="1_jevci"]
+[ext_resource type="Shader" path="res://Water/Water.gdshader" id="1_jevci"]
 
 [sub_resource type="QuadMesh" id="QuadMesh_vbwrk"]
 subdivide_width = 10
