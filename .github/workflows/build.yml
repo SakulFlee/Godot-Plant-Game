@@ -25,6 +25,9 @@ jobs:
     - name: Create export folder
       run: mkdir -p 'Builds/${{ matrix.export_name }}'
 
+    - name: DEBUG
+      run: ls -al -R .
+
     - name: Godot Export
       run: |
         OUTPUT="$(godot --headless --export-release '${{ matrix.export_name }}' 'Builds/${{ matrix.export_name }}' . 2>&1)"
