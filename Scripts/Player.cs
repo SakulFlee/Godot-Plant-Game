@@ -175,7 +175,7 @@ public partial class Player : CharacterBody3D
 		var cell_position = SelectedCell.Value - new Vector3I(0, 1, 0);
 		var cell_id = Island.GetCellItem(cell_position);
 
-		if (SelectedCell != null && Input.IsActionJustPressed("primary_action"))
+		if (SelectedCell != null && Input.IsActionPressed("primary_action"))
 		{
 			if (Island.PlowableVoxelIDs.Contains(cell_id))
 			{
@@ -188,7 +188,7 @@ public partial class Player : CharacterBody3D
 			}
 		}
 
-		if (SelectedCell != null && Input.IsActionJustPressed("secondary_action"))
+		if (SelectedCell != null && Input.IsActionPressed("secondary_action"))
 		{
 			if (Island.PlantableVoxelIDs.Contains(cell_id))
 			{
