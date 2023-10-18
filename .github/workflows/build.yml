@@ -15,9 +15,6 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Make output folder
-      run: mkdir -p out/release
-
     - name: Godot Export
       run: |
         OUTPUT="$(godot --headless --export-release 'Linux' out/release . 2>&1)"
@@ -35,9 +32,6 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Make output folder
-      run: mkdir -p out/release
-
     - name: Godot Export
       run: |
         OUTPUT="$(godot --headless --export-release 'Windows' out/release . 2>&1)"
@@ -54,9 +48,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-
-    - name: Make output folder
-      run: mkdir -p out/release
 
     - name: Godot Export
       run: |
