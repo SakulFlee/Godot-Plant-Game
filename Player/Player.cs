@@ -19,10 +19,12 @@ public partial class Player : CharacterBody3D
 	// Get the gravity from the project settings to be synced with RigidBody nodes.
 	private float gravity = ProjectSettings.GetSetting("physics/3d/default_gravity").AsSingle();
 
+	private RayCast3D rayCastFront;
 	private SpringArm3D springArm3D;
 	private Camera3D camera3D;
 	private Island island;
 
+	private bool isControllerInput;
 	private Vector3I? selectedCell;
 	private int selectorID;
 
@@ -31,6 +33,7 @@ public partial class Player : CharacterBody3D
 
 	public override void _Ready()
 	{
+		rayCastFront = GetNode<RayCast3D>("RayCastFront");
 		springArm3D = GetNode<SpringArm3D>("SpringArm3D");
 		camera3D = GetNode<Camera3D>("SpringArm3D/Camera3D");
 		island = GetNode<Island>("/root/MainGame/Island");
@@ -42,7 +45,6 @@ public partial class Player : CharacterBody3D
 
 	public override void _PhysicsProcess(double delta)
 	{
-		HandleCamera();
 		HandleMovement();
 		HandleGravity(delta);
 
@@ -70,19 +72,6 @@ public partial class Player : CharacterBody3D
 		}
 
 		Velocity = current_velocity;
-	}
-
-	private void HandleCamera()
-	{
-		if (Input.IsActionJustPressed("camera_left"))
-		{
-			springArm3D.RotateY(Mathf.DegToRad(90f));
-		}
-
-		if (Input.IsActionJustPressed("camera_right"))
-		{
-			springArm3D.RotateY(Mathf.DegToRad(-90f));
-		}
 	}
 
 	private void HandleGravity(double delta)
@@ -113,32 +102,56 @@ public partial class Player : CharacterBody3D
 			selectedCell = null;
 		}
 
-		// Ray cast mouse position into world
-		var mouse_position = GetViewport().GetMousePosition();
-		var space_state = GetWorld3D().DirectSpaceState;
+		Vector3 position;
 
-		var origin = camera3D.ProjectRayOrigin(mouse_position);
-		var end = origin + camera3D.ProjectRayNormal(mouse_position) * 35.0f;
-
-		var query = PhysicsRayQueryParameters3D.Create(origin, end);
-		query.CollideWithAreas = true;
-		query.Exclude = new Godot.Collections.Array<Rid> { GetRid() };
-
-		// If there is no position key, we probably didn't 
-		// hit anything anyways so we just return out of here ...
-		var result = space_state.IntersectRay(query);
-		if (!result.ContainsKey("position"))
+		var input_vector = Input.GetVector("cursor_left", "cursor_right", "cursor_forward", "cursor_backward");
+		if (input_vector.Length() > 0.5f)
 		{
-			return;
+			var rounded = input_vector.Round();
+			position = Position + new Vector3(rounded.X, -1, rounded.Y);
+
+			// If there are controller inputs, reset the mouse to the center of the window and disable the mouse cursor.
+			var window = GetViewport().GetWindow();
+			var window_position = window.Position;
+			var window_size = window.Size;
+			var window_half_size = window_size / new Vector2(2f, 2f);
+			var center_of_window = window_position + window_half_size;
+
+			window.WarpMouse(center_of_window);
+			Input.MouseMode = Input.MouseModeEnum.Hidden;
+		}
+		else
+		{
+			// Ray cast mouse position into world
+			var mouse_position = GetViewport().GetMousePosition();
+			var space_state = GetWorld3D().DirectSpaceState;
+
+			var origin = camera3D.ProjectRayOrigin(mouse_position);
+			var end = origin + camera3D.ProjectRayNormal(mouse_position) * 35.0f;
+
+			var query = PhysicsRayQueryParameters3D.Create(origin, end);
+			query.CollideWithAreas = true;
+			query.Exclude = new Godot.Collections.Array<Rid> { GetRid() };
+
+			// If there is no position key, we probably didn't 
+			// hit anything anyways so we just return out of here ...
+			var result = space_state.IntersectRay(query);
+			if (!result.ContainsKey("position"))
+			{
+				return;
+			}
+
+			Input.MouseMode = Input.MouseModeEnum.Visible;
+			position = (Vector3)result["position"];
 		}
 
+		// TODO: Fix
 		var player_cell = new Vector3I(
 			(int)Math.Floor(Position.X),
 			(int)Math.Floor(Position.Y),
 			(int)Math.Floor(Position.Z)
 		);
 
-		var position = (Vector3)result["position"];
 		var cell_position = new Vector3I(
 			(int)Math.Floor(position.X),
 			(int)Math.Floor(position.Y),

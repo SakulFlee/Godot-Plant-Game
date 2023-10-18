@@ -1,48 +1,11 @@
-[gd_scene load_steps=7 format=3 uid="uid://b80pwan0h6npx"]
+[gd_scene load_steps=3 format=3 uid="uid://b80pwan0h6npx"]
 
 [ext_resource type="MeshLibrary" uid="uid://46f7acy8mu60" path="res://models/voxels/mesh_library.tres" id="1_yht2s"]
 [ext_resource type="Script" path="res://Island/Island.cs" id="2_0r8uk"]
-
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_2k1li"]
-noise_type = 2
-seed = 22395
-frequency = 0.005
-fractal_type = 3
-fractal_octaves = 10
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_0xaco"]
-noise = SubResource("FastNoiseLite_2k1li")
-
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_lnox8"]
-noise_type = 2
-seed = 54321
-fractal_type = 3
-domain_warp_type = 1
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_0hom5"]
-noise = SubResource("FastNoiseLite_lnox8")
 
 [node name="Island" type="GridMap"]
 mesh_library = ExtResource("1_yht2s")
 cell_size = Vector3(1, 1, 1)
 script = ExtResource("2_0r8uk")
-update_state_request = 0
-voxel_generation = {
--50: ["Stone"],
--3: ["Dirt"],
-0: ["Dirt", "Grass", "Grass", "Grass"],
-50: ["Dirt", "Stone", "Stone", "Stone"]
-}
-terrain_noise_a = SubResource("NoiseTexture2D_0xaco")
-terrain_noise_b = SubResource("NoiseTexture2D_0hom5")
-change_dict = {
-Vector3i(-1, 0, -1): 1,
-Vector3i(-1, 0, 0): 1,
-Vector3i(-1, 0, 1): 1,
-Vector3i(0, 0, -1): 1,
-Vector3i(0, 0, 0): 1,
-Vector3i(0, 0, 1): 1,
-Vector3i(1, 0, -1): 1,
-Vector3i(1, 0, 0): 1,
-Vector3i(1, 0, 1): 1
-}
+voxelGeneration = {}
+changes = {}

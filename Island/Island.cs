@@ -222,7 +222,7 @@ public partial class Island : GridMap
 				// Calculate noise values
 				var noise_a = terrainNoiseA.Noise.GetNoise2D(x, z) * 100.0;
 				var noise_b = terrainNoiseB.Noise.GetNoise2D(x, z) * 100.0;
-				var below_ground = (noise_a * noise_b) / 100.0 * belowGroundFactor;
+				var below_ground = noise_a * noise_b / 100.0 * belowGroundFactor;
 				var terrain_indent = (noise_b - noise_a) * terrainIndentFactor;
 
 				// Use noise value for (Y) axis (vertical)
