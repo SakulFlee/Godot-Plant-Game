@@ -155,7 +155,6 @@ public partial class Player : CharacterBody3D
 				var local_cell_position = cell_position + new Vector3I(0, i, 0);
 
 				var cell_id = Island.GetCellItem(local_cell_position);
-				GD.Print($"#{i} {cell_id}@{local_cell_position}");
 				if (cell_id == GridMap.InvalidCellItem)
 				{
 					SelectedCell = local_cell_position;
@@ -196,7 +195,6 @@ public partial class Player : CharacterBody3D
 				var cell_above = cell_position + new Vector3I(0, 1, 0);
 
 				SelectedCell = null;
-				// SelectedCell = cell_above + new Vector3I(0, 1, 0);
 				Island.SetCellItem(cell_above, RadishID);
 			}
 		}
