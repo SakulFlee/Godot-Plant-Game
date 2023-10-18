@@ -1,0 +1,50 @@
+[gd_scene load_steps=7 format=3 uid="uid://cncbcoi37cogu"]
+
+[ext_resource type="Script" path="res://SkyAndSun/SkyAndSun.cs" id="1_3l14v"]
+
+[sub_resource type="Gradient" id="Gradient_8f5jr"]
+offsets = PackedFloat32Array(0, 0.226891, 0.470588, 0.655462, 1)
+colors = PackedColorArray(0, 0, 0, 1, 0.411765, 0.776471, 0.956863, 1, 0.368627, 0, 0.576471, 1, 0.0196078, 0.00784314, 0, 1, 0.0196078, 0.00784314, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_ru6gf"]
+gradient = SubResource("Gradient_8f5jr")
+width = 1
+height = 1
+fill_from = Vector2(1, 1)
+
+[sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_e4gkf"]
+turbidity = 0.0
+energy_multiplier = 2.0
+night_sky = SubResource("GradientTexture2D_ru6gf")
+
+[sub_resource type="Sky" id="Sky_n656v"]
+sky_material = SubResource("PhysicalSkyMaterial_e4gkf")
+
+[sub_resource type="Environment" id="Environment_oyip8"]
+background_mode = 2
+sky = SubResource("Sky_n656v")
+ambient_light_source = 3
+ambient_light_color = Color(0.619608, 0.764706, 0.858824, 1)
+reflected_light_source = 2
+tonemap_mode = 1
+sdfgi_use_occlusion = true
+volumetric_fog_enabled = true
+volumetric_fog_density = 0.0
+volumetric_fog_ambient_inject = 1.0
+adjustment_enabled = true
+adjustment_brightness = 0.85
+adjustment_contrast = 1.5
+adjustment_saturation = 1.5
+
+[node name="SkyAndSun" type="Node3D"]
+script = ExtResource("1_3l14v")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_oyip8")
+
+[node name="Anchor" type="Node3D" parent="WorldEnvironment"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="WorldEnvironment/Anchor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 300)
+sky_mode = 2

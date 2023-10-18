@@ -18,11 +18,15 @@ jobs:
     - name: Make output folder
       run: mkdir -p out/debug
 
-    - name: Rust - Debug Build
-      run: cargo build
-
     - name: Godot - Debug Export
-      run: godot --headless --export-debug Linux out/debug .
+      run: |
+        OUTPUT="$(godot --headless --export-debug 'Linux x86_64' out/debug . 2>&1)"
+        echo "$OUTPUT"
+        if echo "$OUTPUT" |& grep "Cannot export project"
+        then
+          echo -e "\n\n\nThere was an error found in the Godot export log!"
+          exit -1
+        fi
 
   release:
     name: Release
@@ -34,8 +38,12 @@ jobs:
     - name: Make output folder
       run: mkdir -p out/release
 
-    - name: Rust - Release Build
-      run: cargo build --release
-
     - name: Godot - Release Export
-      run: godot --headless --export-release Linux out/release .
+      run: |
+        OUTPUT="$(godot --headless --export-release 'Linux x86_64' out/release . 2>&1)"
+        echo "$OUTPUT"
+        if echo "$OUTPUT" |& grep "Cannot export project"
+        then
+          echo -e "\n\n\nThere was an error found in the Godot export log!"
+          exit -1
+        fi
