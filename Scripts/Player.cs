@@ -43,7 +43,7 @@ public partial class Player : CharacterBody3D
 
 	public override void _PhysicsProcess(double delta)
 	{
-		HandleCamera();
+		HandleCamera(delta);
 		HandleMovement();
 		HandleGravity(delta);
 
@@ -73,7 +73,7 @@ public partial class Player : CharacterBody3D
 		Velocity = current_velocity;
 	}
 
-	private void HandleCamera()
+	private void HandleCamera(double delta)
 	{
 		if (Input.IsActionJustPressed("camera_left"))
 		{
