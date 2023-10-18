@@ -1,6 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://c08x37ykkqb24"]
-
-[ext_resource type="Script" path="res://scenes/date_and_time/date_and_time.cs" id="1_u1ugk"]
-
-[node name="DateAndTime" type="Node"]
-script = ExtResource("1_u1ugk")
