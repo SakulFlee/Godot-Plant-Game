@@ -14,9 +14,9 @@ jobs:
     strategy:
       matrix:
         export_name: [
-          "Linux x86_64",
-          "Windows Desktop",
-          "macOS"
+          "Linux_x86_64",
+          "Windows_Desktop_x86_64",
+          "macOS_Universal"
         ]
 
     steps:
