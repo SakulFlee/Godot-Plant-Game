@@ -85,6 +85,25 @@
             "dependsOn": [
                 "[Rust] Debug Build"
             ]
+        },
+        {
+            "label": "[C#] Build",
+            "type": "process",
+            "command": "dotnet",
+            "args": [
+                "build"
+            ],
+            "problemMatcher": "$msCompile",
+            "presentation": {
+                "reveal": "never",
+                "revealProblems": "onProblem",
+                "focus": false,
+                "clear": true
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
         }
         // Export: godot --headless --path path_to_your_project --export-release my_export_preset_name game.exe
     ]
