@@ -145,11 +145,10 @@ public partial class Player : CharacterBody3D
 			position = (Vector3)result["position"];
 		}
 
-		// TODO: Fix
 		var player_cell = new Vector3I(
-			(int)Math.Floor(Position.X),
-			(int)Math.Floor(Position.Y),
-			(int)Math.Floor(Position.Z)
+			(int)Math.Round(Position.X),
+			(int)Math.Round(Position.Y),
+			(int)Math.Round(Position.Z)
 		);
 
 		var cell_position = new Vector3I(
