@@ -8,50 +8,23 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  linux:
-    name: Linux
+  export:
+    name: Export
     runs-on: self-hosted
+    strategy:
+      matrix:
+        export_name: [
+          "Linux x86_64",
+          "Windows Desktop",
+          "macOS"
+        ]
 
     steps:
     - uses: actions/checkout@v4
 
     - name: Godot Export
       run: |
-        OUTPUT="$(godot --headless --export-release 'Linux' out/release . 2>&1)"
-        echo "$OUTPUT"
-        if echo "$OUTPUT" |& grep "ERROR: "
-        then
-          echo -e "\n\n\nThere was an error found in the Godot export log!"
-          exit -1
-        fi
-
-  windows:
-    name: Windows
-    runs-on: self-hosted
-
-    steps:
-    - uses: actions/checkout@v4
-
-    - name: Godot Export
-      run: |
-        OUTPUT="$(godot --headless --export-release 'Windows' out/release . 2>&1)"
-        echo "$OUTPUT"
-        if echo "$OUTPUT" |& grep "ERROR: "
-        then
-          echo -e "\n\n\nThere was an error found in the Godot export log!"
-          exit -1
-        fi
-
-  macos:
-    name: macOS
-    runs-on: self-hosted
-
-    steps:
-    - uses: actions/checkout@v4
-
-    - name: Godot Export
-      run: |
-        OUTPUT="$(godot --headless --export-release 'macOS' out/release . 2>&1)"
+        OUTPUT="$(godot --headless --export-release '${{ matrix.export_name }}' out/release . 2>&1)"
         echo "$OUTPUT"
         if echo "$OUTPUT" |& grep "ERROR: "
         then
