@@ -34,7 +34,7 @@ public partial class Player : CharacterBody3D
 	{
 		SpringArm3D = GetNode<SpringArm3D>("SpringArm3D");
 		Camera3D = GetNode<Camera3D>("SpringArm3D/Camera3D");
-		Island = GetNode<Island>("/root/Node/Island");
+		Island = GetNode<Island>("/root/MainGame/Island");
 		SelectorID = Island.MeshLibrary.FindItemByName("Selector");
 
 		FarmlandVoxelID = Island.MeshLibrary.FindItemByName("Farmland");
