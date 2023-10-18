@@ -189,7 +189,7 @@ public partial class Island : GridMap
 		}
 
 		GD.Print("Culling " + to_be_culled.Count + "/" + count_before);
-		to_be_culled.ForEach(position => SetCellItem(position, -1));
+		to_be_culled.ForEach(position => SetCellItem(position, (int)InvalidCellItem));
 	}
 
 	private void EnsureCenterVoxels()
@@ -243,7 +243,7 @@ public partial class Island : GridMap
 						continue;
 					}
 
-					var voxel_id = -1;
+					var voxel_id = (int)InvalidCellItem;
 					var index = y;
 					while (!voxel_generation.ContainsKey(index))
 					{
