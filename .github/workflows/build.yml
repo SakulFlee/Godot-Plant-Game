@@ -22,9 +22,12 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Create export folder
+      run: mkdir -p 'Builds/${{ matrix.export_name }}'
+
     - name: Godot Export
       run: |
-        OUTPUT="$(godot --headless --export-release '${{ matrix.export_name }}' out/release . 2>&1)"
+        OUTPUT="$(godot --headless --export-release '${{ matrix.export_name }}' 'Builds/${{ matrix.export_name }}' . 2>&1)"
         echo "$OUTPUT"
         if echo "$OUTPUT" |& grep "ERROR: "
         then
