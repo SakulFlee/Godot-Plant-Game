@@ -19,7 +19,7 @@ jobs:
       run: |
         OUTPUT="$(godot --headless --export-release 'Linux' out/release . 2>&1)"
         echo "$OUTPUT"
-        if echo "$OUTPUT" |& grep "Cannot export project"
+        if echo "$OUTPUT" |& grep "ERROR: "
         then
           echo -e "\n\n\nThere was an error found in the Godot export log!"
           exit -1
@@ -36,7 +36,7 @@ jobs:
       run: |
         OUTPUT="$(godot --headless --export-release 'Windows' out/release . 2>&1)"
         echo "$OUTPUT"
-        if echo "$OUTPUT" |& grep "Cannot export project"
+        if echo "$OUTPUT" |& grep "ERROR: "
         then
           echo -e "\n\n\nThere was an error found in the Godot export log!"
           exit -1
@@ -53,7 +53,7 @@ jobs:
       run: |
         OUTPUT="$(godot --headless --export-release 'macOS' out/release . 2>&1)"
         echo "$OUTPUT"
-        if echo "$OUTPUT" |& grep "Cannot export project"
+        if echo "$OUTPUT" |& grep "ERROR: "
         then
           echo -e "\n\n\nThere was an error found in the Godot export log!"
           exit -1
