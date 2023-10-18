@@ -25,7 +25,8 @@ jobs:
     - name: Create export folder
       run: |
         mkdir -p 'Builds/${{ matrix.export_name }}'
-        chmod a+wrx -R 'Builds'
+        chmod a+wrx -R 'Builds/${{ matrix.export_name }}'
+        ls -al -R Builds/
 
     - name: Godot Export
       run: |
