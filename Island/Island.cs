@@ -7,62 +7,62 @@ public partial class Island : GridMap
 {
 	[ExportCategory("Island Update")]
 	[Export]
-	private UpdateStateRequest update_state_request = UpdateStateRequest.FullUpdate;
+	private UpdateStateRequest updateStateRequest = UpdateStateRequest.FullUpdate;
 
 	[ExportCategory("Island Settings")]
 	[Export(PropertyHint.Range, "5.0, 100.0,")]
 	private uint radius = 50;
 
 	[Export]
-	private float below_ground_factor = 2.0f;
+	private float belowGroundFactor = 2.0f;
 
 	[Export(PropertyHint.Range, "0.0, 1.0, ")]
-	private float terrain_indent_factor = 0.05f;
+	private float terrainIndentFactor = 0.05f;
 
 	[Export]
-	private string spawn_platform_voxel = "Grass";
+	private string spawnPlatformVoxel = "Grass";
 
 	[Export]
-	private Godot.Collections.Dictionary<int, Godot.Collections.Array<string>> voxel_generation;
+	private Godot.Collections.Dictionary<int, Godot.Collections.Array<string>> voxelGeneration;
 
 	[Export]
-	private int water_level = 0;
+	private int waterLevel = 0;
 
 	[ExportCategory("Island Noise")]
 	[Export]
-	private NoiseTexture2D terrain_noise_a;
+	private NoiseTexture2D terrainNoiseA;
 
 	[Export]
-	private NoiseTexture2D terrain_noise_b;
+	private NoiseTexture2D terrainNoiseB;
 
 	[ExportCategory("Island Change")]
 	[Export]
-	private Godot.Collections.Dictionary<Vector3I, int> change_dict;
+	private Godot.Collections.Dictionary<Vector3I, int> changes;
 
-	public int[] NoNeighbourVoxelIDs { get; private set; }
-	public int[] PlowableVoxelIDs { get; private set; }
-	public int[] PlantableVoxelIDs { get; private set; }
-	public int[] HarvestableVoxelIDs { get; private set; }
+	public int[] noNeighbourVoxelIDs { get; private set; }
+	public int[] plowableVoxelIDs { get; private set; }
+	public int[] plantableVoxelIDs { get; private set; }
+	public int[] harvestableVoxelIDs { get; private set; }
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
 		// Force an update
-		update_state_request = UpdateStateRequest.FullUpdate;
+		updateStateRequest = UpdateStateRequest.FullUpdate;
 
-		NoNeighbourVoxelIDs = new int[] {
+		noNeighbourVoxelIDs = new int[] {
 			(int) InvalidCellItem,
 			MeshLibrary.FindItemByName("Water"),
 			MeshLibrary.FindItemByName("Selector")
 		};
-		PlowableVoxelIDs = new int[] {
+		plowableVoxelIDs = new int[] {
 			MeshLibrary.FindItemByName("Grass"),
 			MeshLibrary.FindItemByName("Dirt")
 		};
-		PlantableVoxelIDs = new int[] {
+		plantableVoxelIDs = new int[] {
 			MeshLibrary.FindItemByName("Farmland")
 		};
-		HarvestableVoxelIDs = new int[] {
+		harvestableVoxelIDs = new int[] {
 			MeshLibrary.FindItemByName("Radish")
 		};
 	}
@@ -70,13 +70,7 @@ public partial class Island : GridMap
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
-		DoUpdate();
-	}
-
-	private void DoUpdate()
-	{
-
-		if (update_state_request == UpdateStateRequest.None)
+		if (updateStateRequest == UpdateStateRequest.None)
 		{
 			return;
 		}
@@ -87,18 +81,18 @@ public partial class Island : GridMap
 		EnsureCenterVoxels();
 
 		// Remove all currently set voxels
-		if (update_state_request == UpdateStateRequest.FullUpdate || update_state_request == UpdateStateRequest.Clear)
+		if (updateStateRequest == UpdateStateRequest.FullUpdate || updateStateRequest == UpdateStateRequest.Clear)
 		{
 			Clear();
 		}
 
-		if (update_state_request == UpdateStateRequest.FullUpdate)
+		if (updateStateRequest == UpdateStateRequest.FullUpdate)
 		{
 			// Utilize noise maps to generate the island(s)
 			UpdateIslandWithNoise();
 		}
 
-		if (update_state_request == UpdateStateRequest.FullUpdate || update_state_request == UpdateStateRequest.ApplyChangeOnly)
+		if (updateStateRequest == UpdateStateRequest.FullUpdate || updateStateRequest == UpdateStateRequest.ApplyChangeOnly)
 		{
 			// Apply any changes made to the island
 			UpdateIslandWithChange();
@@ -110,7 +104,7 @@ public partial class Island : GridMap
 			CullIsland();
 		}
 
-		update_state_request = UpdateStateRequest.None;
+		updateStateRequest = UpdateStateRequest.None;
 	}
 
 	private void UpdateWater()
@@ -192,18 +186,18 @@ public partial class Island : GridMap
 
 	private void EnsureCenterVoxels()
 	{
-		if (change_dict.Count > 0)
+		if (changes.Count > 0)
 		{
 			return;
 		}
 
-		var voxel_id = MeshLibrary.FindItemByName(spawn_platform_voxel);
+		var voxel_id = MeshLibrary.FindItemByName(spawnPlatformVoxel);
 
 		for (int x = -1; x <= 1; x++)
 		{
 			for (int z = -1; z <= 1; z++)
 			{
-				change_dict.Add(new Vector3I(z, 0, x), voxel_id);
+				changes.Add(new Vector3I(z, 0, x), voxel_id);
 			}
 		}
 	}
@@ -226,10 +220,10 @@ public partial class Island : GridMap
 				}
 
 				// Calculate noise values
-				var noise_a = terrain_noise_a.Noise.GetNoise2D(x, z) * 100.0;
-				var noise_b = terrain_noise_b.Noise.GetNoise2D(x, z) * 100.0;
-				var below_ground = (noise_a * noise_b) / 100.0 * below_ground_factor;
-				var terrain_indent = (noise_b - noise_a) * terrain_indent_factor;
+				var noise_a = terrainNoiseA.Noise.GetNoise2D(x, z) * 100.0;
+				var noise_b = terrainNoiseB.Noise.GetNoise2D(x, z) * 100.0;
+				var below_ground = (noise_a * noise_b) / 100.0 * belowGroundFactor;
+				var terrain_indent = (noise_b - noise_a) * terrainIndentFactor;
 
 				// Use noise value for (Y) axis (vertical)
 				for (int y = -(int)below_ground; y <= (int)terrain_indent; y++)
@@ -243,7 +237,7 @@ public partial class Island : GridMap
 
 					var voxel_id = (int)InvalidCellItem;
 					var index = y;
-					while (!voxel_generation.ContainsKey(index))
+					while (!voxelGeneration.ContainsKey(index))
 					{
 						if (index > 0)
 						{
@@ -263,7 +257,7 @@ public partial class Island : GridMap
 
 					if (index > int.MinValue)
 					{
-						var options = voxel_generation[index];
+						var options = voxelGeneration[index];
 
 						Random random = new();
 						int option_index = random.Next(0, options.Count);
@@ -280,7 +274,7 @@ public partial class Island : GridMap
 
 	private void UpdateIslandWithChange()
 	{
-		foreach ((var position, var voxel) in change_dict)
+		foreach ((var position, var voxel) in changes)
 		{
 			SetCellItem(position, voxel);
 		}
