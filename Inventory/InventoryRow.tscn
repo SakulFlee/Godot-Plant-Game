@@ -1,0 +1,38 @@
+[gd_scene load_steps=2 format=3 uid="uid://cn6s0b7w7m7vo"]
+
+[ext_resource type="PackedScene" uid="uid://coxnadpuj57x7" path="res://Inventory/InventorySlot.tscn" id="1_xanyg"]
+
+[node name="InventoryRow" type="GridContainer"]
+custom_minimum_size = Vector2(648, 72)
+offset_right = 72.0
+offset_bottom = 72.0
+columns = 9
+
+[node name="InventorySlot1" parent="." instance=ExtResource("1_xanyg")]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+
+[node name="InventorySlot2" parent="." instance=ExtResource("1_xanyg")]
+layout_mode = 2
+
+[node name="InventorySlot3" parent="." instance=ExtResource("1_xanyg")]
+layout_mode = 2
+
+[node name="InventorySlot4" parent="." instance=ExtResource("1_xanyg")]
+layout_mode = 2
+
+[node name="InventorySlot5" parent="." instance=ExtResource("1_xanyg")]
+layout_mode = 2
+
+[node name="InventorySlot6" parent="." instance=ExtResource("1_xanyg")]
+layout_mode = 2
+
+[node name="InventorySlot7" parent="." instance=ExtResource("1_xanyg")]
+layout_mode = 2
+
+[node name="InventorySlot8" parent="." instance=ExtResource("1_xanyg")]
+layout_mode = 2
+
+[node name="InventorySlot9" parent="." instance=ExtResource("1_xanyg")]
+layout_mode = 2

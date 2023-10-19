@@ -1,0 +1,21 @@
+[gd_scene load_steps=3 format=3 uid="uid://c54mrteqputtq"]
+
+[ext_resource type="Script" path="res://Inventory/Inventory.cs" id="1_cy0h8"]
+[ext_resource type="PackedScene" uid="uid://cn6s0b7w7m7vo" path="res://Inventory/InventoryRow.tscn" id="1_onb7c"]
+
+[node name="Inventory" type="GridContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_cy0h8")
+
+[node name="InventoryRow1" parent="." instance=ExtResource("1_onb7c")]
+layout_mode = 2
+
+[node name="InventoryRow2" parent="." instance=ExtResource("1_onb7c")]
+layout_mode = 2
+
+[node name="InventoryRow3" parent="." instance=ExtResource("1_onb7c")]
+layout_mode = 2
