@@ -50,19 +50,19 @@ public partial class Island : GridMap
 		// Force an update
 		updateStateRequest = UpdateStateRequest.FullUpdate;
 
-		noNeighbourVoxelIDs = new int[] {
-			(int) InvalidCellItem,
+		noNeighbourVoxelIDs = new int[]{
+			(int)InvalidCellItem,
 			MeshLibrary.FindItemByName("Water"),
 			MeshLibrary.FindItemByName("Selector")
 		};
-		plowableVoxelIDs = new int[] {
+		plowableVoxelIDs = new int[]{
 			MeshLibrary.FindItemByName("Grass"),
 			MeshLibrary.FindItemByName("Dirt")
 		};
-		plantableVoxelIDs = new int[] {
+		plantableVoxelIDs = new int[]{
 			MeshLibrary.FindItemByName("Farmland")
 		};
-		harvestableVoxelIDs = new int[] {
+		harvestableVoxelIDs = new int[]{
 			MeshLibrary.FindItemByName("Radish")
 		};
 	}
