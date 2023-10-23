@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://dds2brwjwf6tl"
-path="res://.godot/imported/Pine.blend-cddfa49e26b72b267d9eb48ab5a3c3ee.scn"
+path="res://.godot/imported/Pine.blend-084f94589cae4ea9fd65a39bc5b199ce.scn"
 
 [deps]
 
-source_file="res://models/others/Pine.blend"
-dest_files=["res://.godot/imported/Pine.blend-cddfa49e26b72b267d9eb48ab5a3c3ee.scn"]
+source_file="res://Models/others/Pine.blend"
+dest_files=["res://.godot/imported/Pine.blend-084f94589cae4ea9fd65a39bc5b199ce.scn"]
 
 [params]
 
@@ -22,7 +22,6 @@ meshes/generate_lods=true
 meshes/create_shadow_meshes=true
 meshes/light_baking=1
 meshes/lightmap_texel_size=0.2
-meshes/force_disable_compression=false
 skins/use_named_skins=true
 animation/import=true
 animation/fps=30

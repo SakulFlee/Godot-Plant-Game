@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://cgwtetrca0u87"
-path="res://.godot/imported/Tree_Attempt_0.blend-66c7a171516b1dd7aa5f017b9463918e.scn"
+path="res://.godot/imported/Tree_Attempt_0.blend-831579e43ed7da123414bfe5f21c093d.scn"
 
 [deps]
 
-source_file="res://models/others/Tree_Attempt_0.blend"
-dest_files=["res://.godot/imported/Tree_Attempt_0.blend-66c7a171516b1dd7aa5f017b9463918e.scn"]
+source_file="res://Models/others/Tree_Attempt_0.blend"
+dest_files=["res://.godot/imported/Tree_Attempt_0.blend-831579e43ed7da123414bfe5f21c093d.scn"]
 
 [params]
 
@@ -22,7 +22,6 @@ meshes/generate_lods=true
 meshes/create_shadow_meshes=true
 meshes/light_baking=1
 meshes/lightmap_texel_size=0.2
-meshes/force_disable_compression=false
 skins/use_named_skins=true
 animation/import=true
 animation/fps=30

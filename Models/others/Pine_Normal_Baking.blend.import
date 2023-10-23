@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://nd5qo6umobm"
-path="res://.godot/imported/Pine_Normal_Baking.blend-f50cd76adb4e2b6f7a876494fadd76e4.scn"
+path="res://.godot/imported/Pine_Normal_Baking.blend-e6b0b27591e2b91ae2ea9b92ed7b3151.scn"
 
 [deps]
 
-source_file="res://models/others/Pine_Normal_Baking.blend"
-dest_files=["res://.godot/imported/Pine_Normal_Baking.blend-f50cd76adb4e2b6f7a876494fadd76e4.scn"]
+source_file="res://Models/others/Pine_Normal_Baking.blend"
+dest_files=["res://.godot/imported/Pine_Normal_Baking.blend-e6b0b27591e2b91ae2ea9b92ed7b3151.scn"]
 
 [params]
 
@@ -22,7 +22,6 @@ meshes/generate_lods=true
 meshes/create_shadow_meshes=true
 meshes/light_baking=1
 meshes/lightmap_texel_size=0.2
-meshes/force_disable_compression=false
 skins/use_named_skins=true
 animation/import=true
 animation/fps=30
