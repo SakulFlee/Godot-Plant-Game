@@ -31,6 +31,8 @@ public partial class Player : CharacterBody3D
 	private int farmlandVoxelID;
 	private int radishID;
 
+	private ItemDefinition? SelectedItemDefinition;
+
 	public override void _Ready()
 	{
 		rayCastFront = GetNode<RayCast3D>("RayCastFront"); // TODO Not needed?
@@ -201,9 +203,12 @@ public partial class Player : CharacterBody3D
 
 		if (selectedCell != null && Input.IsActionPressed("primary_action"))
 		{
-			if (island.plowableVoxelIDs.Contains(cell_id))
+			if (SelectedItemDefinition != null && SelectedItemDefinition.CanPlow)
 			{
-				island.SetCellItem(cell_position, farmlandVoxelID);
+				if (island.plowableVoxelIDs.Contains(cell_id))
+				{
+					island.SetCellItem(cell_position, farmlandVoxelID);
+				}
 			}
 
 			if (island.harvestableVoxelIDs.Contains(cell_id))
@@ -226,6 +231,14 @@ public partial class Player : CharacterBody3D
 
 	public void OnHotBarSelectionChanged(InventoryItem? item)
 	{
-		GD.Print($"Hot Bar changed: {item}");
+		if (item == null)
+		{
+			SelectedItemDefinition = null;
+		}
+		else
+		{
+			var itemDef = ItemDatabase.Instance.FindItem(item);
+			SelectedItemDefinition = itemDef;
+		}
 	}
 }
