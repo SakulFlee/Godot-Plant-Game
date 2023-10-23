@@ -37,6 +37,9 @@ public partial class HotBar : Control
 	[Export]
 	public PackedScene? SlotTemplate;
 
+	[Signal]
+	public delegate void HotBarSelectionChangedEventHandler(InventoryItem? inventoryItem);
+
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
@@ -112,10 +115,16 @@ public partial class HotBar : Control
 			if (item != null)
 			{
 				HotBarTooltip!.Text = $"{item.Name} ({item.Amount}x)";
+
+				// Send Signal
+				EmitSignal(SignalName.HotBarSelectionChanged, item);
 			}
 			else
 			{
 				HotBarTooltip!.Text = "";
+
+				// Send Signal
+				EmitSignal(SignalName.HotBarSelectionChanged, new Variant());
 			}
 		}
 	}

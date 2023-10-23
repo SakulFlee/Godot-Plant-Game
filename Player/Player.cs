@@ -210,6 +210,9 @@ public partial class Player : CharacterBody3D
 			}
 		}
 	}
-}
 
-// TODO: Controller selector!
+	public void OnHotBarSelectionChanged(InventoryItem? item)
+	{
+		GD.Print($"Hot Bar changed: {item}");
+	}
+}
