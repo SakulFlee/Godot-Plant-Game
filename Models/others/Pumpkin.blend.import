@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://duvn5sarkr07c"
-path="res://.godot/imported/Pumpkin.blend-754a2da9ea64ab21a4b0eb03d65a0802.scn"
+path="res://.godot/imported/Pumpkin.blend-18ad231d8ecdf3af0f751b48fd840f28.scn"
 
 [deps]
 
-source_file="res://models/others/Pumpkin.blend"
-dest_files=["res://.godot/imported/Pumpkin.blend-754a2da9ea64ab21a4b0eb03d65a0802.scn"]
+source_file="res://Models/others/Pumpkin.blend"
+dest_files=["res://.godot/imported/Pumpkin.blend-18ad231d8ecdf3af0f751b48fd840f28.scn"]
 
 [params]
 
@@ -22,7 +22,6 @@ meshes/generate_lods=true
 meshes/create_shadow_meshes=true
 meshes/light_baking=1
 meshes/lightmap_texel_size=0.2
-meshes/force_disable_compression=false
 skins/use_named_skins=true
 animation/import=true
 animation/fps=30

@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://divayaucuyihd"
-path="res://.godot/imported/Treeee_.blend-b2fbdcdbcb8c622bab313880fd2a1c1b.scn"
+path="res://.godot/imported/Treeee_.blend-939b4eeaed1d312602821503fea922df.scn"
 
 [deps]
 
-source_file="res://models/others/Treeee_.blend"
-dest_files=["res://.godot/imported/Treeee_.blend-b2fbdcdbcb8c622bab313880fd2a1c1b.scn"]
+source_file="res://Models/others/Treeee_.blend"
+dest_files=["res://.godot/imported/Treeee_.blend-939b4eeaed1d312602821503fea922df.scn"]
 
 [params]
 
@@ -22,7 +22,6 @@ meshes/generate_lods=true
 meshes/create_shadow_meshes=true
 meshes/light_baking=1
 meshes/lightmap_texel_size=0.2
-meshes/force_disable_compression=false
 skins/use_named_skins=true
 animation/import=true
 animation/fps=30

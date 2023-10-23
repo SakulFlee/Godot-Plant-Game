@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dxie0gi2iu3md"
-path="res://.godot/imported/Top Leaf_r.png-87d4c169a346fa11b3cf501ee00a9cc3.ctex"
+path="res://.godot/imported/Top Leaf_r.png-6f2d98024b00ee77dd129e29fc1e4eda.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://models/others/textures/Top Leaf_r.png"
-dest_files=["res://.godot/imported/Top Leaf_r.png-87d4c169a346fa11b3cf501ee00a9cc3.ctex"]
+source_file="res://Models/others/textures/Top Leaf_r.png"
+dest_files=["res://.godot/imported/Top Leaf_r.png-6f2d98024b00ee77dd129e29fc1e4eda.ctex"]
 
 [params]
 

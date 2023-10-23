@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://d1qa8gr18tyf7"
-path="res://.godot/imported/grass.blend-3e55583c781aa19c02de98c4140db08c.scn"
+path="res://.godot/imported/Grass.blend-62aedacca50d610f47729e0c73c28e46.scn"
 
 [deps]
 
-source_file="res://models/voxels/grass.blend"
-dest_files=["res://.godot/imported/grass.blend-3e55583c781aa19c02de98c4140db08c.scn"]
+source_file="res://MeshLibrary/Grass.blend"
+dest_files=["res://.godot/imported/Grass.blend-62aedacca50d610f47729e0c73c28e46.scn"]
 
 [params]
 
@@ -22,7 +22,6 @@ meshes/generate_lods=true
 meshes/create_shadow_meshes=true
 meshes/light_baking=1
 meshes/lightmap_texel_size=0.2
-meshes/force_disable_compression=false
 skins/use_named_skins=true
 animation/import=true
 animation/fps=30

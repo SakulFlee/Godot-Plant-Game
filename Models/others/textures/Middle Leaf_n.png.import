@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://doexa7psu5nql"
-path="res://.godot/imported/Middle Leaf_n.png-82aec732e1bbe7a11557a78be3b25ab8.ctex"
+path="res://.godot/imported/Middle Leaf_n.png-46f36a0db9b1b8df6ef5e75329a48eb0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://models/others/textures/Middle Leaf_n.png"
-dest_files=["res://.godot/imported/Middle Leaf_n.png-82aec732e1bbe7a11557a78be3b25ab8.ctex"]
+source_file="res://Models/others/textures/Middle Leaf_n.png"
+dest_files=["res://.godot/imported/Middle Leaf_n.png-46f36a0db9b1b8df6ef5e75329a48eb0.ctex"]
 
 [params]
 

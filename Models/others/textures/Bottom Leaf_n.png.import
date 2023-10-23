@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b6v6drdoh2mjx"
-path="res://.godot/imported/Bottom Leaf_n.png-772216d234f386e5054bff8d6b328c37.ctex"
+path="res://.godot/imported/Bottom Leaf_n.png-00c24148add17f9ddec09d89d127ef8c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://models/others/textures/Bottom Leaf_n.png"
-dest_files=["res://.godot/imported/Bottom Leaf_n.png-772216d234f386e5054bff8d6b328c37.ctex"]
+source_file="res://Models/others/textures/Bottom Leaf_n.png"
+dest_files=["res://.godot/imported/Bottom Leaf_n.png-00c24148add17f9ddec09d89d127ef8c.ctex"]
 
 [params]
 

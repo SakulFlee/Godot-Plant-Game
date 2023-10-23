@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://hnpxrwfwpndk"
-path="res://.godot/imported/dirt.blend-f16001c498127759804e905a2b7229bd.scn"
+uid="uid://bmwntvf5yg3ol"
+path="res://.godot/imported/Stone.blend-7f386a3319c2ac9ed03bd902d1ad3940.scn"
 
 [deps]
 
-source_file="res://models/voxels/dirt.blend"
-dest_files=["res://.godot/imported/dirt.blend-f16001c498127759804e905a2b7229bd.scn"]
+source_file="res://MeshLibrary/Stone.blend"
+dest_files=["res://.godot/imported/Stone.blend-7f386a3319c2ac9ed03bd902d1ad3940.scn"]
 
 [params]
 
@@ -22,7 +22,6 @@ meshes/generate_lods=true
 meshes/create_shadow_meshes=true
 meshes/light_baking=1
 meshes/lightmap_texel_size=0.2
-meshes/force_disable_compression=false
 skins/use_named_skins=true
 animation/import=true
 animation/fps=30

@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dr3r8d2r4ivn1"
-path="res://.godot/imported/BezierCurve_s.png-657f04f2629e5f3a7e24ddd843d8f153.ctex"
+path="res://.godot/imported/BezierCurve_s.png-42d9e3ada6e601b92229acafceaa4951.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://models/others/textures/BezierCurve_s.png"
-dest_files=["res://.godot/imported/BezierCurve_s.png-657f04f2629e5f3a7e24ddd843d8f153.ctex"]
+source_file="res://Models/others/textures/BezierCurve_s.png"
+dest_files=["res://.godot/imported/BezierCurve_s.png-42d9e3ada6e601b92229acafceaa4951.ctex"]
 
 [params]
 

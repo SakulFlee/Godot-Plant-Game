@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://dkm7skp2k7lwt"
-path="res://.godot/imported/Pine_Autumn.blend-14ce027a29f9aee4a185652e06f679d3.scn"
+path="res://.godot/imported/Pine_Autumn.blend-ebcb2a61601e8fc5269fbb00b21bfe86.scn"
 
 [deps]
 
-source_file="res://models/others/Pine_Autumn.blend"
-dest_files=["res://.godot/imported/Pine_Autumn.blend-14ce027a29f9aee4a185652e06f679d3.scn"]
+source_file="res://Models/others/Pine_Autumn.blend"
+dest_files=["res://.godot/imported/Pine_Autumn.blend-ebcb2a61601e8fc5269fbb00b21bfe86.scn"]
 
 [params]
 
@@ -22,7 +22,6 @@ meshes/generate_lods=true
 meshes/create_shadow_meshes=true
 meshes/light_baking=1
 meshes/lightmap_texel_size=0.2
-meshes/force_disable_compression=false
 skins/use_named_skins=true
 animation/import=true
 animation/fps=30

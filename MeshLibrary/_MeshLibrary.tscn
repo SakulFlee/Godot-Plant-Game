@@ -1,0 +1,25 @@
+[gd_scene load_steps=8 format=3 uid="uid://dp2w4tc5a0c6e"]
+
+[ext_resource type="PackedScene" uid="uid://1jvixigil6id" path="res://MeshLibrary/Selector.blend" id="1_gveyk"]
+[ext_resource type="PackedScene" uid="uid://d1qa8gr18tyf7" path="res://MeshLibrary/Grass.blend" id="2_ngjn5"]
+[ext_resource type="PackedScene" uid="uid://hnpxrwfwpndk" path="res://MeshLibrary/Dirt.blend" id="3_ww42g"]
+[ext_resource type="PackedScene" uid="uid://bmwntvf5yg3ol" path="res://MeshLibrary/Stone.blend" id="4_qalch"]
+[ext_resource type="PackedScene" uid="uid://t4poddlmn6vn" path="res://Water/Water.tscn" id="5_poxa5"]
+[ext_resource type="PackedScene" uid="uid://bvek78enbifi7" path="res://MeshLibrary/Farmland.blend" id="6_mesnc"]
+[ext_resource type="PackedScene" uid="uid://d3tewr522sn5r" path="res://MeshLibrary/Radish.blend" id="7_be4u7"]
+
+[node name="Library" type="Node3D"]
+
+[node name="Selector" parent="." instance=ExtResource("1_gveyk")]
+
+[node name="Grass" parent="." instance=ExtResource("2_ngjn5")]
+
+[node name="Dirt" parent="." instance=ExtResource("3_ww42g")]
+
+[node name="Stone" parent="." instance=ExtResource("4_qalch")]
+
+[node name="Water" parent="." instance=ExtResource("5_poxa5")]
+
+[node name="Farmland" parent="." instance=ExtResource("6_mesnc")]
+
+[node name="Radish" parent="." instance=ExtResource("7_be4u7")]
