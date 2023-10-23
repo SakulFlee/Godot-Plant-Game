@@ -68,19 +68,6 @@ public partial class HotBar : Control
 		}
 
 		ItemSlots = new InventoryItem?[MaxSlots];
-
-
-		// TEST
-		AddItem(new InventoryItem
-		{
-			Name = "Oak Log",
-			Amount = 17,
-		});
-		AddItem(new InventoryItem
-		{
-			Name = "Stone",
-			Amount = 8,
-		});
 	}
 
 	public override void _Process(double delta)
