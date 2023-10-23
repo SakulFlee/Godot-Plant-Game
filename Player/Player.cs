@@ -43,6 +43,19 @@ public partial class Player : CharacterBody3D
 		radishID = island.MeshLibrary.FindItemByName("Radish");
 	}
 
+	public override void _Process(double delta)
+	{
+		var hotbar = GetNodeOrNull<HotBar>("/root/MainGame/HUD/HotBar");
+		if (hotbar != null && hotbar.IsEmpty()) // TODO: Need a "new game" trigger instead
+		{
+			hotbar.AddItem(new InventoryItem
+			{
+				Name = "Hoe",
+				Amount = 1,
+			});
+		}
+	}
+
 	public override void _PhysicsProcess(double delta)
 	{
 		HandleMovement();

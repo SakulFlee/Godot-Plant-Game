@@ -269,4 +269,14 @@ public partial class HotBar : Control
 	{
 		return ItemSlots![SelectedSlot - 1];
 	}
+
+	public bool IsEmpty() {
+		foreach(var item in ItemSlots!) {
+			if (item != null) {
+				return false;
+			}
+		}
+
+		return true;
+	}
 }
