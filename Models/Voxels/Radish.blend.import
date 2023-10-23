@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://d3tewr522sn5r"
-path="res://.godot/imported/Radish.blend-dae63a69b597ab5ba091f967651d7808.scn"
+path="res://.godot/imported/radish.blend-31c7dc79b8509a34cff1aeaa9eb280a0.scn"
 
 [deps]
 
-source_file="res://models/Voxels/Radish.blend"
-dest_files=["res://.godot/imported/Radish.blend-dae63a69b597ab5ba091f967651d7808.scn"]
+source_file="res://models/voxels/radish.blend"
+dest_files=["res://.godot/imported/radish.blend-31c7dc79b8509a34cff1aeaa9eb280a0.scn"]
 
 [params]
 
@@ -22,6 +22,7 @@ meshes/generate_lods=true
 meshes/create_shadow_meshes=true
 meshes/light_baking=1
 meshes/lightmap_texel_size=0.2
+meshes/force_disable_compression=false
 skins/use_named_skins=true
 animation/import=true
 animation/fps=30

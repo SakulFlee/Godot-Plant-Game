@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://e78lxxm5hkbw"]
+[gd_scene load_steps=4 format=3 uid="uid://e78lxxm5hkbw"]
 
 [ext_resource type="Script" path="res://MainGame/HUD/HUD.cs" id="1_jvbqs"]
+[ext_resource type="PackedScene" uid="uid://qht3cjgj3jn0" path="res://MainGame/HUD/HotBar.tscn" id="2_o8vaa"]
 
 [sub_resource type="SystemFont" id="SystemFont_46blq"]
 generate_mipmaps = true
@@ -31,3 +32,6 @@ shortcut_keys_enabled = false
 meta_underlined = false
 hint_underlined = false
 deselect_on_focus_loss_enabled = false
+
+[node name="HotBar" parent="." instance=ExtResource("2_o8vaa")]
+layout_mode = 1

@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="ItemDefinition" load_steps=3 format=3 uid="uid://cwx302qavryu6"]
+
+[ext_resource type="Script" path="res://Items/ItemDefinition.cs" id="1_e7mta"]
+[ext_resource type="Texture2D" uid="uid://cwa6a5i3tpr8n" path="res://Items/Defs/_Missing.png" id="1_kfo6y"]
+
+[resource]
+script = ExtResource("1_e7mta")
+Name = "Oak Log"
+MaxStackSize = 5
+Icon = ExtResource("1_kfo6y")
+CanPlow = false
+Plantable = false

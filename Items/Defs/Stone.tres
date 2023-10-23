@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="ItemDefinition" load_steps=3 format=3 uid="uid://ccw0p6pumhh8o"]
+
+[ext_resource type="Texture2D" uid="uid://fjodjruxvhg8" path="res://icon.svg" id="1_ik74u"]
+[ext_resource type="Script" path="res://Items/ItemDefinition.cs" id="2_e336b"]
+
+[resource]
+script = ExtResource("2_e336b")
+Name = "Stone"
+MaxStackSize = 3
+Icon = ExtResource("1_ik74u")
+CanPlow = false
+Plantable = false
