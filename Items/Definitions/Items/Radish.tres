@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="ItemDefinition" load_steps=3 format=3 uid="uid://dwil8e8tkq78p"]
+
+[ext_resource type="Texture2D" uid="uid://fsce8wwehony" path="res://Items/Definitions/Icons/Radish.png" id="1_wlkuu"]
+[ext_resource type="Script" path="res://Items/ItemDefinition.cs" id="2_3kfj6"]
+
+[resource]
+script = ExtResource("2_3kfj6")
+Name = "Radish"
+MaxStackSize = 15
+Icon = ExtResource("1_wlkuu")
+Type = 1

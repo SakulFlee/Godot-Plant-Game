@@ -29,18 +29,40 @@ public partial class Player : CharacterBody3D
 	private int selectorID;
 
 	private int farmlandVoxelID;
-	private int radishID;
+
+	private HotBar? HotBar;
+	private ItemDefinition? SelectedItemDefinition;
+	private ToolDefinition? SelectedToolDefinition;
+	private PlantDefinition? SelectedPlantDefinition;
 
 	public override void _Ready()
 	{
-		rayCastFront = GetNode<RayCast3D>("RayCastFront");
+		rayCastFront = GetNode<RayCast3D>("RayCastFront"); // TODO Not needed?
 		springArm3D = GetNode<SpringArm3D>("SpringArm3D");
 		camera3D = GetNode<Camera3D>("SpringArm3D/Camera3D");
 		island = GetNode<Island>("/root/MainGame/Island");
 		selectorID = island.MeshLibrary.FindItemByName("Selector");
 
 		farmlandVoxelID = island.MeshLibrary.FindItemByName("Farmland");
-		radishID = island.MeshLibrary.FindItemByName("Radish");
+
+		HotBar = GetNode<HotBar>("/root/MainGame/HUD/HotBar");
+	}
+
+	public override void _Process(double delta)
+	{
+		if (HotBar!.IsEmpty()) // TODO: Need a "new game" trigger instead
+		{
+			HotBar.AddItem(new InventoryItem
+			{
+				Name = "Hoe",
+				Amount = 1,
+			});
+			HotBar.AddItem(new InventoryItem
+			{
+				Name = "Radish",
+				Amount = 20,
+			});
+		}
 	}
 
 	public override void _PhysicsProcess(double delta)
@@ -188,28 +210,77 @@ public partial class Player : CharacterBody3D
 
 		if (selectedCell != null && Input.IsActionPressed("primary_action"))
 		{
-			if (island.plowableVoxelIDs.Contains(cell_id))
+			if (SelectedToolDefinition != null && SelectedToolDefinition.CanPlow)
 			{
-				island.SetCellItem(cell_position, farmlandVoxelID);
+				if (island.plowableVoxelIDs.Contains(cell_id))
+				{
+					island.SetCellItem(cell_position, farmlandVoxelID);
+				}
 			}
 
 			if (island.harvestableVoxelIDs.Contains(cell_id))
 			{
 				island.SetCellItem(cell_position, (int)Island.InvalidCellItem);
+
+				// TODO: Add item to inventory (random?)
 			}
 		}
 
 		if (selectedCell != null && Input.IsActionPressed("secondary_action"))
 		{
-			if (island.plantableVoxelIDs.Contains(cell_id))
+			if (SelectedPlantDefinition != null && SelectedPlantDefinition.CanBePlanted)
 			{
-				var cell_above = cell_position + new Vector3I(0, 1, 0);
+				if (island.plantableVoxelIDs.Contains(cell_id) && SelectedPlantDefinition != null)
+				{
+					var cell_above = cell_position + new Vector3I(0, 1, 0);
 
-				selectedCell = null;
-				island.SetCellItem(cell_above, radishID);
+					var plantID = island.MeshLibrary.FindItemByName(SelectedPlantDefinition.Name);
+					if (plantID < 0)
+					{
+						GD.PrintErr($"Selected plant '{SelectedPlantDefinition}' could not be found in MeshLibrary!");
+					}
+
+					selectedCell = null;
+					island.SetCellItem(cell_above, plantID);
+					HotBar!.RemoveItem(1);
+				}
+			}
+		}
+	}
+
+	public void OnHotBarSelectionChanged(InventoryItem? item)
+	{
+		if (item == null)
+		{
+			SelectedItemDefinition = null;
+			SelectedToolDefinition = null;
+			SelectedPlantDefinition = null;
+		}
+		else
+		{
+			var itemDef = ItemDatabase.Instance.FindItem(item);
+			SelectedItemDefinition = itemDef;
+
+			if (itemDef == null || itemDef.Type == ItemType.Generic)
+			{
+				SelectedToolDefinition = null;
+				SelectedPlantDefinition = null;
+			}
+			else if (itemDef.Type == ItemType.Tool)
+			{
+				SelectedPlantDefinition = null;
+
+				var toolDefinition = ItemDatabase.Instance.FindTool(itemDef!.Name);
+				SelectedToolDefinition = toolDefinition;
+			}
+			else if (itemDef.Type == ItemType.Plant)
+			{
+				SelectedToolDefinition = null;
+
+				var plantDefinition = ItemDatabase.Instance.FindPlant(itemDef!.Name);
+				SelectedPlantDefinition = plantDefinition;
+
 			}
 		}
 	}
 }
-
-// TODO: Controller selector!

@@ -23,9 +23,7 @@ public partial class HotBar : Control
 
 	private uint SelectedSlot;
 
-	private bool UpdateSlot = true;
-
-	private bool InventoryUpdate = true;
+	private bool DoUpdate = true;
 
 	private Label? HotBarTooltip;
 
@@ -36,6 +34,9 @@ public partial class HotBar : Control
 
 	[Export]
 	public PackedScene? SlotTemplate;
+
+	[Signal]
+	public delegate void HotBarSelectionChangedEventHandler(InventoryItem? inventoryItem);
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
@@ -68,26 +69,13 @@ public partial class HotBar : Control
 		}
 
 		ItemSlots = new InventoryItem?[MaxSlots];
-
-
-		// TEST
-		AddItem(new InventoryItem
-		{
-			Name = "Oak Log",
-			Amount = 17,
-		});
-		AddItem(new InventoryItem
-		{
-			Name = "Stone",
-			Amount = 8,
-		});
 	}
 
 	public override void _Process(double delta)
 	{
-		if (InventoryUpdate)
+		if (DoUpdate)
 		{
-			InventoryUpdate = false;
+			DoUpdate = false;
 
 			for (uint i = 0; i < MaxSlots; i++)
 			{
@@ -105,11 +93,6 @@ public partial class HotBar : Control
 					icon.Texture = itemDefinition!.Icon;
 				}
 			}
-		}
-
-		if (UpdateSlot)
-		{
-			UpdateSlot = false;
 
 			// Set all slots back to their standard size
 			foreach (var slot in UISlots!)
@@ -121,14 +104,20 @@ public partial class HotBar : Control
 			UISlots![SelectedSlot - 1].CustomMinimumSize = SelectedSize;
 
 			// If the slot is not empty, display the name
-			var item = ItemSlots![SelectedSlot - 1];
-			if (item != null)
+			var selectedItem = ItemSlots![SelectedSlot - 1];
+			if (selectedItem != null)
 			{
-				HotBarTooltip!.Text = $"{item.Name} ({item.Amount}x)";
+				HotBarTooltip!.Text = $"{selectedItem.Name} ({selectedItem.Amount}x)";
+
+				// Send Signal
+				EmitSignal(SignalName.HotBarSelectionChanged, selectedItem);
 			}
 			else
 			{
 				HotBarTooltip!.Text = "";
+
+				// Send Signal
+				EmitSignal(SignalName.HotBarSelectionChanged, new Variant());
 			}
 		}
 	}
@@ -144,7 +133,7 @@ public partial class HotBar : Control
 				SelectedSlot = 1;
 			}
 
-			UpdateSlot = true;
+			DoUpdate = true;
 		}
 
 		if (@event.IsActionPressed("hotbar_down"))
@@ -156,7 +145,7 @@ public partial class HotBar : Control
 				SelectedSlot = MaxSlots;
 			}
 
-			UpdateSlot = true;
+			DoUpdate = true;
 		}
 	}
 
@@ -216,7 +205,7 @@ public partial class HotBar : Control
 				return 0;
 			}
 
-			InventoryUpdate = true;
+			DoUpdate = true;
 			foreach (var (index, foundItem) in foundItems)
 			{
 				var differenceToMax = itemDefinition.MaxStackSize - foundItem.Amount;
@@ -244,7 +233,7 @@ public partial class HotBar : Control
 		var emptySlot = FindEmptySlot();
 		while (emptySlot != null && amountLeft > 0)
 		{
-			InventoryUpdate = true;
+			DoUpdate = true;
 			if (amountLeft <= itemDefinition.MaxStackSize)
 			{
 				var slotItem = item;
@@ -269,8 +258,63 @@ public partial class HotBar : Control
 		return amountLeft;
 	}
 
+	/// <summary>
+	/// Removes an item from the selected slot.
+	/// </summary>
+	/// <param name="amount">Amount to be removed</param>
+	public void RemoveItem(uint amount)
+	{
+		var item = ItemSlots![SelectedSlot - 1];
+		if (item == null)
+		{
+			return;
+		}
+
+		DoUpdate = true;
+
+		var amountLeft = item.Amount - amount;
+		if (amountLeft <= 0)
+		{
+			// Remove the whole item
+			RemoveItem();
+		}
+		else
+		{
+			// Change the amount
+			ItemSlots![SelectedSlot - 1]!.Amount = amountLeft;
+		}
+	}
+
+	/// <summary>
+	/// Removes the item in the current item slot, no matter how many items are present
+	/// </summary>
+	public void RemoveItem()
+	{
+		var item = ItemSlots![SelectedSlot - 1];
+		if (item == null)
+		{
+			return;
+		}
+
+		ItemSlots![SelectedSlot - 1] = null;
+		DoUpdate = true;
+	}
+
 	public InventoryItem? GetItem()
 	{
 		return ItemSlots![SelectedSlot - 1];
+	}
+
+	public bool IsEmpty()
+	{
+		foreach (var item in ItemSlots!)
+		{
+			if (item != null)
+			{
+				return false;
+			}
+		}
+
+		return true;
 	}
 }

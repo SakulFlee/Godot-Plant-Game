@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="PlantDefinition" load_steps=2 format=3 uid="uid://dx5akdl4hnpwy"]
+
+[ext_resource type="Script" path="res://Items/PlantDefinition.cs" id="1_gq2dr"]
+
+[resource]
+script = ExtResource("1_gq2dr")
+Name = "Radish"
+CanBePlanted = true

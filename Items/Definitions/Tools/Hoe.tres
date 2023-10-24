@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="ToolDefinition" load_steps=2 format=3 uid="uid://du4rrlagjxrc"]
+
+[ext_resource type="Script" path="res://Items/ToolDefinition.cs" id="1_5yxpy"]
+
+[resource]
+script = ExtResource("1_5yxpy")
+Name = "Hoe"
+CanPlow = true

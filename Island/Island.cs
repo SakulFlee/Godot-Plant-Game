@@ -75,8 +75,6 @@ public partial class Island : GridMap
 			return;
 		}
 
-		GD.Print("Doing Update!");
-
 		// Ensure there is a center island for the player to spawn
 		EnsureCenterVoxels();
 
