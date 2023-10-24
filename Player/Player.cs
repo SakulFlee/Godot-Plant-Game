@@ -30,6 +30,7 @@ public partial class Player : CharacterBody3D
 
 	private int farmlandVoxelID;
 
+	private HotBar? HotBar;
 	private ItemDefinition? SelectedItemDefinition;
 	private ToolDefinition? SelectedToolDefinition;
 	private PlantDefinition? SelectedPlantDefinition;
@@ -43,17 +44,23 @@ public partial class Player : CharacterBody3D
 		selectorID = island.MeshLibrary.FindItemByName("Selector");
 
 		farmlandVoxelID = island.MeshLibrary.FindItemByName("Farmland");
+
+		HotBar = GetNode<HotBar>("/root/MainGame/HUD/HotBar");
 	}
 
 	public override void _Process(double delta)
 	{
-		var hotbar = GetNodeOrNull<HotBar>("/root/MainGame/HUD/HotBar");
-		if (hotbar != null && hotbar.IsEmpty()) // TODO: Need a "new game" trigger instead
+		if (HotBar!.IsEmpty()) // TODO: Need a "new game" trigger instead
 		{
-			hotbar.AddItem(new InventoryItem
+			HotBar.AddItem(new InventoryItem
 			{
 				Name = "Hoe",
 				Amount = 1,
+			});
+			HotBar.AddItem(new InventoryItem
+			{
+				Name = "Radish",
+				Amount = 20,
 			});
 		}
 	}
@@ -203,7 +210,7 @@ public partial class Player : CharacterBody3D
 
 		if (selectedCell != null && Input.IsActionPressed("primary_action"))
 		{
-			if (SelectedItemDefinition != null && SelectedToolDefinition != null && SelectedToolDefinition.CanPlow)
+			if (SelectedToolDefinition != null && SelectedToolDefinition.CanPlow)
 			{
 				if (island.plowableVoxelIDs.Contains(cell_id))
 				{
@@ -221,20 +228,22 @@ public partial class Player : CharacterBody3D
 
 		if (selectedCell != null && Input.IsActionPressed("secondary_action"))
 		{
-			if (island.plantableVoxelIDs.Contains(cell_id) && SelectedPlantDefinition != null)
+			if (SelectedPlantDefinition != null && SelectedPlantDefinition.CanBePlanted)
 			{
-				var cell_above = cell_position + new Vector3I(0, 1, 0);
-
-				var plantID = island.MeshLibrary.FindItemByName(SelectedPlantDefinition.Name);
-				if (plantID < 0)
+				if (island.plantableVoxelIDs.Contains(cell_id) && SelectedPlantDefinition != null)
 				{
-					GD.PrintErr($"Selected plant '{SelectedPlantDefinition}' could not be found in MeshLibrary!");
+					var cell_above = cell_position + new Vector3I(0, 1, 0);
+
+					var plantID = island.MeshLibrary.FindItemByName(SelectedPlantDefinition.Name);
+					if (plantID < 0)
+					{
+						GD.PrintErr($"Selected plant '{SelectedPlantDefinition}' could not be found in MeshLibrary!");
+					}
+
+					selectedCell = null;
+					island.SetCellItem(cell_above, plantID);
+					HotBar!.RemoveItem(1);
 				}
-
-				// TODO: Add Radish alongside Hoe to inventory
-
-				selectedCell = null;
-				island.SetCellItem(cell_above, plantID);
 			}
 		}
 	}
@@ -244,33 +253,33 @@ public partial class Player : CharacterBody3D
 		if (item == null)
 		{
 			SelectedItemDefinition = null;
+			SelectedToolDefinition = null;
+			SelectedPlantDefinition = null;
 		}
 		else
 		{
 			var itemDef = ItemDatabase.Instance.FindItem(item);
 			SelectedItemDefinition = itemDef;
 
-			if (itemDef != null)
+			if (itemDef == null || itemDef.Type == ItemType.Generic)
 			{
-				if (itemDef.Type == ItemType.Generic)
-				{
-					SelectedToolDefinition = null;
-					SelectedPlantDefinition = null;
-				}
-				else if (itemDef.Type == ItemType.Tool)
-				{
-					SelectedPlantDefinition = null;
+				SelectedToolDefinition = null;
+				SelectedPlantDefinition = null;
+			}
+			else if (itemDef.Type == ItemType.Tool)
+			{
+				SelectedPlantDefinition = null;
 
-					var toolDefinition = ItemDatabase.Instance.FindTool(itemDef!.Name);
-					SelectedToolDefinition = toolDefinition;
-				}
-				else if (itemDef.Type == ItemType.Plant)
-				{
-					SelectedToolDefinition = null;
+				var toolDefinition = ItemDatabase.Instance.FindTool(itemDef!.Name);
+				SelectedToolDefinition = toolDefinition;
+			}
+			else if (itemDef.Type == ItemType.Plant)
+			{
+				SelectedToolDefinition = null;
 
-					var plantDefinition = ItemDatabase.Instance.FindPlant(itemDef!.Name);
-					SelectedPlantDefinition = plantDefinition;
-				}
+				var plantDefinition = ItemDatabase.Instance.FindPlant(itemDef!.Name);
+				SelectedPlantDefinition = plantDefinition;
+
 			}
 		}
 	}

@@ -6,5 +6,6 @@ public partial class PlantDefinition : Resource
     [Export]
     public string Name = "INVALID";
 
-    // TODO
+    [Export]
+    public bool CanBePlanted = false;
 }
