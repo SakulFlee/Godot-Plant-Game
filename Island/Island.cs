@@ -1,4 +1,5 @@
 using Godot;
+using Godot.Collections;
 using System;
 using System.Collections.Generic;
 
@@ -7,62 +8,62 @@ public partial class Island : GridMap
 {
 	[ExportCategory("Island Update")]
 	[Export]
-	private UpdateStateRequest updateStateRequest = UpdateStateRequest.FullUpdate;
+	public UpdateStateRequest UpdateStateRequest = UpdateStateRequest.FullUpdate;
 
 	[ExportCategory("Island Settings")]
 	[Export(PropertyHint.Range, "5.0, 100.0,")]
-	private uint radius = 50;
+	public uint Radius = 50;
 
 	[Export]
-	private float belowGroundFactor = 2.0f;
+	public float BelowGroundFactor = 2.0f;
 
 	[Export(PropertyHint.Range, "0.0, 1.0, ")]
-	private float terrainIndentFactor = 0.05f;
+	public float TerrainIndentFactor = 0.05f;
 
 	[Export]
-	private string spawnPlatformVoxel = "Grass";
+	public string SpawnPlatformVoxel = "Grass";
 
 	[Export]
-	private Godot.Collections.Dictionary<int, Godot.Collections.Array<string>> voxelGeneration;
+	public Godot.Collections.Dictionary<int, Array<string>>? VoxelGeneration;
 
 	[Export]
-	private int waterLevel = 0;
+	public int WaterLevel = 0;
 
 	[ExportCategory("Island Noise")]
 	[Export]
-	private NoiseTexture2D terrainNoiseA;
+	public NoiseTexture2D TerrainNoiseA = new NoiseTexture2D();
 
 	[Export]
-	private NoiseTexture2D terrainNoiseB;
+	public NoiseTexture2D TerrainNoiseB = new NoiseTexture2D();
 
 	[ExportCategory("Island Change")]
 	[Export]
-	private Godot.Collections.Dictionary<Vector3I, int> changes;
+	public Godot.Collections.Dictionary<Vector3I, int>? Changes;
 
-	public int[] noNeighbourVoxelIDs { get; private set; }
-	public int[] plowableVoxelIDs { get; private set; }
-	public int[] plantableVoxelIDs { get; private set; }
-	public int[] harvestableVoxelIDs { get; private set; }
+	public int[] NoNeighbourVoxelIDs { get; private set; } = new int[0];
+	public int[] PlowableVoxelIDs { get; private set; } = new int[0];
+	public int[] PlantableVoxelIDs { get; private set; } = new int[0];
+	public int[] HarvestableVoxelIDs { get; private set; } = new int[0];
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
 		// Force an update
-		updateStateRequest = UpdateStateRequest.FullUpdate;
+		UpdateStateRequest = UpdateStateRequest.FullUpdate;
 
-		noNeighbourVoxelIDs = new int[]{
+		NoNeighbourVoxelIDs = new int[]{
 			(int)InvalidCellItem,
 			MeshLibrary.FindItemByName("Water"),
 			MeshLibrary.FindItemByName("Selector")
 		};
-		plowableVoxelIDs = new int[]{
+		PlowableVoxelIDs = new int[]{
 			MeshLibrary.FindItemByName("Grass"),
 			MeshLibrary.FindItemByName("Dirt")
 		};
-		plantableVoxelIDs = new int[]{
+		PlantableVoxelIDs = new int[]{
 			MeshLibrary.FindItemByName("Farmland")
 		};
-		harvestableVoxelIDs = new int[]{
+		HarvestableVoxelIDs = new int[]{
 			MeshLibrary.FindItemByName("Radish")
 		};
 	}
@@ -70,7 +71,7 @@ public partial class Island : GridMap
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
-		if (updateStateRequest == UpdateStateRequest.None)
+		if (UpdateStateRequest == UpdateStateRequest.None)
 		{
 			return;
 		}
@@ -79,18 +80,18 @@ public partial class Island : GridMap
 		EnsureCenterVoxels();
 
 		// Remove all currently set voxels
-		if (updateStateRequest == UpdateStateRequest.FullUpdate || updateStateRequest == UpdateStateRequest.Clear)
+		if (UpdateStateRequest == UpdateStateRequest.FullUpdate || UpdateStateRequest == UpdateStateRequest.Clear)
 		{
 			Clear();
 		}
 
-		if (updateStateRequest == UpdateStateRequest.FullUpdate)
+		if (UpdateStateRequest == UpdateStateRequest.FullUpdate)
 		{
 			// Utilize noise maps to generate the island(s)
 			UpdateIslandWithNoise();
 		}
 
-		if (updateStateRequest == UpdateStateRequest.FullUpdate || updateStateRequest == UpdateStateRequest.ApplyChangeOnly)
+		if (UpdateStateRequest == UpdateStateRequest.FullUpdate || UpdateStateRequest == UpdateStateRequest.ApplyChangeOnly)
 		{
 			// Apply any changes made to the island
 			UpdateIslandWithChange();
@@ -102,20 +103,20 @@ public partial class Island : GridMap
 			CullIsland();
 		}
 
-		updateStateRequest = UpdateStateRequest.None;
+		UpdateStateRequest = UpdateStateRequest.None;
 	}
 
 	private void UpdateWater()
 	{
 		// Calculate the range
-		var range = Math.Pow(radius, 2.0);
+		var range = Math.Pow(Radius, 2.0);
 
 		var water_id = MeshLibrary.FindItemByName("Water");
 
 		// Loop over (X, Y) coordinates (horizontal coordinates)
-		for (int x = -(int)radius; x <= radius; x++)
+		for (int x = -(int)Radius; x <= Radius; x++)
 		{
-			for (int z = -(int)radius; z <= radius; z++)
+			for (int z = -(int)Radius; z <= Radius; z++)
 			{
 				// If distance (without Y!) is greater than the range, skip
 				var distance = new Vector3(x, 0, z).DistanceSquaredTo(Vector3.Zero);
@@ -184,18 +185,18 @@ public partial class Island : GridMap
 
 	private void EnsureCenterVoxels()
 	{
-		if (changes.Count > 0)
+		if (Changes!.Count > 0)
 		{
 			return;
 		}
 
-		var voxel_id = MeshLibrary.FindItemByName(spawnPlatformVoxel);
+		var voxel_id = MeshLibrary.FindItemByName(SpawnPlatformVoxel);
 
 		for (int x = -1; x <= 1; x++)
 		{
 			for (int z = -1; z <= 1; z++)
 			{
-				changes.Add(new Vector3I(z, 0, x), voxel_id);
+				Changes.Add(new Vector3I(z, 0, x), voxel_id);
 			}
 		}
 	}
@@ -203,12 +204,12 @@ public partial class Island : GridMap
 	private void UpdateIslandWithNoise()
 	{
 		// Calculate the range
-		var range = Math.Pow(radius, 2.0);
+		var range = Math.Pow(Radius, 2.0);
 
 		// Loop over (X, Y) coordinates (horizontal coordinates)
-		for (int x = -(int)radius; x <= radius; x++)
+		for (int x = -(int)Radius; x <= Radius; x++)
 		{
-			for (int z = -(int)radius; z <= radius; z++)
+			for (int z = -(int)Radius; z <= Radius; z++)
 			{
 				// If distance (without Y!) is greater than the range, skip
 				var distance = new Vector3(x, 0, z).DistanceSquaredTo(Vector3.Zero);
@@ -218,10 +219,10 @@ public partial class Island : GridMap
 				}
 
 				// Calculate noise values
-				var noise_a = terrainNoiseA.Noise.GetNoise2D(x, z) * 100.0;
-				var noise_b = terrainNoiseB.Noise.GetNoise2D(x, z) * 100.0;
-				var below_ground = noise_a * noise_b / 100.0 * belowGroundFactor;
-				var terrain_indent = (noise_b - noise_a) * terrainIndentFactor;
+				var noise_a = TerrainNoiseA.Noise.GetNoise2D(x, z) * 100.0;
+				var noise_b = TerrainNoiseB.Noise.GetNoise2D(x, z) * 100.0;
+				var below_ground = noise_a * noise_b / 100.0 * BelowGroundFactor;
+				var terrain_indent = (noise_b - noise_a) * TerrainIndentFactor;
 
 				// Use noise value for (Y) axis (vertical)
 				for (int y = -(int)below_ground; y <= (int)terrain_indent; y++)
@@ -235,7 +236,7 @@ public partial class Island : GridMap
 
 					var voxel_id = (int)InvalidCellItem;
 					var index = y;
-					while (!voxelGeneration.ContainsKey(index))
+					while (!VoxelGeneration!.ContainsKey(index))
 					{
 						if (index > 0)
 						{
@@ -246,7 +247,7 @@ public partial class Island : GridMap
 							index--;
 						}
 
-						if (index > radius || index < -radius)
+						if (index > Radius || index < -Radius)
 						{
 							index = int.MinValue;
 							break;
@@ -255,7 +256,7 @@ public partial class Island : GridMap
 
 					if (index > int.MinValue)
 					{
-						var options = voxelGeneration[index];
+						var options = VoxelGeneration[index];
 
 						Random random = new();
 						int option_index = random.Next(0, options.Count);
@@ -272,7 +273,7 @@ public partial class Island : GridMap
 
 	private void UpdateIslandWithChange()
 	{
-		foreach ((var position, var voxel) in changes)
+		foreach ((var position, var voxel) in Changes!)
 		{
 			SetCellItem(position, voxel);
 		}

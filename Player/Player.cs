@@ -212,13 +212,13 @@ public partial class Player : CharacterBody3D
 		{
 			if (SelectedToolDefinition != null && SelectedToolDefinition.CanPlow)
 			{
-				if (island.plowableVoxelIDs.Contains(cell_id))
+				if (island.PlowableVoxelIDs.Contains(cell_id))
 				{
 					island.SetCellItem(cell_position, farmlandVoxelID);
 				}
 			}
 
-			if (island.harvestableVoxelIDs.Contains(cell_id))
+			if (island.HarvestableVoxelIDs.Contains(cell_id))
 			{
 				island.SetCellItem(cell_position, (int)Island.InvalidCellItem);
 
@@ -230,7 +230,7 @@ public partial class Player : CharacterBody3D
 		{
 			if (SelectedPlantDefinition != null && SelectedPlantDefinition.CanBePlanted)
 			{
-				if (island.plantableVoxelIDs.Contains(cell_id) && SelectedPlantDefinition != null)
+				if (island.PlantableVoxelIDs.Contains(cell_id) && SelectedPlantDefinition != null)
 				{
 					var cell_above = cell_position + new Vector3I(0, 1, 0);
 
