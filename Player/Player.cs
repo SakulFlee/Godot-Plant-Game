@@ -231,7 +231,6 @@ public partial class Player : CharacterBody3D
 					GD.PrintErr($"Selected plant '{SelectedPlantDefinition}' could not be found in MeshLibrary!");
 				}
 
-				// TODO: Add a Radish item
 				// TODO: Add Radish alongside Hoe to inventory
 
 				selectedCell = null;
