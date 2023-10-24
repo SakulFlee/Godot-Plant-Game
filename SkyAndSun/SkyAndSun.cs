@@ -15,8 +15,8 @@ public partial class SkyAndSun : Node3D
 		anchor = GetNode<Node3D>("WorldEnvironment/Anchor");
 
 		var DateAndTime = GetNode<DateAndTime>("/root/MainGame/DateAndTime");
-		hoursPerDay = DateAndTime.hoursPerDay;
-		minutesPerHour = DateAndTime.minutesPerHour;
+		hoursPerDay = DateAndTime.HoursPerDay;
+		minutesPerHour = DateAndTime.MinutesPerHour;
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
