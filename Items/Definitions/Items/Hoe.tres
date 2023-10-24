@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="ItemDefinition" load_steps=3 format=3 uid="uid://8cpk4msm4slq"]
+
+[ext_resource type="Script" path="res://Items/ItemDefinition.cs" id="1_1fp3w"]
+[ext_resource type="Texture2D" uid="uid://bhqdomwnpoant" path="res://Items/Definitions/Icons/ToolHoe.png" id="1_5div1"]
+
+[resource]
+script = ExtResource("1_1fp3w")
+Name = "Hoe"
+MaxStackSize = 1
+Icon = ExtResource("1_5div1")
+Type = 2
+CanPlow = false
+Plantable = false

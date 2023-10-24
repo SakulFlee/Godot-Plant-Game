@@ -29,9 +29,10 @@ public partial class Player : CharacterBody3D
 	private int selectorID;
 
 	private int farmlandVoxelID;
-	private int radishID;
 
 	private ItemDefinition? SelectedItemDefinition;
+	private ToolDefinition? SelectedToolDefinition;
+	private PlantDefinition? SelectedPlantDefinition;
 
 	public override void _Ready()
 	{
@@ -42,7 +43,6 @@ public partial class Player : CharacterBody3D
 		selectorID = island.MeshLibrary.FindItemByName("Selector");
 
 		farmlandVoxelID = island.MeshLibrary.FindItemByName("Farmland");
-		radishID = island.MeshLibrary.FindItemByName("Radish");
 	}
 
 	public override void _Process(double delta)
@@ -203,7 +203,7 @@ public partial class Player : CharacterBody3D
 
 		if (selectedCell != null && Input.IsActionPressed("primary_action"))
 		{
-			if (SelectedItemDefinition != null && SelectedItemDefinition.CanPlow)
+			if (SelectedItemDefinition != null && SelectedToolDefinition != null && SelectedToolDefinition.CanPlow)
 			{
 				if (island.plowableVoxelIDs.Contains(cell_id))
 				{
@@ -214,17 +214,28 @@ public partial class Player : CharacterBody3D
 			if (island.harvestableVoxelIDs.Contains(cell_id))
 			{
 				island.SetCellItem(cell_position, (int)Island.InvalidCellItem);
+
+				// TODO: Add item to inventory (random?)
 			}
 		}
 
 		if (selectedCell != null && Input.IsActionPressed("secondary_action"))
 		{
-			if (island.plantableVoxelIDs.Contains(cell_id))
+			if (island.plantableVoxelIDs.Contains(cell_id) && SelectedPlantDefinition != null)
 			{
 				var cell_above = cell_position + new Vector3I(0, 1, 0);
 
+				var plantID = island.MeshLibrary.FindItemByName(SelectedPlantDefinition.Name);
+				if (plantID < 0)
+				{
+					GD.PrintErr($"Selected plant '{SelectedPlantDefinition}' could not be found in MeshLibrary!");
+				}
+
+				// TODO: Add a Radish item
+				// TODO: Add Radish alongside Hoe to inventory
+
 				selectedCell = null;
-				island.SetCellItem(cell_above, radishID);
+				island.SetCellItem(cell_above, plantID);
 			}
 		}
 	}
@@ -239,6 +250,29 @@ public partial class Player : CharacterBody3D
 		{
 			var itemDef = ItemDatabase.Instance.FindItem(item);
 			SelectedItemDefinition = itemDef;
+
+			if (itemDef != null)
+			{
+				if (itemDef.Type == ItemType.Generic)
+				{
+					SelectedToolDefinition = null;
+					SelectedPlantDefinition = null;
+				}
+				else if (itemDef.Type == ItemType.Tool)
+				{
+					SelectedPlantDefinition = null;
+
+					var toolDefinition = ItemDatabase.Instance.FindTool(itemDef!.Name);
+					SelectedToolDefinition = toolDefinition;
+				}
+				else if (itemDef.Type == ItemType.Plant)
+				{
+					SelectedToolDefinition = null;
+
+					var plantDefinition = ItemDatabase.Instance.FindPlant(itemDef!.Name);
+					SelectedPlantDefinition = plantDefinition;
+				}
+			}
 		}
 	}
 }
