@@ -24,21 +24,39 @@ public partial class Island : GridMap
 	public string SpawnPlatformVoxel = "Grass";
 
 	[Export]
-	public Godot.Collections.Dictionary<int, Array<string>>? VoxelGeneration;
+	public Godot.Collections.Dictionary<int, Array<string>> VoxelGeneration = new();
 
 	[Export]
 	public int WaterLevel = 0;
 
 	[ExportCategory("Island Noise")]
 	[Export]
-	public NoiseTexture2D TerrainNoiseA = new NoiseTexture2D();
+	public NoiseTexture2D TerrainNoiseA = new NoiseTexture2D
+	{
+		Noise = new FastNoiseLite
+		{
+			Seed = 12345,
+			NoiseType = FastNoiseLite.NoiseTypeEnum.SimplexSmooth,
+			Frequency = 0.01f,
+			FractalType = FastNoiseLite.FractalTypeEnum.Fbm,
+		}
+	};
 
 	[Export]
-	public NoiseTexture2D TerrainNoiseB = new NoiseTexture2D();
+	public NoiseTexture2D TerrainNoiseB = new NoiseTexture2D
+	{
+		Noise = new FastNoiseLite
+		{
+			Seed = 54321,
+			NoiseType = FastNoiseLite.NoiseTypeEnum.SimplexSmooth,
+			Frequency = 0.005f,
+			FractalType = FastNoiseLite.FractalTypeEnum.Fbm,
+		}
+	};
 
 	[ExportCategory("Island Change")]
 	[Export]
-	public Godot.Collections.Dictionary<Vector3I, int>? Changes;
+	public Godot.Collections.Dictionary<Vector3I, int> Changes = new();
 
 	public int[] NoNeighbourVoxelIDs { get; private set; } = new int[0];
 	public int[] PlowableVoxelIDs { get; private set; } = new int[0];
@@ -66,6 +84,26 @@ public partial class Island : GridMap
 		HarvestableVoxelIDs = new int[]{
 			MeshLibrary.FindItemByName("Radish")
 		};
+
+		if (VoxelGeneration.Count == 0)
+		{
+			VoxelGeneration.Add(-50, new Array<string>
+			{
+				"Stone"
+			});
+			VoxelGeneration.Add(-3, new Array<string>
+			{
+				"Dirt"
+			});
+			VoxelGeneration.Add(0, new Array<string>
+			{
+				"Grass"
+			});
+			VoxelGeneration.Add(50, new Array<string>
+			{
+				"Stone"
+			});
+		}
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -258,8 +296,16 @@ public partial class Island : GridMap
 					{
 						var options = VoxelGeneration[index];
 
-						Random random = new();
-						int option_index = random.Next(0, options.Count);
+						int option_index;
+						if (options.Count == 0)
+						{
+							option_index = 0;
+						}
+						else
+						{
+							Random random = new();
+							option_index = random.Next(0, options.Count - 1);
+						}
 
 						voxel_id = MeshLibrary.FindItemByName(options[option_index]);
 					}
