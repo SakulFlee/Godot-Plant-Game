@@ -5,30 +5,30 @@ using System.Linq;
 public partial class Player : CharacterBody3D
 {
 	[Export]
-	private float movementVelocity = 10.0f;
+	private float MovementVelocity = 10.0f;
 
 	[Export]
-	private float jumpVelocity = 5.0f;
+	private float JumpVelocity = 5.0f;
 
 	[Export]
-	private float sanityCutoff = -100.0f;
+	private float SanityCutoff = -100.0f;
 
 	[Export]
-	private float selectorRange = 2.5f;
+	private float SelectorRange = 2.5f;
 
 	// Get the gravity from the project settings to be synced with RigidBody nodes.
-	private float gravity = ProjectSettings.GetSetting("physics/3d/default_gravity").AsSingle();
+	private float Gravity = ProjectSettings.GetSetting("physics/3d/default_gravity").AsSingle();
 
-	private RayCast3D rayCastFront;
-	private SpringArm3D springArm3D;
-	private Camera3D camera3D;
-	private Island island;
+	private RayCast3D? RayCastFront;
+	private SpringArm3D? SpringArm3D;
+	private Camera3D? Camera3D;
+	private Island? Island;
 
-	private bool isControllerInput;
-	private Vector3I? selectedCell;
-	private int selectorID;
+	private bool IsControllerInput;
+	private Vector3I? SelectedCell;
+	private int SelectorID;
 
-	private int farmlandVoxelID;
+	private int FarmlandVoxelID;
 
 	private HotBar? HotBar;
 	private ItemDefinition? SelectedItemDefinition;
@@ -37,13 +37,13 @@ public partial class Player : CharacterBody3D
 
 	public override void _Ready()
 	{
-		rayCastFront = GetNode<RayCast3D>("RayCastFront"); // TODO Not needed?
-		springArm3D = GetNode<SpringArm3D>("SpringArm3D");
-		camera3D = GetNode<Camera3D>("SpringArm3D/Camera3D");
-		island = GetNode<Island>("/root/MainGame/Island");
-		selectorID = island.MeshLibrary.FindItemByName("Selector");
+		RayCastFront = GetNode<RayCast3D>("RayCastFront"); // TODO Not needed?
+		SpringArm3D = GetNode<SpringArm3D>("SpringArm3D");
+		Camera3D = GetNode<Camera3D>("SpringArm3D/Camera3D");
+		Island = GetNode<Island>("/root/MainGame/Island");
+		SelectorID = Island.MeshLibrary.FindItemByName("Selector");
 
-		farmlandVoxelID = island.MeshLibrary.FindItemByName("Farmland");
+		FarmlandVoxelID = Island.MeshLibrary.FindItemByName("Farmland");
 
 		HotBar = GetNode<HotBar>("/root/MainGame/HUD/HotBar");
 	}
@@ -83,14 +83,14 @@ public partial class Player : CharacterBody3D
 		var current_velocity = Velocity;
 
 		var input_vector = Input.GetVector("move_left", "move_right", "move_forward", "move_backward");
-		var direction = springArm3D.Transform.Basis * new Vector3(input_vector.X, 0.0f, input_vector.Y).Normalized();
+		var direction = SpringArm3D!.Transform.Basis * new Vector3(input_vector.X, 0.0f, input_vector.Y).Normalized();
 
-		current_velocity.X = direction.X * movementVelocity;
-		current_velocity.Z = direction.Z * movementVelocity;
+		current_velocity.X = direction.X * MovementVelocity;
+		current_velocity.Z = direction.Z * MovementVelocity;
 
 		if (IsOnFloor() && Input.IsActionJustPressed("jump"))
 		{
-			current_velocity.Y = jumpVelocity;
+			current_velocity.Y = JumpVelocity;
 		}
 
 		Velocity = current_velocity;
@@ -101,14 +101,14 @@ public partial class Player : CharacterBody3D
 		if (!IsOnFloor())
 		{
 			var current_velocity = Velocity;
-			current_velocity.Y -= gravity * (float)delta;
+			current_velocity.Y -= Gravity * (float)delta;
 			Velocity = current_velocity;
 		}
 	}
 
 	private void SanityCheck()
 	{
-		if (Position.Y <= sanityCutoff)
+		if (Position.Y <= SanityCutoff)
 		{
 			GD.PushWarning("Sanity check! Returning player to spawn!");
 			Position = new(0.0f, 5.0f, 0.0f);
@@ -118,10 +118,10 @@ public partial class Player : CharacterBody3D
 	private void HandleMouseMovement()
 	{
 		// If there is a selected cell, remove it
-		if (selectedCell != null)
+		if (SelectedCell != null)
 		{
-			island.SetCellItem(selectedCell.Value, (int)GridMap.InvalidCellItem);
-			selectedCell = null;
+			Island!.SetCellItem(SelectedCell.Value, (int)GridMap.InvalidCellItem);
+			SelectedCell = null;
 		}
 
 		Vector3 position;
@@ -148,8 +148,8 @@ public partial class Player : CharacterBody3D
 			var mouse_position = GetViewport().GetMousePosition();
 			var space_state = GetWorld3D().DirectSpaceState;
 
-			var origin = camera3D.ProjectRayOrigin(mouse_position);
-			var end = origin + camera3D.ProjectRayNormal(mouse_position) * 35.0f;
+			var origin = Camera3D!.ProjectRayOrigin(mouse_position);
+			var end = origin + Camera3D.ProjectRayNormal(mouse_position) * 35.0f;
 
 			var query = PhysicsRayQueryParameters3D.Create(origin, end);
 			query.CollideWithAreas = true;
@@ -187,11 +187,11 @@ public partial class Player : CharacterBody3D
 			{
 				var local_cell_position = cell_position + new Vector3I(0, i, 0);
 
-				var cell_id = island.GetCellItem(local_cell_position);
+				var cell_id = Island!.GetCellItem(local_cell_position);
 				if (cell_id == GridMap.InvalidCellItem)
 				{
-					selectedCell = local_cell_position;
-					island.SetCellItem(selectedCell.Value, selectorID);
+					SelectedCell = local_cell_position;
+					Island.SetCellItem(SelectedCell.Value, SelectorID);
 					break;
 				}
 			}
@@ -200,48 +200,48 @@ public partial class Player : CharacterBody3D
 
 	private void HandleSelectorInteraction()
 	{
-		if (selectedCell == null)
+		if (SelectedCell == null)
 		{
 			return;
 		}
 
-		var cell_position = selectedCell.Value - new Vector3I(0, 1, 0);
-		var cell_id = island.GetCellItem(cell_position);
+		var cell_position = SelectedCell.Value - new Vector3I(0, 1, 0);
+		var cell_id = Island!.GetCellItem(cell_position);
 
-		if (selectedCell != null && Input.IsActionPressed("primary_action"))
+		if (SelectedCell != null && Input.IsActionPressed("primary_action"))
 		{
 			if (SelectedToolDefinition != null && SelectedToolDefinition.CanPlow)
 			{
-				if (island.PlowableVoxelIDs.Contains(cell_id))
+				if (Island.PlowableVoxelIDs.Contains(cell_id))
 				{
-					island.SetCellItem(cell_position, farmlandVoxelID);
+					Island.SetCellItem(cell_position, FarmlandVoxelID);
 				}
 			}
 
-			if (island.HarvestableVoxelIDs.Contains(cell_id))
+			if (Island.HarvestableVoxelIDs.Contains(cell_id))
 			{
-				island.SetCellItem(cell_position, (int)Island.InvalidCellItem);
+				Island.SetCellItem(cell_position, (int)Island.InvalidCellItem);
 
 				// TODO: Add item to inventory (random?)
 			}
 		}
 
-		if (selectedCell != null && Input.IsActionPressed("secondary_action"))
+		if (SelectedCell != null && Input.IsActionPressed("secondary_action"))
 		{
 			if (SelectedPlantDefinition != null && SelectedPlantDefinition.CanBePlanted)
 			{
-				if (island.PlantableVoxelIDs.Contains(cell_id) && SelectedPlantDefinition != null)
+				if (Island.PlantableVoxelIDs.Contains(cell_id) && SelectedPlantDefinition != null)
 				{
 					var cell_above = cell_position + new Vector3I(0, 1, 0);
 
-					var plantID = island.MeshLibrary.FindItemByName(SelectedPlantDefinition.Name);
+					var plantID = Island.MeshLibrary.FindItemByName(SelectedPlantDefinition.Name);
 					if (plantID < 0)
 					{
 						GD.PrintErr($"Selected plant '{SelectedPlantDefinition}' could not be found in MeshLibrary!");
 					}
 
-					selectedCell = null;
-					island.SetCellItem(cell_above, plantID);
+					SelectedCell = null;
+					Island.SetCellItem(cell_above, plantID);
 					HotBar!.RemoveItem(1);
 				}
 			}
