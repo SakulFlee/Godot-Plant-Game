@@ -33,7 +33,7 @@ jobs:
           wine_path: ${{ steps.wine_install.outputs.WINE_PATH }}
           
       - name: create release
-        uses: ncipollo/release-action@v1.11.2
+        uses: ncipollo/release-action@v1.13.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           generateReleaseNotes: true
