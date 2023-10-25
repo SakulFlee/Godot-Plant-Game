@@ -1,110 +1,14 @@
 {
-    // See https://go.microsoft.com/fwlink/?LinkId=733558
-    // for the documentation about the tasks.json format
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "[Rust] Debug Build",
-            "type": "shell",
-            "command": "cargo build",
+            "label": "dotnet: build",
+            "type": "dotnet",
+            "task": "build",
             "problemMatcher": [
-                "$rustc"
-            ]
-        },
-        {
-            "label": "[Rust] Release Build",
-            "type": "shell",
-            "command": "cargo build --release",
-            "problemMatcher": [
-                "$rustc"
-            ]
-        },
-        {
-            "label": "[Rust] Open Documenation",
-            "type": "shell",
-            "command": "cargo doc --open",
-            "problemMatcher": [
-                "$rustc"
-            ]
-        },
-        {
-            "label": "[Godot] Open Editor",
-            "type": "shell",
-            "command": "godot_console",
-            "args": [
-                "--editor",
-                "--path",
-                "${workspaceFolder}",
+                "$msCompile"
             ],
-            "problemMatcher": [],
-            "isBackground": true,
-            "dependsOn": [
-                "[Rust] Debug Build"
-            ]
-        },
-        {
-            "label": "[Godot] Run Default Scene",
-            "type": "shell",
-            "command": "godot_console",
-            "args": [
-                "--path",
-                "${workspaceFolder}",
-            ],
-            "problemMatcher": [],
-            "isBackground": true,
-            "dependsOn": [
-                "[Rust] Debug Build"
-            ]
-        },
-        {
-            "label": "[Godot] Run MainMenu Scene",
-            "type": "shell",
-            "command": "godot_console",
-            "args": [
-                "--path",
-                "${workspaceFolder}",
-                "${workspaceFolder}/scenes/main_menu.tscn",
-            ],
-            "problemMatcher": [],
-            "isBackground": true,
-            "dependsOn": [
-                "[Rust] Debug Build"
-            ]
-        },
-        {
-            "label": "[Godot] Run MainGame Scene",
-            "type": "shell",
-            "command": "godot_console",
-            "args": [
-                "--path",
-                "${workspaceFolder}",
-                "${workspaceFolder}/Scenes/main_game.tscn",
-            ],
-            "problemMatcher": [],
-            "isBackground": true,
-            "dependsOn": [
-                "[Rust] Debug Build"
-            ]
-        },
-        {
-            "label": "[C#] Build",
-            "type": "process",
-            "command": "dotnet",
-            "args": [
-                "build"
-            ],
-            "problemMatcher": "$msCompile",
-            "presentation": {
-                "reveal": "silent",
-                "revealProblems": "onProblem",
-                "focus": false,
-                "clear": true
-            },
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            }
+            "group": "build"
         }
-        // Export: godot --headless --path path_to_your_project --export-release my_export_preset_name game.exe
     ]
 }
