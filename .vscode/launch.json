@@ -2,10 +2,10 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Play",
+            "name": "Play Game",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "[C#] Build",
+            "preLaunchTask": "dotnet: build",
             "program": "C:/Program Files/Godot/godot.exe",
             "args": [],
             "cwd": "${workspaceFolder}",
@@ -13,12 +13,27 @@
             "console": "internalConsole"
         },
         {
-            "name": "Editor",
+            "name": "Open Editor",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "[C#] Build",
+            "preLaunchTask": "dotnet: build",
             "program": "C:/Program Files/Godot/godot.exe",
-            "args": ["--editor"],
+            "args": [
+                "--editor"
+            ],
+            "cwd": "${workspaceFolder}",
+            "stopAtEntry": false,
+            "console": "internalConsole"
+        },
+        {
+            "name": "Run MainGame Scene",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "dotnet: build",
+            "program": "C:/Program Files/Godot/godot.exe",
+            "args": [
+                "MainGame/MainGame.tscn"
+            ],
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
             "console": "internalConsole"
