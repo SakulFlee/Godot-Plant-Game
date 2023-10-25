@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="Godot-Rust"
+config/name="Godot-Plant-Game"
 run/main_scene="res://MainMenu/MainMenu.tscn"
 config/features=PackedStringArray("4.1", "C#", "Forward Plus")
 config/icon="res://icon.svg"
