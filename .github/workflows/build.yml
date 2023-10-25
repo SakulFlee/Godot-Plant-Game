@@ -13,7 +13,7 @@ jobs:
     name: Export Game Job
     steps:
       - name: checkout
-        uses: actions/checkout@v3.3.0
+        uses: actions/checkout@v3.6.0
         
       - name: install wine
         id: wine_install
