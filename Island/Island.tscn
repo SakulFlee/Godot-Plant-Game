@@ -26,12 +26,6 @@ data = {
 }
 script = ExtResource("2_0r8uk")
 updateStateRequest = 0
-voxelGeneration = {
--50: ["Stone"],
--3: ["Dirt"],
-0: ["Grass"],
-50: ["Stone"]
-}
 terrainNoiseA = SubResource("NoiseTexture2D_wx62d")
 terrainNoiseB = SubResource("NoiseTexture2D_bci0r")
 changes = {

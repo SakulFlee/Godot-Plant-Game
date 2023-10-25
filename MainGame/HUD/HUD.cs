@@ -2,11 +2,11 @@ using Godot;
 
 public partial class HUD : Control
 {
-	private RichTextLabel dateAndTimeLabel;
+	private RichTextLabel? DateAndTimeLabel;
 
 	public override void _Ready()
 	{
-		dateAndTimeLabel = GetNode<RichTextLabel>("DateAndTimeLabel");
+		DateAndTimeLabel = GetNode<RichTextLabel>("DateAndTimeLabel");
 	}
 
 	public void OnTimeChanged(uint day, uint month, uint year, uint hour, uint minute)
@@ -17,6 +17,6 @@ public partial class HUD : Control
 		string local_hour = hour.ToString().PadLeft(2, '0');
 		string local_minute = minute.ToString().PadLeft(2, '0');
 
-		dateAndTimeLabel.Text = $"Date: {local_day}.{local_month}.{local_year}\nTime: {local_hour}:{local_minute}";
+		DateAndTimeLabel!.Text = $"Date: {local_day}.{local_month}.{local_year}\nTime: {local_hour}:{local_minute}";
 	}
 }

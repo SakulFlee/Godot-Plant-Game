@@ -3,37 +3,37 @@ using Godot;
 public partial class DateAndTime : Node
 {
 	[Export]
-	public uint hoursPerDay { get; private set; } = 24;
+	public uint HoursPerDay { get; private set; } = 24;
 
 	[Export]
-	public uint minutesPerHour { get; private set; } = 60;
+	public uint MinutesPerHour { get; private set; } = 60;
 
 	[Export]
-	public uint daysPerMonth { get; private set; } = 30;
+	public uint DaysPerMonth { get; private set; } = 30;
 
 	[Export]
-	public uint monthsPerYear { get; private set; } = 12;
+	public uint MonthsPerYear { get; private set; } = 12;
 
 	[Export]
-	public float incrementFactor { get; private set; } = 1;
+	public float IncrementFactor { get; private set; } = 1;
 
 	[Export]
-	public float time { get; private set; } = 0;
+	public float Time { get; private set; } = 0;
 
 	[Export]
-	public uint hour { get; private set; } = 6;
+	public uint Hour { get; private set; } = 6;
 
 	[Export]
-	public uint minute { get; private set; } = 0;
+	public uint Minute { get; private set; } = 0;
 
 	[Export]
-	public uint day { get; private set; } = 1;
+	public uint Day { get; private set; } = 1;
 
 	[Export]
-	public uint month { get; private set; } = 1;
+	public uint Month { get; private set; } = 1;
 
 	[Export]
-	public uint year { get; private set; } = 1000;
+	public uint Year { get; private set; } = 1000;
 
 	[Signal]
 	public delegate void MinutePassedEventHandler(float time);
@@ -56,63 +56,63 @@ public partial class DateAndTime : Node
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		EmitSignal(SignalName.TimeChanged, day, month, year, hour, minute);
+		EmitSignal(SignalName.TimeChanged, Day, Month, Year, Hour, Minute);
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
 		// Calculate factor and add to time
-		var factor = (float)delta * incrementFactor;
-		time += factor;
+		var factor = (float)delta * IncrementFactor;
+		Time += factor;
 
-		if (time >= 1.0f)
+		if (Time >= 1.0f)
 		{
-			time -= 1.0f;
-			minute += 1;
+			Time -= 1.0f;
+			Minute += 1;
 
-			EmitSignal(SignalName.MinutePassed, minute);
+			EmitSignal(SignalName.MinutePassed, Minute);
 		}
 
-		if (minute > minutesPerHour)
+		if (Minute > MinutesPerHour)
 		{
-			minute = 0;
-			hour += 1;
+			Minute = 0;
+			Hour += 1;
 
-			EmitSignal(SignalName.HourPassed, hour);
+			EmitSignal(SignalName.HourPassed, Hour);
 		}
 
-		if (hour >= hoursPerDay)
+		if (Hour >= HoursPerDay)
 		{
-			hour = 0;
-			day += 1;
+			Hour = 0;
+			Day += 1;
 
-			EmitSignal(SignalName.DayPassed, day);
+			EmitSignal(SignalName.DayPassed, Day);
 		}
 
-		if (day > daysPerMonth)
+		if (Day > DaysPerMonth)
 		{
-			day = 1;
-			month += 1;
+			Day = 1;
+			Month += 1;
 
-			EmitSignal(SignalName.MonthPassed, month);
+			EmitSignal(SignalName.MonthPassed, Month);
 		}
 
-		if (month > monthsPerYear)
+		if (Month > MonthsPerYear)
 		{
-			month = 1;
-			year += 1;
+			Month = 1;
+			Year += 1;
 
-			EmitSignal(SignalName.YearPassed, year);
+			EmitSignal(SignalName.YearPassed, Year);
 		}
 
 		EmitSignal(
 			SignalName.TimeChanged,
-			day,
-			month,
-			year,
-			hour,
-			minute
+			Day,
+			Month,
+			Year,
+			Hour,
+			Minute
 		);
 	}
 }
