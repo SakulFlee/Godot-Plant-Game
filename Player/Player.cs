@@ -37,7 +37,7 @@ public partial class Player : CharacterBody3D
 
 	public override void _Ready()
 	{
-		RayCastFront = GetNode<RayCast3D>("RayCastFront"); // TODO Not needed?
+		RayCastFront = GetNode<RayCast3D>("RayCastFront");
 		SpringArm3D = GetNode<SpringArm3D>("SpringArm3D");
 		Camera3D = GetNode<Camera3D>("SpringArm3D/Camera3D");
 		Island = GetNode<Island>("/root/MainGame/Island");
