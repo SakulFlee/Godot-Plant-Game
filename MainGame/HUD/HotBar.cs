@@ -149,6 +149,45 @@ public partial class HotBar : Control
 		}
 	}
 
+	public override void _PhysicsProcess(double delta)
+	{
+		if (Input.IsMouseButtonPressed(MouseButton.Left))
+		{
+			// Ray cast mouse position into world
+			var mouse_position = GetViewport().GetMousePosition();
+			var space_state = GetWorld2D().DirectSpaceState;
+
+			var query = PhysicsRayQueryParameters2D.Create(Vector2.Zero, mouse_position);
+			query.CollideWithAreas = true;
+
+			// Ray cast and skip if there is no hit
+			var result = space_state.IntersectRay(query);
+			if (result.Count == 0)
+			{
+				return;
+			}
+
+			var collider = result["collider"];
+			try
+			{
+				var slotArea2D = (Area2D)collider;
+				var slot = slotArea2D.GetParent<Panel>();
+
+				var slotName = slot.Name.ToString();
+				if (slotName.StartsWith("Slot"))
+				{
+					var numberString = slotName.Substr(4 /* Slot */, slotName.Length);
+					var actualNumber = uint.Parse(numberString);
+
+					GD.Print("Slot Number: " + actualNumber);
+					SelectedSlot = actualNumber + 1;
+					DoUpdate = true;
+				}
+			}
+			catch (InvalidCastException) { }
+		}
+	}
+
 	public (uint, InventoryItem)[]? FindItems(string name)
 	{
 		var list = new LinkedList<(uint, InventoryItem)>();
