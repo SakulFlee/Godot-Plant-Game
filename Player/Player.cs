@@ -50,7 +50,7 @@ public partial class Player : CharacterBody3D
 
 	public override void _Process(double delta)
 	{
-		if (HotBar!.IsEmpty()) // TODO: Need a "new game" trigger instead
+		if (HotBar!.IsEmpty())
 		{
 			HotBar.AddItem(new InventoryItem
 			{
