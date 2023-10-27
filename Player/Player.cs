@@ -221,8 +221,6 @@ public partial class Player : CharacterBody3D
 			if (Island.HarvestableVoxelIDs.Contains(cell_id))
 			{
 				Island.SetCellItem(cell_position, (int)Island.InvalidCellItem);
-
-				// TODO: Add item to inventory (random?)
 			}
 		}
 
