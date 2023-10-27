@@ -1,4 +1,7 @@
-[gd_scene format=3 uid="uid://coxnadpuj57x7"]
+[gd_scene load_steps=2 format=3 uid="uid://coxnadpuj57x7"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_qhf3b"]
+size = Vector2(56, 56)
 
 [node name="Slot" type="Panel"]
 custom_minimum_size = Vector2(64, 64)
@@ -23,3 +26,9 @@ grow_horizontal = 2
 grow_vertical = 2
 expand_mode = 5
 stretch_mode = 4
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(32, 32)
+shape = SubResource("RectangleShape2D_qhf3b")
