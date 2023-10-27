@@ -37,7 +37,7 @@ public partial class Player : CharacterBody3D
 
 	public override void _Ready()
 	{
-		RayCastFront = GetNode<RayCast3D>("RayCastFront"); // TODO Not needed?
+		RayCastFront = GetNode<RayCast3D>("RayCastFront");
 		SpringArm3D = GetNode<SpringArm3D>("SpringArm3D");
 		Camera3D = GetNode<Camera3D>("SpringArm3D/Camera3D");
 		Island = GetNode<Island>("/root/MainGame/Island");
@@ -50,7 +50,7 @@ public partial class Player : CharacterBody3D
 
 	public override void _Process(double delta)
 	{
-		if (HotBar!.IsEmpty()) // TODO: Need a "new game" trigger instead
+		if (HotBar!.IsEmpty())
 		{
 			HotBar.AddItem(new InventoryItem
 			{
@@ -221,8 +221,6 @@ public partial class Player : CharacterBody3D
 			if (Island.HarvestableVoxelIDs.Contains(cell_id))
 			{
 				Island.SetCellItem(cell_position, (int)Island.InvalidCellItem);
-
-				// TODO: Add item to inventory (random?)
 			}
 		}
 

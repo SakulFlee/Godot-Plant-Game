@@ -185,7 +185,6 @@ public partial class Island : GridMap
 			var position = used_cells[i];
 
 			var neighbours = 0;
-			// TODO: Voxel Library
 			if (GetCellItem(position + new Vector3I(1, 0, 0)) > 0)
 			{
 				neighbours++;
