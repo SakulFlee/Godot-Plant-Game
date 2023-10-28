@@ -37,8 +37,7 @@ jobs:
       - name: 💽 Setup .NET SDK
         uses: actions/setup-dotnet@v3
         with:
-          # Use the .NET SDK from global.json in the root of the repository.
-          global-json-file: global.json
+          dotnet-version: 7.0
 
       - name: 📦 Restore Dependencies
         run: dotnet restore
@@ -57,14 +56,8 @@ jobs:
       - name: 🤖 Setup Godot
         uses: chickensoft-games/setup-godot@v1
         with:
-          # Version must include major, minor, and patch, and be >= 4.0.0
-          # Pre-release label is optional.
-          #
-          # In this case, we are using the version from global.json.
-          #
-          # This allows checks on renovatebot PR's to succeed whenever
-          # renovatebot updates the Godot SDK version.
-          version: global.json
+          version: 4.1.2
+          use-dotnet: true
 
       - name: 🧑‍🔬 Generate .NET Bindings
         run: godot --headless --build-solutions --quit || exit 0
