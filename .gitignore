@@ -4,3 +4,6 @@ Builds/Current/
 
 # Blender
 *.blend[0-999]
+
+# DotNet
+*.csproj.old*
