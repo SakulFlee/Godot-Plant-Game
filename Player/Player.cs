@@ -26,6 +26,8 @@ public partial class Player : CharacterBody3D
 	private bool IsControllerInput;
 	private Vector3I? SelectedCell;
 	private int SelectorID;
+	private int MinimumYSelectorSnap = 0;
+	private int MaximumYSelectorSnap = 10;
 
 	private int FarmlandVoxelID;
 
@@ -71,9 +73,19 @@ public partial class Player : CharacterBody3D
 		MoveAndSlide();
 
 		SanityCheck();
+	}
 
-		HandleMouseMovement();
-		HandleSelectorInteraction();
+	public override void _Input(InputEvent @event)
+	{
+		if (@event is InputEventMouseMotion || @event is InputEventJoypadMotion)
+		{
+			HandleMouseMovement();
+		}
+
+		if (@event is InputEventMouseButton || @event is InputEventJoypadButton || @event is InputEventMouseMotion || @event is InputEventJoypadButton)
+		{
+			HandleSelectorInteraction();
+		}
 	}
 
 	private void HandleMovement()
@@ -115,15 +127,7 @@ public partial class Player : CharacterBody3D
 
 	private void HandleMouseMovement()
 	{
-		// If there is a selected cell, remove it
-		if (SelectedCell != null)
-		{
-			Island!.SetCellItem(SelectedCell.Value, (int)GridMap.InvalidCellItem);
-			SelectedCell = null;
-		}
-
 		Vector3 position;
-
 		var input_vector = Input.GetVector("cursor_left", "cursor_right", "cursor_forward", "cursor_backward");
 		if (input_vector.Length() > 0.5f)
 		{
@@ -165,33 +169,52 @@ public partial class Player : CharacterBody3D
 			position = (Vector3)result["position"];
 		}
 
-		var player_cell = new Vector3I(
+		var playerCell = new Vector3I(
 			(int)Math.Round(Position.X),
 			(int)Math.Round(Position.Y),
 			(int)Math.Round(Position.Z)
 		);
 
-		var cell_position = new Vector3I(
+		var cellPosition = new Vector3I(
 			(int)Math.Floor(position.X),
 			(int)Math.Floor(position.Y),
 			(int)Math.Floor(position.Z)
 		);
 
 		// Only select the cell if there is a single voxel distance
-		var distance = player_cell - cell_position;
+		Vector3I? newSelectedCell = null;
+		var distance = playerCell - cellPosition;
 		if (distance.X <= 1 && distance.X >= -1 && distance.Z <= 1 && distance.Z >= -1)
 		{
-			for (int i = 0; i <= 2; i++)
+			for (int y = MinimumYSelectorSnap; y <= MaximumYSelectorSnap; y++)
 			{
-				var local_cell_position = cell_position + new Vector3I(0, i, 0);
+				var localCellPosition = new Vector3I(cellPosition.X, y, cellPosition.Z);
+				var localCellId = Island!.GetCellItem(localCellPosition);
 
-				var cell_id = Island!.GetCellItem(local_cell_position);
-				if (cell_id == GridMap.InvalidCellItem)
+				if (localCellId == GridMap.InvalidCellItem || localCellId == SelectorID)
 				{
-					SelectedCell = local_cell_position;
-					Island.SetCellItem(SelectedCell.Value, SelectorID);
+					newSelectedCell = localCellPosition - new Vector3I(0, 1, 0);
 					break;
 				}
+			}
+		}
+
+		// Only change the selector if the existing and new cell aren't the same
+		if (SelectedCell != newSelectedCell)
+		{
+			// Remove the existing selector if it exists
+			if (SelectedCell != null)
+			{
+				Island!.SetCellItem(SelectedCell!.Value + new Vector3I(0, 1, 0), (int)GridMap.InvalidCellItem);
+			}
+
+			// Set the new selected cell
+			SelectedCell = newSelectedCell;
+
+			// Set the new selector if not null
+			if (SelectedCell != null)
+			{
+				Island!.SetCellItem(SelectedCell!.Value + new Vector3I(0, 1, 0), SelectorID);
 			}
 		}
 	}
@@ -203,32 +226,31 @@ public partial class Player : CharacterBody3D
 			return;
 		}
 
-		var cell_position = SelectedCell.Value - new Vector3I(0, 1, 0);
-		var cell_id = Island!.GetCellItem(cell_position);
+		var cellId = Island!.GetCellItem(SelectedCell!.Value);
 
-		if (SelectedCell != null && Input.IsActionPressed("primary_action"))
+		if (Input.IsActionPressed("primary_action"))
 		{
 			if (SelectedToolDefinition != null && SelectedToolDefinition.CanPlow)
 			{
-				if (Island.PlowableVoxelIDs.Contains(cell_id))
+				if (Island.PlowableVoxelIDs.Contains(cellId))
 				{
-					Island.SetCellItem(cell_position, FarmlandVoxelID);
+					Island.SetCellItem(SelectedCell!.Value, FarmlandVoxelID);
 				}
 			}
 
-			if (Island.HarvestableVoxelIDs.Contains(cell_id))
+			if (Island.HarvestableVoxelIDs.Contains(cellId))
 			{
-				Island.SetCellItem(cell_position, (int)Island.InvalidCellItem);
+				Island.SetCellItem(SelectedCell!.Value, (int)Island.InvalidCellItem);
 			}
 		}
 
-		if (SelectedCell != null && Input.IsActionPressed("secondary_action"))
+		if (Input.IsActionPressed("secondary_action"))
 		{
 			if (SelectedPlantDefinition != null && SelectedPlantDefinition.CanBePlanted)
 			{
-				if (Island.PlantableVoxelIDs.Contains(cell_id) && SelectedPlantDefinition != null)
+				if (Island.PlantableVoxelIDs.Contains(cellId) && SelectedPlantDefinition != null)
 				{
-					var cell_above = cell_position + new Vector3I(0, 1, 0);
+					var cell_above = SelectedCell!.Value + new Vector3I(0, 1, 0);
 
 					var plantID = Island.MeshLibrary.FindItemByName(SelectedPlantDefinition.Name);
 					if (plantID < 0)
