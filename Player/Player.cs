@@ -19,7 +19,6 @@ public partial class Player : CharacterBody3D
 	// Get the gravity from the project settings to be synced with RigidBody nodes.
 	private float Gravity = ProjectSettings.GetSetting("physics/3d/default_gravity").AsSingle();
 
-	private RayCast3D? RayCastFront;
 	private SpringArm3D? SpringArm3D;
 	private Camera3D? Camera3D;
 	private Island? Island;
@@ -37,7 +36,6 @@ public partial class Player : CharacterBody3D
 
 	public override void _Ready()
 	{
-		RayCastFront = GetNode<RayCast3D>("RayCastFront");
 		SpringArm3D = GetNode<SpringArm3D>("SpringArm3D");
 		Camera3D = GetNode<Camera3D>("SpringArm3D/Camera3D");
 		Island = GetNode<Island>("/root/MainGame/Island");
