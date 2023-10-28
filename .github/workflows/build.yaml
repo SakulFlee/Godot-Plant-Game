@@ -51,3 +51,6 @@ jobs:
         run: |
           mkdir -p "out/${{ matrix.export-template }}"
           godot --headless --export-release "${{ matrix.export-template }}" "out/${{ matrix.export-template }}"
+
+      - name: Debug
+        run: ls -al -R out/
