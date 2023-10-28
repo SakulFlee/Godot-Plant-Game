@@ -30,7 +30,7 @@ project/assembly_name="Godot-Rust"
 
 [editor_plugins]
 
-enabled=PackedStringArray()
+enabled=PackedStringArray("res://addons/csg_mesher/plugin.cfg")
 
 [filesystem]
 
