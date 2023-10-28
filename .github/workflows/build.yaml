@@ -49,5 +49,5 @@ jobs:
 
       - name: 🎁 Export Project
         run: |
-          mkdir "out/${{ matrix.export-template }}"
+          mkdir -p "out/${{ matrix.export-template }}"
           godot --headless --export-release "${{ matrix.export-template }}" "out/${{ matrix.export-template }}"
