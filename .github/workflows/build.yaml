@@ -23,13 +23,13 @@ jobs:
           lfs: true
           submodules: 'recursive'
 
+      - name: 🎥 Setup Blender
+        run: sudo apt-get install -y blender
+
       - name: 💽 Setup .NET SDK
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: ${{ matrix.dotnet-version }}
-
-      - name: 📦 Restore Dependencies
-        run: dotnet restore
 
       - name: 🤖 Setup Godot
         uses: chickensoft-games/setup-godot@v1
@@ -37,8 +37,11 @@ jobs:
           version: ${{ matrix.godot-version }}
           use-dotnet: true
 
+      - name: 📦 Restore Dependencies
+        run: dotnet restore
+
       - name: 🧑‍🔬 Generate .NET Bindings
-        run: godot --headless --build-solutions --quit || exit 0
+        run: godot --headless --build-solutions --quit
 
       - name: 🦺 Build Projects
         run: dotnet build
