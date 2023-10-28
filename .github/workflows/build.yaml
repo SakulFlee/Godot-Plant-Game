@@ -1,0 +1,44 @@
+name: 🛠️ Build
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: true
+      DOTNET_NOLOGO: true
+    strategy:
+      fail-fast: false
+      matrix:
+        godot-version: [4.1.2]
+        dotnet-version: [7.0]
+
+    steps:
+      - name: 🧾 Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+          submodules: 'recursive'
+
+      - name: 💽 Setup .NET SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ matrix.dotnet-version }}
+
+      - name: 📦 Restore Dependencies
+        run: dotnet restore
+
+      - name: 🤖 Setup Godot
+        uses: chickensoft-games/setup-godot@v1
+        with:
+          version: ${{ matrix.godot-version }}
+          use-dotnet: true
+
+      - name: 🧑‍🔬 Generate .NET Bindings
+        run: godot --headless --build-solutions --quit || exit 0
+
+      - name: 🦺 Build Projects
+        run: dotnet build
