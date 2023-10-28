@@ -49,10 +49,6 @@ current = true
 fov = 50.0
 size = 0.25
 
-[node name="RayCastFront" type="RayCast3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1)
-target_position = Vector3(0, -2, 0)
-
 [node name="OmniLight3D" type="OmniLight3D" parent="."]
 light_color = Color(0.643137, 0.490196, 0.203922, 1)
 light_specular = 1.0
