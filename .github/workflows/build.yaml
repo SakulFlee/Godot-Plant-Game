@@ -28,8 +28,12 @@ jobs:
         run: |
           sudo apt-get install -y blender
           BLENDER_LOCATION=$(whereis blender)
+          echo "Blender Location: ${BLENDER_LOCATION}"
+
           mkdir -p ~/.config/godot/
-          cat >> ~/.config/godot/editor_settings.tres << 'END'
+          cat >> ~/.config/godot/editor_settings-4.tres << 'END'
+          [gd_resource type="EditorSettings" format=3]
+
           [resource]
           filesystem/import/blender/blender3_path = "${BLENDER_LOCATION}"
           END
