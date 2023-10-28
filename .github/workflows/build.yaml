@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        godot-version: [4.0.0, 4.1.0, 4.1.2, 4.2.0]
+        godot-version: [4.1.2, 4.2-beta3]
         dotnet-version: [7.0, 8.0]
 
     steps:
