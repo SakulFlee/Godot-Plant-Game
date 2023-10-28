@@ -179,7 +179,6 @@ public partial class HotBar : Control
 					var numberString = slotName.Substr(4 /* Slot */, slotName.Length);
 					var actualNumber = uint.Parse(numberString);
 
-					GD.Print("Slot Number: " + actualNumber);
 					SelectedSlot = actualNumber + 1;
 					DoUpdate = true;
 				}
