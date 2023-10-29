@@ -43,11 +43,7 @@ jobs:
           BLENDER_LOCATION=$(whereis blender | awk '{print($2)}')
           echo "Blender Location: $BLENDER_LOCATION"
 
-          mkdir -p ~/.config/godot/
-          cat > ~/.config/godot/editor_settings-4.tres << EOF
-          [gd_resource type="EditorSettings" format=3]
-
-          [resource]
+          cat >> ~/.config/godot/editor_settings-4.tres << EOF
           filesystem/import/blender/blender3_path = "$BLENDER_LOCATION"
           EOF
 
