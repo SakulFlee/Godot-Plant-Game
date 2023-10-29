@@ -68,9 +68,7 @@ jobs:
 
       - name: Debug
         run: |
-          ls -al /usr/bin/
-          ls -al /usr/bin/blender
-          file /usr/bin/blender
+          cat > ~/.config/godot/editor_settings-4.tres
 
           echo ""
           ls -al -R out/
