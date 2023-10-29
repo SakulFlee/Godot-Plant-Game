@@ -31,12 +31,12 @@ jobs:
           echo "Blender Location: $BLENDER_LOCATION"
 
           mkdir -p ~/.config/godot/
-          cat > ~/.config/godot/editor_settings-4.tres << 'END'
+          cat > ~/.config/godot/editor_settings-4.tres << EOF
           [gd_resource type="EditorSettings" format=3]
 
           [resource]
           filesystem/import/blender/blender3_path = "$BLENDER_LOCATION"
-          END
+          EOF
 
           echo "Godot settings:"
           cat ~/.config/godot/editor_settings-4.tres
