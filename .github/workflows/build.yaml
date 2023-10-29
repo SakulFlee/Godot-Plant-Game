@@ -38,7 +38,16 @@ jobs:
           version: ${{ matrix.godot-version }}
           use-dotnet: true
 
-      - name: ⚙️ Godot Configuration
+      - name: 📦 Restore Dependencies
+        run: dotnet restore
+
+      - name: 🧑‍🔬 Generate .NET Bindings
+        run: godot --headless --build-solutions --quit
+
+      - name: 🦺 Build Project
+        run: dotnet build
+
+      - name: ⚙️ Godot Configuration for Export
         run: |
           BLENDER_LOCATION=$(whereis blender | awk '{print($2)}')
           echo "Blender Location: $BLENDER_LOCATION"
@@ -49,15 +58,6 @@ jobs:
 
           echo "Godot settings:"
           cat ~/.config/godot/editor_settings-4.tres
-
-      - name: 📦 Restore Dependencies
-        run: dotnet restore
-
-      - name: 🧑‍🔬 Generate .NET Bindings
-        run: godot --headless --build-solutions --quit
-
-      - name: 🦺 Build Project
-        run: dotnet build
 
       - name: 🎁 Export Project
         run: |
