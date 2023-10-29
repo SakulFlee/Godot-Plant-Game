@@ -3,5 +3,6 @@
     <TargetFramework>net7.0</TargetFramework>
     <EnableDynamicLoading>true</EnableDynamicLoading>
     <RootNamespace>GodotRust</RootNamespace>
+    <Nullable>Enable</Nullable>
   </PropertyGroup>
 </Project>
