@@ -67,4 +67,10 @@ jobs:
           godot --headless --export-release "${{ matrix.export-template }}" "out/${{ matrix.export-template }}"
 
       - name: Debug
-        run: ls -al -R out/
+        run: |
+          ls -al /usr/bin/
+          ls -al /usr/bin/blender
+          file /usr/bin/blender
+
+          echo ""
+          ls -al -R out/
