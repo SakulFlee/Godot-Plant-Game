@@ -120,6 +120,8 @@ public partial class HotBar : Control
 				EmitSignal(SignalName.HotBarSelectionChanged, new Variant());
 			}
 		}
+
+		
 	}
 
 	public override void _Input(InputEvent @event)

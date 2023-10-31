@@ -1,0 +1,73 @@
+[gd_scene load_steps=3 format=3 uid="uid://n8111bey4kwc"]
+
+[ext_resource type="Theme" uid="uid://clhd7emejsjp2" path="res://MainMenu/MainMenuTheme.tres" id="1_ovcu1"]
+[ext_resource type="Script" path="res://MainGame/HUD/EscapeMenu.cs" id="1_t0brg"]
+
+[node name="EscapeMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_t0brg")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 32
+alignment = 1
+
+[node name="ResumeButton" type="Button" parent="MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(512, 128)
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 6
+theme = ExtResource("1_ovcu1")
+theme_override_font_sizes/font_size = 40
+text = "Resume"
+
+[node name="HSeparator" type="HSeparator" parent="MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+
+[node name="SaveGameButton" type="Button" parent="MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(512, 128)
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 6
+theme = ExtResource("1_ovcu1")
+theme_override_font_sizes/font_size = 40
+text = "Save Game"
+
+[node name="SettingsButton" type="Button" parent="MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(512, 128)
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 6
+theme = ExtResource("1_ovcu1")
+theme_override_font_sizes/font_size = 40
+text = "Settings"
+
+[node name="ExitToMainMenu" type="Button" parent="MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(512, 128)
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 6
+theme = ExtResource("1_ovcu1")
+theme_override_font_sizes/font_size = 40
+text = "Exit to Main Menu"
+
+[connection signal="pressed" from="MarginContainer/VBoxContainer/ResumeButton" to="." method="OnResumeButtonPressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/SaveGameButton" to="." method="OnSaveGameButtonPressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/SettingsButton" to="." method="OnSettingsButtonPressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/ExitToMainMenu" to="." method="OnExitToMainMenuButtonPressed"]
