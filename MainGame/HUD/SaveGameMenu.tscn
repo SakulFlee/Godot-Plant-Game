@@ -1,0 +1,57 @@
+[gd_scene load_steps=2 format=3 uid="uid://c1thmwwqiachw"]
+
+[ext_resource type="Theme" uid="uid://clhd7emejsjp2" path="res://MainMenu/MainMenuTheme.tres" id="1_no5m1"]
+
+[node name="SaveGameMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HSplitContainer" type="HSplitContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+split_offset = 1280
+dragger_visibility = 1
+
+[node name="SaveList" type="MarginContainer" parent="HSplitContainer"]
+layout_mode = 2
+theme = ExtResource("1_no5m1")
+
+[node name="Actions" type="MarginContainer" parent="HSplitContainer"]
+layout_mode = 2
+
+[node name="VSplitContainer" type="VSplitContainer" parent="HSplitContainer/Actions"]
+layout_mode = 2
+split_offset = 1016
+dragger_visibility = 1
+
+[node name="Label" type="Label" parent="HSplitContainer/Actions/VSplitContainer"]
+layout_mode = 2
+size_flags_vertical = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HSplitContainer/Actions/VSplitContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="Button" type="Button" parent="HSplitContainer/Actions/VSplitContainer/HBoxContainer"]
+layout_mode = 2
+text = "Load"
+
+[node name="Button2" type="Button" parent="HSplitContainer/Actions/VSplitContainer/HBoxContainer"]
+layout_mode = 2
+text = "Exiteb"

@@ -31,7 +31,7 @@ public partial class EscapeMenu : Control
 		var saveResource = SaveResource.FromCurrent(this);
 		saveResource.SaveToFile("test");
 	}
-
+ 
 	public void OnSettingsButtonPressed()
 	{
 		// TODO
