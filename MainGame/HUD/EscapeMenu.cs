@@ -22,7 +22,8 @@ public partial class EscapeMenu : Control
 
 	public void OnResumeButtonPressed()
 	{
-		// TODO
+		// Hide again, nothing to do! :)
+		Visible = false;
 	}
 
 	public void OnSaveGameButtonPressed()
