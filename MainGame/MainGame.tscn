@@ -1,7 +1,8 @@
-[gd_scene load_steps=10 format=3 uid="uid://b288q5sls7os5"]
+[gd_scene load_steps=11 format=3 uid="uid://b288q5sls7os5"]
 
 [ext_resource type="PackedScene" uid="uid://e78lxxm5hkbw" path="res://MainGame/HUD/HUD.tscn" id="1_socn4"]
 [ext_resource type="PackedScene" uid="uid://cncbcoi37cogu" path="res://SkyAndSun/SkyAndSun.tscn" id="1_u0jro"]
+[ext_resource type="PackedScene" uid="uid://n8111bey4kwc" path="res://MainGame/HUD/EscapeMenu.tscn" id="2_30vyr"]
 [ext_resource type="PackedScene" uid="uid://8q5kqymcgbiq" path="res://Player/Player.tscn" id="3_pa30b"]
 [ext_resource type="PackedScene" uid="uid://c08x37ykkqb24" path="res://DateAndTime/DateAndTime.tscn" id="5_oq07f"]
 [ext_resource type="PackedScene" uid="uid://b80pwan0h6npx" path="res://Island/Island.tscn" id="5_wtii5"]
@@ -22,6 +23,8 @@ noise = SubResource("FastNoiseLite_wv2l2")
 [node name="MainGame" type="Node"]
 
 [node name="HUD" parent="." instance=ExtResource("1_socn4")]
+
+[node name="EscapeMenu" parent="." instance=ExtResource("2_30vyr")]
 
 [node name="SkyAndSun" parent="." groups=["Persistance"] instance=ExtResource("1_u0jro")]
 

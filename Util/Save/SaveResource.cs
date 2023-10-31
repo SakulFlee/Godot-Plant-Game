@@ -1,140 +1,137 @@
-using System.Reflection.Metadata.Ecma335;
+using System;
 using Godot;
 using Godot.Collections;
 
 [GlobalClass]
 public partial class SaveResource : Resource
 {
-    #region Island Settings
-    [ExportCategory("Island Settings")]
     [Export]
-    public uint Radius = 0;
+    public Dictionary<string, Variant> save = new();
 
-    [Export]
-    public float BelowGroundFactor = 0;
+    private static string SaveDir = "user://saves";
 
-    [Export]
-    public float TerrainIndentFactor = 0;
+    private static void SaveDirCheck()
+    {
+        if (!DirAccess.DirExistsAbsolute(SaveDir))
+        {
+            DirAccess.MakeDirRecursiveAbsolute(SaveDir);
+        }
+    }
 
-    [Export]
-    public string SpawnPlatformVoxel = "";
-
-    [Export]
-    public Dictionary<int, Array<string>> VoxelGeneration = new();
-
-    [Export]
-    public int WaterLevel = 0;
-    #endregion
-
-    #region Island Noise
-    [ExportCategory("Island Noise")]
-    [Export]
-    public NoiseTexture2D TerrainNoiseA = new();
-
-    [Export]
-    public NoiseTexture2D TerrainNoiseB = new();
-    #endregion
-
-    #region Island Change
-    [ExportCategory("Island Settings")]
-    [Export]
-    public Dictionary<Vector3I, int> Changes = new();
-    #endregion
-
-    #region Date and Time
-    [ExportCategory("Date and Time")]
-    [Export]
-    public uint HoursPerDay { get; private set; }
-
-    [Export]
-    public uint MinutesPerHour { get; private set; }
-
-    [Export]
-    public uint DaysPerMonth { get; private set; }
-
-    [Export]
-    public uint MonthsPerYear { get; private set; }
-
-    [Export]
-    public float IncrementFactor { get; private set; }
-
-    [Export]
-    public float Time { get; private set; }
-
-    [Export]
-    public uint Hour { get; private set; }
-
-    [Export]
-    public uint Minute { get; private set; }
-
-    [Export]
-    public uint Day { get; private set; }
-
-    [Export]
-    public uint Month { get; private set; }
-
-    [Export]
-    public uint Year { get; private set; }
-    #endregion
-
-    #region Functions
     public void SaveToFile(string name)
     {
-        var thisAsJson = ToJson();
+        string thisAsJson = ToJson();
+        GD.Print($"JSON Save: {thisAsJson}");
 
-        var saveGame = FileAccess.Open($"user://save_{name}.save", FileAccess.ModeFlags.Write);
-        saveGame.StoreString(thisAsJson);
+        var filePath = $"{SaveDir}/save_{name}.json";
+
+        SaveDirCheck();
+
+        using (var saveGame = FileAccess.Open(filePath, FileAccess.ModeFlags.Write))
+        {
+            saveGame.StoreString(thisAsJson);
+        }
+        GD.Print($"Game saved to {filePath}!");
     }
 
     public string ToJson()
     {
-        return Json.Stringify(this);
+        return Json.Stringify(save);
+    }
+
+    public static SaveResource? FromName(string name)
+    {
+        return FromFileName($"save_{name}.json");
+    }
+
+        public static SaveResource? FromFileName(string fileName)
+    {
+        SaveDirCheck();
+        var filePath = $"{SaveDir}/{fileName}";
+
+        using (var saveGame = FileAccess.Open(filePath, FileAccess.ModeFlags.Read))
+        {
+            var jsonString = saveGame.GetLine();
+
+            var json = new Json();
+            var parseResult = json.Parse(jsonString);
+            if (parseResult != Error.Ok)
+            {
+                GD.PrintErr($"JSON Parse Error: {json.GetErrorMessage()} in {jsonString} at {json.GetErrorLine()}");
+
+                return null;
+            }
+
+            var saveResource = new SaveResource
+            {
+                save = new Dictionary<string, Variant>((Dictionary)json.Data)
+            };
+            return saveResource;
+        }
     }
 
     public static SaveResource FromCurrent(Node current)
     {
-        var saveResource = new SaveResource();
-
-        saveResource = WriteIslandToResource(current, saveResource);
-        saveResource = WriteDateAndTimeToResource(current, saveResource);
-
-        return saveResource;
+        return new SaveResource()
+            .WriteCurrentDateAndTimeToResource(current)
+            .WriteCurrentIslandToResource(current)
+            .WriteCurrentPlayerToResource(current);
     }
 
-    private static SaveResource WriteIslandToResource(Node current, SaveResource saveResource)
+    private SaveResource WriteCurrentPlayerToResource(Node current)
     {
-        var island = current.GetNode<Island>("/MainGame/Island");
+        var player = current.GetNode<Player>("/root/MainGame/Player");
 
-        saveResource.Radius = island.Radius;
-        saveResource.BelowGroundFactor = island.BelowGroundFactor;
-        saveResource.TerrainIndentFactor = island.TerrainIndentFactor;
-        saveResource.SpawnPlatformVoxel = island.SpawnPlatformVoxel;
-        saveResource.VoxelGeneration = island.VoxelGeneration;
-        saveResource.WaterLevel = island.WaterLevel;
-        saveResource.TerrainNoiseA = island.TerrainNoiseA;
-        saveResource.TerrainNoiseB = island.TerrainNoiseB;
-        saveResource.Changes = island.Changes;
+        save.Add("Player.Position", player.Position);
 
-        return saveResource;
+        return this;
     }
 
-    private static SaveResource WriteDateAndTimeToResource(Node current, SaveResource saveResource)
+    private SaveResource WriteCurrentIslandToResource(Node current)
     {
-        var dateAndTime = current.GetNode<DateAndTime>("/MainGame/DateAndTime");
+        var island = current.GetNode<Island>("/root/MainGame/Island");
 
-        saveResource.HoursPerDay = dateAndTime.HoursPerDay;
-        saveResource.MinutesPerHour = dateAndTime.MinutesPerHour;
-        saveResource.DaysPerMonth = dateAndTime.DaysPerMonth;
-        saveResource.MonthsPerYear = dateAndTime.MonthsPerYear;
-        saveResource.IncrementFactor = dateAndTime.IncrementFactor;
-        saveResource.Time = dateAndTime.Time;
-        saveResource.Hour = dateAndTime.Hour;
-        saveResource.Minute = dateAndTime.Minute;
-        saveResource.Day = dateAndTime.Day;
-        saveResource.Month = dateAndTime.Month;
-        saveResource.Year = dateAndTime.Year;
+        save.Add($"Island.Radius", island.Radius);
+        save.Add($"Island.BelowGroundFactor", island.BelowGroundFactor);
+        save.Add($"Island.TerrainIndentFactor", island.TerrainIndentFactor);
+        save.Add($"Island.SpawnPlatformVoxel", island.SpawnPlatformVoxel);
+        save.Add($"Island.VoxelGeneration", island.VoxelGeneration);
+        save.Add($"Island.WaterLevel", island.WaterLevel);
+        save.Add($"Island.Changes", island.Changes);
 
-        return saveResource;
+        // Noises
+        var terrainNoiseA = (FastNoiseLite)island.TerrainNoiseA.Noise;
+        save.Add($"Island.TerrainNoiseA.Seed", terrainNoiseA.Seed);
+        save.Add($"Island.TerrainNoiseA.NoiseType", (int)terrainNoiseA.NoiseType);
+        save.Add($"Island.TerrainNoiseA.Frequency", terrainNoiseA.Frequency);
+        save.Add($"Island.TerrainNoiseA.FractalType", (int)terrainNoiseA.FractalType);
+
+        var terrainNoiseB = (FastNoiseLite)island.TerrainNoiseB.Noise;
+        save.Add($"Island.TerrainNoiseB.Seed", terrainNoiseB.Seed);
+        save.Add($"Island.TerrainNoiseB.NoiseType", (int)terrainNoiseB.NoiseType);
+        save.Add($"Island.TerrainNoiseB.Frequency", terrainNoiseB.Frequency);
+        save.Add($"Island.TerrainNoiseB.FractalType", (int)terrainNoiseB.FractalType);
+
+
+        return this;
     }
-    #endregion
+
+    private SaveResource WriteCurrentDateAndTimeToResource(Node current)
+    {
+        var dateAndTime = current.GetNode<DateAndTime>("/root/MainGame/DateAndTime");
+
+        save.Add("DateAndTime.HoursPerDay", dateAndTime.HoursPerDay);
+        save.Add("DateAndTime.MinutesPerHour", dateAndTime.MinutesPerHour);
+        save.Add("DateAndTime.DaysPerMonth", dateAndTime.DaysPerMonth);
+        save.Add("DateAndTime.MonthsPerYear", dateAndTime.MonthsPerYear);
+        save.Add("DateAndTime.IncrementFactor", dateAndTime.IncrementFactor);
+        save.Add("DateAndTime.Time", dateAndTime.Time);
+        save.Add("DateAndTime.Hour", dateAndTime.Hour);
+        save.Add("DateAndTime.Minute", dateAndTime.Minute);
+        save.Add("DateAndTime.Day", dateAndTime.Day);
+        save.Add("DateAndTime.Month", dateAndTime.Month);
+        save.Add("DateAndTime.Year", dateAndTime.Year);
+
+        return this;
+    }
 }
