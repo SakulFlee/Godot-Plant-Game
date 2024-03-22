@@ -33,7 +33,7 @@ jobs:
           dotnet-version: ${{ matrix.dotnet-version }}
 
       - name: 🤖 Setup Godot
-        uses: chickensoft-games/setup-godot@v1
+        uses: chickensoft-games/setup-godot@v2
         with:
           version: ${{ matrix.godot-version }}
           use-dotnet: true
